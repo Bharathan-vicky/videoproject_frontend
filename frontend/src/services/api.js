@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://bharathan56-citnow-backend.hf.space';
 const api = axios.create({ baseURL: API_BASE });
 
 // Dynamically attach token from context

@@ -1436,171 +1436,10 @@ export default function SuperAdminDashboard() {
   const [selectedDealer, setSelectedDealer] = useState(null);
   const [dealerDetailOpen, setDealerDetailOpen] = useState(false);
 
-  // Get unique dealers from users data
-  const getUniqueDealersFromUsers = (usersData) => {
-    const dealerMap = new Map();
-
-    usersData.forEach(user => {
-      const dealerId = user.dealer_id;
-      if (dealerId && dealerId.trim() !== '') {
-        if (!dealerMap.has(dealerId)) {
-          dealerMap.set(dealerId, {
-            id: dealerId,
-            name: dealerId,
-            users: []
-          });
-        }
-        dealerMap.get(dealerId).users.push(user);
-      }
-    });
-
-    return Array.from(dealerMap.values());
-  };
-
-  const calculateDealerPerformance = (allResults, dealers) => {
-    const dealerMap = new Map();
-
-    // Initialize all dealers from users data
-    dealers.forEach(dealer => {
-      dealerMap.set(dealer.id, {
-        id: dealer.id,
-        name: dealer.name,
-        videos: 0,
-        scores: [],
-        videoScores: [],
-        audioScores: [],
-        users: dealer.users.length
-      });
-    });
-
-    allResults.forEach(result => {
-      const dealerId = result.dealer_id || 'unknown';
-
-      if (dealerMap.has(dealerId)) {
-        const dealer = dealerMap.get(dealerId);
-        dealer.videos++;
-
-        if (result.overall_quality?.overall_score != null) {
-          dealer.scores.push(result.overall_quality.overall_score);
-        }
-        if (result.video_analysis?.quality_score != null) {
-          dealer.videoScores.push(result.video_analysis.quality_score);
-        }
-        if (result.audio_analysis?.score != null) {
-          dealer.audioScores.push(result.audio_analysis.score);
-        }
-      } else {
-        // Handle results from dealers not in users data
-        const dealerName = result.citnow_metadata?.dealership || `Dealer ${dealerId}`;
-        if (!dealerMap.has(dealerId)) {
-          dealerMap.set(dealerId, {
-            id: dealerId,
-            name: dealerName,
-            videos: 0,
-            scores: [],
-            videoScores: [],
-            audioScores: [],
-            users: 0
-          });
-        }
-        const dealer = dealerMap.get(dealerId);
-        dealer.videos++;
-
-        if (result.overall_quality?.overall_score != null) {
-          dealer.scores.push(result.overall_quality.overall_score);
-        }
-        if (result.video_analysis?.quality_score != null) {
-          dealer.videoScores.push(result.video_analysis.quality_score);
-        }
-        if (result.audio_analysis?.score != null) {
-          dealer.audioScores.push(result.audio_analysis.score);
-        }
-      }
-    });
-
-    return Array.from(dealerMap.values()).map(dealer => {
-      const avgScore = dealer.scores.length > 0
-        ? dealer.scores.reduce((sum, score) => sum + score, 0) / dealer.scores.length
-        : 0;
-
-      const avgVideoScore = dealer.videoScores.length > 0
-        ? dealer.videoScores.reduce((sum, score) => sum + score, 0) / dealer.videoScores.length
-        : 0;
-
-      const avgAudioScore = dealer.audioScores.length > 0
-        ? dealer.audioScores.reduce((sum, score) => sum + score, 0) / dealer.audioScores.length
-        : 0;
-
-      return {
-        id: dealer.id,
-        name: dealer.name,
-        videos: dealer.videos,
-        users: dealer.users,
-        overall: Math.round(avgScore * 10) / 10,
-        video: Math.round(avgVideoScore * 10) / 10,
-        audio: Math.round(avgAudioScore * 10) / 10,
-        score: Math.round(avgScore * 10) / 10
-      };
-    }).sort((a, b) => b.overall - a.overall);
-  };
-
-  const calculateQualityBreakdown = (allResults) => {
-    const qualityCounts = {
-      'Excellent': 0,
-      'Very Good': 0,
-      'Good': 0,
-      'Fair': 0,
-      'Poor': 0
-    };
-
-    allResults.forEach((result) => {
-      let label = result.overall_quality?.overall_label;
-
-      if (label) {
-        const normalizedLabel = String(label).trim().toLowerCase();
-
-        if (normalizedLabel.includes('excellent')) {
-          qualityCounts['Excellent']++;
-        } else if (normalizedLabel.includes('very good')) {
-          qualityCounts['Very Good']++;
-        } else if (normalizedLabel.includes('good')) {
-          qualityCounts['Good']++;
-        } else if (normalizedLabel.includes('fair')) {
-          qualityCounts['Fair']++;
-        } else if (normalizedLabel.includes('poor')) {
-          qualityCounts['Poor']++;
-        } else {
-          const score = result.overall_quality?.overall_score;
-          if (score !== undefined && score !== null) {
-            if (score >= 9) qualityCounts['Excellent']++;
-            else if (score >= 8) qualityCounts['Very Good']++;
-            else if (score >= 7) qualityCounts['Good']++;
-            else if (score >= 6) qualityCounts['Fair']++;
-            else qualityCounts['Poor']++;
-          } else {
-            qualityCounts['Good']++;
-          }
-        }
-      } else {
-        const score = result.overall_quality?.overall_score;
-        if (score !== undefined && score !== null) {
-          if (score >= 9) qualityCounts['Excellent']++;
-          else if (score >= 8) qualityCounts['Very Good']++;
-          else if (score >= 7) qualityCounts['Good']++;
-          else if (score >= 6) qualityCounts['Fair']++;
-          else qualityCounts['Poor']++;
-        } else {
-          qualityCounts['Good']++;
-        }
-      }
-    });
-
-    return Object.entries(qualityCounts).map(([name, value]) => ({
-      name,
-      value
-    }));
-  };
-
+  /* 
+   * Helper: Calculate Performance Trend
+   * Used to format data for the trend chart
+   */
   const calculateDealerPerformanceTrend = (dealerPerformance) => {
     const topDealers = dealerPerformance.slice(0, 7);
 
@@ -1613,57 +1452,71 @@ export default function SuperAdminDashboard() {
     }));
   };
 
-  const processDashboardData = (allResults, usersData, timeRange) => {
-    const dealers = getUniqueDealersFromUsers(usersData);
-    const dealerPerformance = calculateDealerPerformance(allResults, dealers);
 
-    return {
-      overview: {
-        totalDealers: dealers.length,
-        totalVideos: allResults.length,
-        totalUsers: usersData.length,
-        averageScore: dealerPerformance.length > 0
-          ? Math.round(dealerPerformance.reduce((sum, d) => sum + d.overall, 0) / dealerPerformance.length * 10) / 10
-          : 0,
-        performanceChange: 2.3
-      },
-      performanceTrend: calculateDealerPerformanceTrend(dealerPerformance),
-      dealerRankings: dealerPerformance,
-      qualityDistribution: calculateQualityBreakdown(allResults),
-      topPerformers: {
-        overall: dealerPerformance.slice(0, 5).map((dealer, index) => ({ ...dealer, rank: index + 1 })),
-        video: dealerPerformance
-          .sort((a, b) => b.video - a.video)
-          .slice(0, 5)
-          .map((dealer, index) => ({ ...dealer, rank: index + 1 })),
-        audio: dealerPerformance
-          .sort((a, b) => b.audio - a.audio)
-          .slice(0, 5)
-          .map((dealer, index) => ({ ...dealer, rank: index + 1 }))
-      },
-      recentActivity: dealerPerformance.slice(0, 8)
-    };
-  };
 
   const loadDashboardData = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Get all results from the backend
-      const response = await api.get('/results');
-      const allResults = response.data || [];
+      // 🚀 MAJOR OPTIMIZATION: Use Server-Side Aggregation
+      const [overviewRes, usersRes] = await Promise.all([
+        api.get('/dashboard/super-admin/overview'),
+        listUsers()
+      ]);
 
-      // Get all users
-      const usersResponse = await listUsers();
-      const usersData = usersResponse || [];
+      const overview = overviewRes.data;
+      const usersData = Array.isArray(usersRes) ? usersRes : [];
       setUsers(usersData);
 
-      // Process the data for the dashboard
-      const processedData = processDashboardData(allResults, usersData, timeRange);
-      setDashboardData(processedData);
+      // Map Dealer IDs to Names using User Data
+      const dealerNames = {};
+      usersData.forEach(u => {
+        if (u.dealer_id && u.showroom_name) {
+          dealerNames[u.dealer_id] = u.showroom_name;
+        }
+      });
+
+      // Transform Dealer Performance Data
+      const dealerPerformance = (overview.dealers_summary || []).map(d => ({
+        id: d.dealer_id,
+        name: dealerNames[d.dealer_id] || d.dealer_id || 'Unknown Dealer',
+        videos: d.total_videos,
+        overall: d.avg_overall_quality,
+        // Backend doesn't currently split video/audio scores in summary, using overall as proxy or 0
+        video: d.avg_overall_quality,
+        audio: d.avg_overall_quality,
+        users: 0 // Count users per dealer if needed, or omit
+      })).sort((a, b) => b.overall - a.overall);
+
+      // Transform Quality Distribution
+      const qualityDist = Object.entries(overview.quality_distribution || {}).map(([name, value]) => ({
+        name,
+        value
+      }));
+
+      setDashboardData({
+        overview: {
+          totalDealers: overview.dealers_summary?.length || 0,
+          totalVideos: overview.total_videos || 0,
+          totalUsers: usersData.length,
+          averageScore: overview.avg_overall_quality || 0,
+          performanceChange: 2.4 // Placeholder/Calculated
+        },
+        performanceTrend: calculateDealerPerformanceTrend(dealerPerformance), // Reuse existing helper
+        dealerRankings: dealerPerformance,
+        qualityDistribution: qualityDist,
+        topPerformers: {
+          overall: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 })),
+          video: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 })), // Proxy
+          audio: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 }))  // Proxy
+        },
+        recentActivity: [] // Optional
+      });
+
       setLoading(false);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      console.error('Error details:', error.response?.data || error.message);
       setError('Failed to load dashboard data. Please try again.');
       setLoading(false);
     }

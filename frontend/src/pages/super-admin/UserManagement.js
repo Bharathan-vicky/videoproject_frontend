@@ -88,7 +88,8 @@ export default function UserManagement() {
     setLoading(true);
     try {
       const data = await listUsers();
-      const dealerAdmins = data.filter(user => user.role === 'dealer_admin');
+      const userList = Array.isArray(data) ? data : [];
+      const dealerAdmins = userList.filter(user => user.role === 'dealer_admin');
       setUsers(dealerAdmins);
     } catch (error) {
       console.error('Error loading users:', error);

@@ -5,7 +5,8 @@ import { updateUserProfile } from '../services/users';
 
 export const AuthContext = createContext(null);
 
-const API_BASE = 'http://localhost:8000';
+// Define API_BASE locally to avoid circular dependency issues
+const API_BASE = 'https://bharathan56-citnow-backend.hf.space';
 
 export default function AuthProvider({ children }) {
   const [token, setToken] = useState(null);

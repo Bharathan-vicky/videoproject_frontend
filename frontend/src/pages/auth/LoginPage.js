@@ -122,7 +122,8 @@ export default function LoginPage() {
       await login(form.username.trim(), form.password);
       // Success message is handled in the useEffect above
     } catch (err) {
-      const errorMessage = err.message || 'Invalid username or password. Please try again.';
+      console.error("Login Error:", err);
+      const errorMessage = err.response?.data?.detail || err.message || 'Invalid username or password.';
       showSnackbar(errorMessage, 'error');
     }
   };

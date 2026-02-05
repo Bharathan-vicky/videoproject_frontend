@@ -275,7 +275,8 @@ export default function DealerUsers() {
     setError('');
     try {
       const data = await listMyDealerUsers();
-      const filtered = data.filter(
+      const safeData = Array.isArray(data) ? data : [];
+      const filtered = safeData.filter(
         (u) => String(u.dealer_id) === String(authUser?.dealer_id) && u.role !== 'dealer_admin'
       );
       setUsers(filtered);
