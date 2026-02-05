@@ -1,0 +1,63 @@
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+backend/.env
+frontend/.env
+
+# Dependencies
+node_modules/
+backend/venv/
+backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Build outputs
+frontend/build/
+frontend/dist/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+startup_log.txt
+
+# Testing
+coverage/
+.pytest_cache/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# AI Model files (if large)
+backend/models/*.pt
+backend/models/*.pth
+backend/cache/
+
+# Reports
+backend/reports/
