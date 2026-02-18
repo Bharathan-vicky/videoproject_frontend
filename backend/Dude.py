@@ -539,7 +539,7 @@ class UnifiedMediaAnalyzer:
             import librosa
             import numpy as np
             
-            y, sr = librosa.load(audio_path, sr=22050, duration=30)
+            y, sr = librosa.load(audio_path, sr=16000, duration=20)  # Optimized: 16kHz, 20s window
             if len(y) == 0:
                 return {
                     "prediction": "No Audio", "confidence": 0.0, "score": 0.0,
@@ -778,13 +778,13 @@ class UnifiedMediaAnalyzer:
             # Get resolution info
             res_label, min_res_score, max_res_score = self._get_resolution_info(width, height)
             
-            # Dynamic frame sampling based on video length
+            # Dynamic frame sampling based on video length (optimized for speed)
             if duration > 300:
-                num_frames_to_sample = min(150, frame_count)
+                num_frames_to_sample = min(60, frame_count)   # was 150
             elif duration > 120:
-                num_frames_to_sample = min(80, frame_count)
+                num_frames_to_sample = min(35, frame_count)   # was 80
             else:
-                num_frames_to_sample = min(50, frame_count)
+                num_frames_to_sample = min(20, frame_count)   # was 50
                 
             print(f"🎯 Sampling {num_frames_to_sample} frames from {frame_count} total frames")
             
