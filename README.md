@@ -25,6 +25,7 @@ Access the app at: `http://localhost:3000`
 Use your credentials (e.g., `vicky@mail.com`). The app will automatically connect to the Cloud Backend.
 
 ## ☁️ Cloud Resources
+*   **🚀 Live App**: [https://videoproject-frontend.pages.dev/login](https://videoproject-frontend.pages.dev/login)
 *   **Backend API**: [https://bharathan56-citnow-backend.hf.space](https://bharathan56-citnow-backend.hf.space)
 *   **Hugging Face Space**: [CitNow Backend Space](https://huggingface.co/spaces/bharathan56/citnow-backend)
 
