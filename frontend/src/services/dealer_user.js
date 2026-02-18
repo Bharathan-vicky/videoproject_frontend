@@ -67,7 +67,8 @@ export const createDealerUser = async (userData) => {
   try {
     const payload = {
       ...userData,
-      role: 'dealer_user', // fixed role for dealer-admin created users
+      ...userData,
+      role: userData.role || 'dealer_user',
     };
     const res = await api.post('/users/', payload);
     return res.data;
