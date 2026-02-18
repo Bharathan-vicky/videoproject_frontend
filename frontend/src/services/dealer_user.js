@@ -13,7 +13,7 @@ export const listDealerUsers = async (dealerId) => {
     if (!dealerId) {
       throw new Error('Dealer ID is required');
     }
-    
+
     //console.log(`🔄 [listDealerUsers] Fetching users for dealer: "${dealerId}"`);
     const res = await api.get(`/users/by-dealer/${dealerId}`);
     //console.log(`✅ [listDealerUsers] Found ${res.data.length} users for dealer "${dealerId}"`);
@@ -32,14 +32,14 @@ export const getDealerUserStats = async (dealerId) => {
     console.log('📡 Raw API response:', res.data);
     console.log('📡 Type of response:', typeof res.data);
     console.log('📡 Is array?', Array.isArray(res.data));
-    
+
     const data = res.data;
-    
+
     // ALWAYS return an array
     if (Array.isArray(data)) {
       return data;
     }
-    
+
     // If it's an object but not an array, check for common structures
     if (data && typeof data === 'object') {
       if (data.users && Array.isArray(data.users)) {
@@ -51,10 +51,10 @@ export const getDealerUserStats = async (dealerId) => {
         return values;
       }
     }
-    
+
     // Fallback to empty array
     return [];
-    
+
   } catch (err) {
     console.error('❌ Error fetching dealer user stats:', err);
     // Don't throw - return empty array instead
@@ -104,7 +104,7 @@ export const deleteDealerUser = async (id) => {
 export const listMyDealerUsers = async () => {
   try {
     console.log(`🔄 [listMyDealerUsers] Fetching users for current dealer`);
-    const res = await api.get('/users/my-dealer');
+    const res = await api.get('/users/');
     console.log(`✅ [listMyDealerUsers] Found ${res.data.length} users`);
     return res.data;
   } catch (err) {
