@@ -374,7 +374,7 @@ export default function DealerUsers() {
       await load();
     } catch (err) {
       console.error('Error saving user:', err);
-      setError(err.response?.data?.error || 'Failed to save user. Please try again.');
+      setError(err.response?.data?.detail || err.response?.data?.error || 'Failed to save user. Please try again.');
     }
   };
 
