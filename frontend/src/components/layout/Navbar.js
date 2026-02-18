@@ -273,7 +273,7 @@ export default function Navbar() {
             fontWeight: 600,
             color: 'white'
           }}>
-            {(user?.username || 'U').charAt(0).toUpperCase()}
+            <Person />
           </Avatar>
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>
@@ -479,7 +479,7 @@ export default function Navbar() {
                     fontSize: '14px'
                   }}
                 >
-                  {(user?.username || 'U').charAt(0).toUpperCase()}
+                  <Person />
                 </Avatar>
               </IconButton>
             </Tooltip>
