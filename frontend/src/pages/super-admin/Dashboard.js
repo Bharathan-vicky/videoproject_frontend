@@ -1583,36 +1583,7 @@ export default function SuperAdminDashboard() {
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{
-        minHeight: '100vh',
-        background: MODERN_BMW_THEME.background,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <Box sx={{ textAlign: 'center' }}>
-          <Box sx={{
-            width: 60,
-            height: 60,
-            borderRadius: '50%',
-            border: `3px solid ${MODERN_BMW_THEME.border}`,
-            borderTop: `3px solid ${MODERN_BMW_THEME.primary}`,
-            animation: 'spin 1s linear infinite',
-            mx: 'auto',
-            mb: 3
-          }} />
-          <Typography variant="h6" sx={{
-            color: MODERN_BMW_THEME.textSecondary,
-            fontWeight: 500
-          }}>
-            Loading Dashboard...
-          </Typography>
-        </Box>
-      </Box>
-    );
-  }
+
 
   return (
     <Box sx={{

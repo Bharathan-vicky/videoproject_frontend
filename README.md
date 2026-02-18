@@ -28,7 +28,20 @@ Use your credentials (e.g., `vicky@mail.com`). The app will automatically connec
 *   **Backend API**: [https://bharathan56-citnow-backend.hf.space](https://bharathan56-citnow-backend.hf.space)
 *   **Hugging Face Space**: [CitNow Backend Space](https://huggingface.co/spaces/bharathan56/citnow-backend)
 
-## 📦 Project Structure
+## � Default Credentials
+
+### 👑 Super Admin
+*   **Username:** `admin`
+*   **Password:** `admin123`
+*   *Access Level: Full control over all dealers, users, and system settings.*
+
+### 🏢 Tenant / Dealer Admin
+*   **Username:** `bmw_admin`
+*   **Password:** `![alt text](image.png)`
+*   **Dealer ID:** `BMW-001`
+*   *Access Level: Manage users and view reports for a specific dealership (Tenant).*
+
+## �📦 Project Structure
 *   `frontend/` - React application source code.
 *   `backend/` - Python FastAPI application (only needed for cloud deployment updates).
 
