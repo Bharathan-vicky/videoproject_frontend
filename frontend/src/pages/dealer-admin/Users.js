@@ -123,18 +123,41 @@ const UserCard = ({ user, onEdit, onDelete }) => (
             <Typography variant="h6" sx={{
               color: MODERN_BMW_THEME.textPrimary,
               fontWeight: 600,
-              mb: 0.5
+              mb: 0
             }}>
               {user.username}
             </Typography>
+            {user.job_title && (
+              <Typography variant="caption" sx={{
+                color: MODERN_BMW_THEME.textSecondary,
+                fontWeight: 500,
+                display: 'block',
+                mb: 0.5
+              }}>
+                {user.job_title}
+              </Typography>
+            )}
             <Chip
-              label={user.role === 'dealer_admin' ? 'Dealer Admin' : 'Dealer User'}
+              label={
+                user.role === 'dealer_admin' ? 'Dealer Admin' :
+                  user.role === 'branch_admin' ? `Branch Admin${user.branch_name ? ` - ${user.branch_name}` : ''}` :
+                    `Dealer User${user.branch_name ? ` (${user.branch_name})` : ''}`
+              }
               size="small"
               sx={{
-                background: user.role === 'dealer_admin' ? MODERN_BMW_THEME.accent : MODERN_BMW_THEME.primary,
-                color: MODERN_BMW_THEME.background,
+                background: user.role === 'dealer_admin' ? MODERN_BMW_THEME.accent :
+                  user.role === 'branch_admin' ? MODERN_BMW_THEME.warning :
+                    MODERN_BMW_THEME.primary,
+                color: user.role === 'dealer_admin' || user.role === 'branch_admin' ? MODERN_BMW_THEME.textPrimary : 'white',
                 fontWeight: 600,
-                fontSize: '0.75rem'
+                fontSize: '0.75rem',
+                maxWidth: '100%',
+                height: 'auto',
+                '& .MuiChip-label': {
+                  display: 'block',
+                  whiteSpace: 'normal',
+                  padding: '4px 8px'
+                }
               }}
             />
           </Box>
@@ -142,7 +165,6 @@ const UserCard = ({ user, onEdit, onDelete }) => (
 
         <Divider sx={{ borderColor: MODERN_BMW_THEME.borderLight, mb: 3 }} />
 
-        {/* User Details */}
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Email sx={{ fontSize: 18, color: MODERN_BMW_THEME.textSecondary, mr: 2 }} />
@@ -152,7 +174,7 @@ const UserCard = ({ user, onEdit, onDelete }) => (
                 fontWeight: 500,
                 fontSize: '0.75rem'
               }}>
-                EMAIL
+                CONTACT
               </Typography>
               <Typography variant="body2" sx={{
                 color: MODERN_BMW_THEME.textPrimary,
@@ -161,6 +183,11 @@ const UserCard = ({ user, onEdit, onDelete }) => (
               }}>
                 {user.email}
               </Typography>
+              {user.phone_number && (
+                <Typography variant="caption" sx={{ display: 'block', color: MODERN_BMW_THEME.textSecondary, mt: 0.5 }}>
+                  {user.phone_number}
+                </Typography>
+              )}
             </Box>
           </Box>
 
@@ -253,6 +280,10 @@ export default function DealerUsers() {
     password: '',
     role: 'dealer_user',
     dealer_id: authUser?.dealer_id || '',
+    branch_id: authUser?.branch_id || '',
+    branch_name: authUser?.branch_name || '',
+    job_title: '',
+    phone_number: ''
   });
 
   // Show success message
@@ -276,9 +307,17 @@ export default function DealerUsers() {
     try {
       const data = await listMyDealerUsers();
       const safeData = Array.isArray(data) ? data : [];
-      const filtered = safeData.filter(
-        (u) => String(u.dealer_id) === String(authUser?.dealer_id) && u.role !== 'dealer_admin'
-      );
+
+      let filtered = safeData;
+
+      if (authUser?.role === 'dealer_admin') {
+        // show all except self (dealer_admin) - wait, maybe show other DAs? 
+        // Assuming we want to manage Branch Admins and Dealer Users
+        filtered = safeData.filter(u => u.username !== authUser.username);
+      } else if (authUser?.role === 'branch_admin') {
+        // Filter already done by backend, just safety check
+        filtered = safeData.filter(u => u.branch_id === authUser.branch_id);
+      }
       setUsers(filtered);
     } catch (err) {
       console.error('Error loading users:', err);
@@ -299,8 +338,12 @@ export default function DealerUsers() {
         username: '',
         email: '',
         password: '',
-        role: 'dealer_user',
+        role: authUser?.role === 'branch_admin' ? 'dealer_user' : 'dealer_user',
         dealer_id: authUser?.dealer_id || '',
+        branch_id: authUser?.branch_id || '',
+        branch_name: authUser?.branch_name || '',
+        job_title: '',
+        phone_number: ''
       });
       setEditingUser(null);
       setError('');
@@ -316,6 +359,10 @@ export default function DealerUsers() {
       password: user.plain_password || '',
       role: user.role,
       dealer_id: user.dealer_id,
+      branch_id: user.branch_id || '',
+      branch_name: user.branch_name || '',
+      job_title: user.job_title || '',
+      phone_number: user.phone_number || ''
     });
     setOpen(true);
   };
@@ -832,17 +879,120 @@ export default function DealerUsers() {
               }}
             />
 
-            {/* Role is fixed for Dealer Admins */}
+            {/* Role Selection - Only for Dealer Admin */}
+            {authUser?.role === 'dealer_admin' ? (
+              <TextField
+                select
+                fullWidth
+                margin="normal"
+                label="Role"
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  }
+                }}
+              >
+                <MenuItem value="dealer_user">Dealer User</MenuItem>
+                <MenuItem value="branch_admin">Branch Admin</MenuItem>
+              </TextField>
+            ) : (
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Role"
+                value="Dealer User"
+                disabled
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    background: MODERN_BMW_THEME.surface,
+                  }
+                }}
+              />
+            )}
+
+            {/* Branch Name - Only if creating/editing Branch Admin */}
+            {form.role === 'branch_admin' && (
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Branch Name"
+                placeholder="e.g. Downtown Branch"
+                value={form.branch_name}
+                onChange={(e) => setForm({ ...form, branch_name: e.target.value })}
+                required
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  }
+                }}
+              />
+            )}
+
+            {/* Branch Selection - Only if Dealer Admin creating Dealer User */}
+            {authUser?.role === 'dealer_admin' && form.role === 'dealer_user' && (
+              <TextField
+                select
+                fullWidth
+                margin="normal"
+                label="Assign to Branch (Optional)"
+                value={form.branch_id}
+                onChange={(e) => {
+                  const selectedBranch = users.find(u => u.branch_id === e.target.value);
+                  setForm({
+                    ...form,
+                    branch_id: e.target.value,
+                    branch_name: selectedBranch ? selectedBranch.branch_name : ''
+                  });
+                }}
+                helperText="Leave empty for direct report to Dealer Admin"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  }
+                }}
+              >
+                <MenuItem value="">
+                  <em>None (Direct Report)</em>
+                </MenuItem>
+                {/* Filter mainly distinct branches from users list */}
+                {Array.from(new Set(users.filter(u => u.role === 'branch_admin').map(u => u.branch_id)))
+                  .map(branchId => {
+                    const branch = users.find(u => u.branch_id === branchId);
+                    return (
+                      <MenuItem key={branchId} value={branchId}>
+                        {branch?.branch_name || 'Unnamed Branch'}
+                      </MenuItem>
+                    );
+                  })
+                }
+              </TextField>
+            )}
+
             <TextField
               fullWidth
               margin="normal"
-              label="Role"
-              value="Dealer User"
-              disabled
+              label="Job Title"
+              value={form.job_title}
+              onChange={(e) => setForm({ ...form, job_title: e.target.value })}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
-                  background: MODERN_BMW_THEME.surface,
+                }
+              }}
+            />
+
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Phone Number"
+              value={form.phone_number}
+              onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
                 }
               }}
             />

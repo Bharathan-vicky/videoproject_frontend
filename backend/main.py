@@ -128,6 +128,10 @@ class UserBase(BaseModel):
     username: str
     email: Optional[str] = None
     showroom_name: Optional[str] = None
+    job_title: Optional[str] = None
+    phone_number: Optional[str] = None
+    branch_id: Optional[str] = None
+    branch_name: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -141,6 +145,10 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None      # will be re-hashed if present
     dealer_id: Optional[str] = None     # simple string (your simplified schema)
     showroom_name: Optional[str] = None
+    job_title: Optional[str] = None
+    phone_number: Optional[str] = None
+    branch_id: Optional[str] = None
+    branch_name: Optional[str] = None
 
 class UserInDB(UserBase):
     id: str = Field(alias="_id")  # This should accept ObjectId converted to string
@@ -875,7 +883,16 @@ async def read_users(current_user: UserInDB = Depends(get_current_user)):
     elif current_user.role == "dealer_admin":
         if not current_user.dealer_id:
             raise HTTPException(403, detail="Dealer Admin has no assigned dealer_id.")
+        # DA sees ALL users in their dealership (including all branches)
         users_cursor = users_collection.find({"dealer_id": current_user.dealer_id})
+    elif current_user.role == "branch_admin":
+        if not current_user.dealer_id or not current_user.branch_id:
+             raise HTTPException(403, detail="Branch Admin missing dealer_id or branch_id.")
+        # BA sees ONLY users in their specific branch
+        users_cursor = users_collection.find({
+            "dealer_id": current_user.dealer_id,
+            "branch_id": current_user.branch_id
+        })
     else:
         raise HTTPException(403, detail="Not authorized to view users.")
 
@@ -901,13 +918,47 @@ async def create_user(user: UserCreate, current_user: UserInDB = Depends(get_cur
         allowed_role = user.role  # super_admin can create any role
         allowed_dealer = user.dealer_id
         allowed_showroom = user.showroom_name
+        allowed_branch_id = user.branch_id
+        allowed_branch_name = user.branch_name
+
     elif current_user.role == "dealer_admin":
-        # Dealer admin can only create dealer_user (not dealer_admin or super_admin)
-        if user.role not in ["dealer_user", "dealer_admin"]:
-            raise HTTPException(status_code=403, detail="Dealer admins can only create dealer_user accounts")
-        allowed_role = user.role
-        allowed_dealer = current_user.dealer_id  # Force their dealer_id
+        # Dealer admin can create:
+        # 1. Branch Admin (must provide branch_name)
+        # 2. Dealer User (Direct report or assigned to a branch)
+        
+        if user.role == "branch_admin":
+            # Creating a new Branch Admin
+            if not user.branch_name:
+                raise HTTPException(400, detail="Branch Name is required when creating a Branch Admin")
+            allowed_role = "branch_admin"
+            allowed_dealer = current_user.dealer_id
+            allowed_branch_name = user.branch_name
+            # Generate a simple ID for the branch if not provided
+            allowed_branch_id = user.branch_id or re.sub(r'[^a-zA-Z0-9]', '', user.branch_name.lower())[:10] + "-" + str(uuid.uuid4())[:4]
+            allowed_showroom = user.showroom_name or current_user.showroom_name
+
+        elif user.role == "dealer_user":
+            # Creating a standard user
+            allowed_role = "dealer_user"
+            allowed_dealer = current_user.dealer_id
+            # Can assign to a branch if specified, otherwise None (Direct report)
+            allowed_branch_id = user.branch_id 
+            allowed_branch_name = user.branch_name 
+            allowed_showroom = user.showroom_name or current_user.showroom_name
+        else:
+             raise HTTPException(status_code=403, detail="Dealer Admins can only create 'branch_admin' or 'dealer_user' accounts")
+             
+    elif current_user.role == "branch_admin":
+        # Branch Admin can ONLY create dealer_user
+        if user.role != "dealer_user":
+             raise HTTPException(status_code=403, detail="Branch Admins can only create 'dealer_user' accounts")
+        
+        allowed_role = "dealer_user"
+        allowed_dealer = current_user.dealer_id  # Inherit Dealer
+        allowed_branch_id = current_user.branch_id # FORCED to inherit Branch
+        allowed_branch_name = current_user.branch_name # FORCED to inherit Branch Name
         allowed_showroom = current_user.showroom_name
+
 
     else:
         raise HTTPException(403, detail="Not authorized to create user.")
@@ -919,7 +970,11 @@ async def create_user(user: UserCreate, current_user: UserInDB = Depends(get_cur
         "hashed_password": hashed_password,
         "role": allowed_role,
         "dealer_id": allowed_dealer,
-	"showroom_name": allowed_showroom,
+        "showroom_name": allowed_showroom,
+        "branch_id": allowed_branch_id,
+        "branch_name": allowed_branch_name,
+        "job_title": user.job_title,
+        "phone_number": user.phone_number,
         "created_at": dt.utcnow(),
         "updated_at": dt.utcnow()
     }
@@ -946,6 +1001,11 @@ async def update_user(user_id: str, payload: UserUpdate, current_user: UserInDB 
     if current_user.role == "dealer_admin":
         if user_doc.get("dealer_id") != current_user.dealer_id:
             raise HTTPException(403, detail="Not authorized to modify this user.")
+    elif current_user.role == "branch_admin":
+        # BA can only modify users in their branch
+        if (user_doc.get("dealer_id") != current_user.dealer_id or 
+            user_doc.get("branch_id") != current_user.branch_id):
+            raise HTTPException(403, detail="Not authorized to modify users outside your branch.")
     elif current_user.role != "super_admin":
         raise HTTPException(403, detail="Not authorized to modify users.")
 
@@ -975,8 +1035,22 @@ async def update_user(user_id: str, payload: UserUpdate, current_user: UserInDB 
     if payload.dealer_id is not None and current_user.role == "super_admin":
         # Only super admin may change dealer_id
         updates["dealer_id"] = payload.dealer_id
+        
     if payload.showroom_name is not None:  
         updates["showroom_name"] = payload.showroom_name
+        
+    if payload.job_title is not None:
+        updates["job_title"] = payload.job_title
+        
+    if payload.phone_number is not None:
+        updates["phone_number"] = payload.phone_number
+        
+    if payload.branch_id is not None and current_user.role in ["super_admin", "dealer_admin"]:
+        updates["branch_id"] = payload.branch_id
+        
+    if payload.branch_name is not None and current_user.role in ["super_admin", "dealer_admin"]:
+         updates["branch_name"] = payload.branch_name
+
     if not updates:
         raise HTTPException(400, detail="No valid fields to update.")
 
