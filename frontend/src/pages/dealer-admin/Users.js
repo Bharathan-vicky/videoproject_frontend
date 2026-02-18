@@ -405,7 +405,12 @@ export default function DealerUsers() {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      // Scroll to top of dialog content to show error
+      const dialogContent = document.querySelector('.MuiDialogContent-root');
+      if (dialogContent) dialogContent.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
     try {
       if (editingUser) {
@@ -422,6 +427,9 @@ export default function DealerUsers() {
     } catch (err) {
       console.error('Error saving user:', err);
       setError(err.response?.data?.detail || err.response?.data?.error || 'Failed to save user. Please try again.');
+      // Scroll to top of dialog content to show error
+      const dialogContent = document.querySelector('.MuiDialogContent-root');
+      if (dialogContent) dialogContent.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
