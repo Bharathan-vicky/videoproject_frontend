@@ -1,13 +1,11 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { setAuthToken } from '../services/api';
+import { setAuthToken, API_BASE } from '../services/api';
 import { updateUserProfile } from '../services/users';
 
 export const AuthContext = createContext(null);
 
-// Define API_BASE locally to avoid circular dependency issues
-// const API_BASE = 'https://bharathan56-citnow-backend.hf.space';
-const API_BASE = 'http://localhost:8000';
+// Removed local API_BASE definition to use the centralized one from api.js
 
 export default function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
