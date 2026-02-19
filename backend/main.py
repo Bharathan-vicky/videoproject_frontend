@@ -2284,10 +2284,14 @@ async def get_dealer_user_stats(
         user_id = str(user["_id"])
         
         # Count videos analyzed by this user
+        # Include results with completed status OR no status field (older data)
         video_count = await results_collection.count_documents({
             "submitted_by_user_id": user_id,
             "dealer_id": dealer_id,
-            "status": BatchStatus.COMPLETED
+            "$or": [
+                {"status": BatchStatus.COMPLETED},
+                {"status": {"$exists": False}}
+            ]
         })
         
         user_stats.append({
