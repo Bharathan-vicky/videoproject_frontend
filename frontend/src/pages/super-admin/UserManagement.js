@@ -117,6 +117,10 @@ export default function UserManagement() {
       setError('Username, email, password, and showroom name are required');
       return;
     }
+    if (form.role === 'dealer_admin' && !form.dealer_id) {
+      setError('Dealer ID is required for Dealer Admins to link data');
+      return;
+    }
     try {
       await createUser(form);
       setOpen(false);
@@ -701,7 +705,8 @@ export default function UserManagement() {
                 label="Dealer ID"
                 value={form.dealer_id}
                 onChange={(e) => setForm({ ...form, dealer_id: e.target.value })}
-                helperText="Optional: Assign to specific dealership"
+                required={form.role === 'dealer_admin'}
+                helperText={form.role === 'dealer_admin' ? "Required: Unique ID for this dealership" : "Optional: Assign to specific dealership"}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
