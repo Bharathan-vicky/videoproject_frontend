@@ -672,22 +672,24 @@ async def get_dealer_user_dashboard(current_user: UserInDB = Depends(get_current
         raise HTTPException(status_code=400, detail="User has no assigned dealer_id")
     
     # Get ALL dealership stats (not just user's own)
-    dealer_videos_count = await results_collection.count_documents({
-        "dealer_id": current_user.dealer_id,
-        "status": BatchStatus.COMPLETED
-    })
+    # Include results with completed status OR no status field (older data)
+    dealer_match = {"dealer_id": current_user.dealer_id, "$or": [
+        {"status": BatchStatus.COMPLETED},
+        {"status": {"$exists": False}}
+    ]}
+    dealer_videos_count = await results_collection.count_documents(dealer_match)
     
     # Recent analyses from entire dealership
-    recent_analyses = await results_collection.find({
-        "dealer_id": current_user.dealer_id,
-        "status": BatchStatus.COMPLETED
-    }).sort("created_at", -1).limit(10).to_list(10)
+    recent_analyses = await results_collection.find(
+        dealer_match
+    ).sort("created_at", -1).limit(10).to_list(10)
     
     # User's personal stats
-    user_videos_count = await results_collection.count_documents({
-        "submitted_by_user_id": str(current_user.id),
-        "status": BatchStatus.COMPLETED
-    })
+    user_match = {"submitted_by_user_id": str(current_user.id), "$or": [
+        {"status": BatchStatus.COMPLETED},
+        {"status": {"$exists": False}}
+    ]}
+    user_videos_count = await results_collection.count_documents(user_match)
     
     return {
         "dealer_videos_analyzed": dealer_videos_count,
@@ -2075,17 +2077,23 @@ async def get_all_results(
     if current_user.role == "super_admin":
         if dealer_id:
             query["dealer_id"] = dealer_id
-    elif current_user.role in ("dealer_admin", "dealer_user", "branch_admin"):
+    elif current_user.role in ("dealer_admin", "branch_admin"):
+        # Admins see ALL results in their dealership
         if not current_user.dealer_id:
             raise HTTPException(status_code=403, detail="User has no assigned dealer_id.")
         query["dealer_id"] = current_user.dealer_id
+    elif current_user.role == "dealer_user":
+        # Regular users see ONLY their own results
+        if not current_user.dealer_id:
+            raise HTTPException(status_code=403, detail="User has no assigned dealer_id.")
+        query["dealer_id"] = current_user.dealer_id
+        query["submitted_by_user_id"] = str(current_user.id)
     else:
         raise HTTPException(status_code=403, detail="Not authorized to view results")
 
     total_count = await results_collection.count_documents(query)
 
     # Calculate skip
-      # Calculate skip
     skip = (page - 1) * per_page
     
     # Fetch paginated results
@@ -2097,11 +2105,6 @@ async def get_all_results(
         "per_page": per_page,
         "has_more": len(results) == per_page
     }
-    
-    ''''elif current_user.role == "dealer_user":
-        query["submitted_by_user_id"] = str(current_user.id)'''
-
-
 
 @app.get("/results/{result_id}")
 async def get_result(result_id: str, current_user: UserInDB = Depends(get_current_user)):
@@ -2143,32 +2146,39 @@ async def delete_result(result_id: str, current_user: UserInDB = Depends(get_cur
 async def get_super_admin_dashboard_overview(current_user: UserInDB = Depends(get_current_super_admin)):
     """
     Retrieves aggregated data for the Super Admin dashboard.
+    Includes ALL results (completed or without status field for backward compatibility).
     """
-    total_videos = await results_collection.count_documents({"status": BatchStatus.COMPLETED})
+    # Match condition: completed OR no status field (older results)
+    status_match = {"$or": [
+        {"status": BatchStatus.COMPLETED},
+        {"status": {"$exists": False}}
+    ]}
+
+    total_videos = await results_collection.count_documents(status_match)
     
     avg_overall_quality_agg = await results_collection.aggregate([
-        {"$match": {"overall_quality_score": {"$exists": True, "$ne": None}, "status": BatchStatus.COMPLETED}},
+        {"$match": {**status_match, "overall_quality_score": {"$exists": True, "$ne": None}}},
         {"$group": {"_id": None, "average": {"$avg": "$overall_quality_score"}}}
     ]).to_list(1)
 
     avg_overall_quality = avg_overall_quality_agg[0]["average"] if avg_overall_quality_agg else 0
 
     quality_distribution_raw = await results_collection.aggregate([
-        {"$match": {"status": BatchStatus.COMPLETED}},
+        {"$match": status_match},
         {"$group": {"_id": "$overall_quality_label", "count": {"$sum": 1}}}
     ]).to_list(None)
     quality_distribution = {item['_id']: item['count'] for item in quality_distribution_raw if item['_id']}
 
-    # SIMPLIFIED: No dealer name lookup, just use dealer_id directly
+    # Dealer-wise summary
     dealers_summary_raw = await results_collection.aggregate([
-        {"$match": {"dealer_id": {"$exists": True, "$ne": None}, "status": BatchStatus.COMPLETED}},
+        {"$match": {**status_match, "dealer_id": {"$exists": True, "$ne": None}}},
         {"$group": {
             "_id": "$dealer_id",
             "total_videos": {"$sum": 1},
             "avg_overall_quality": {"$avg": "$overall_quality_score"}
         }},
         {"$project": {
-            "dealer_id": "$_id", # Use dealer_id directly as string
+            "dealer_id": "$_id",
             "total_videos": 1,
             "avg_overall_quality": {"$round": ["$avg_overall_quality", 1]}
         }}
@@ -2195,34 +2205,38 @@ async def get_dealer_dashboard_overview(current_user: UserInDB = Depends(get_cur
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Dealer Admin is not assigned to a dealer.")
 
     dealer_id_str = current_user.dealer_id
+
+    # Match condition: completed OR no status field (older results)
+    dealer_status_match = {"dealer_id": dealer_id_str, "$or": [
+        {"status": BatchStatus.COMPLETED},
+        {"status": {"$exists": False}}
+    ]}
     
-    total_videos = await results_collection.count_documents({"dealer_id": dealer_id_str, "status": BatchStatus.COMPLETED})
+    total_videos = await results_collection.count_documents(dealer_status_match)
 
     avg_overall_quality_agg = await results_collection.aggregate([
-        {"$match": {"dealer_id": dealer_id_str, "overall_quality_score": {"$exists": True, "$ne": None}, "status": BatchStatus.COMPLETED}},
+        {"$match": {**dealer_status_match, "overall_quality_score": {"$exists": True, "$ne": None}}},
         {"$group": {"_id": None, "average": {"$avg": "$overall_quality_score"}}}
     ]).to_list(1)
     avg_overall_quality = avg_overall_quality_agg[0]["average"] if avg_overall_quality_agg else 0
 
     quality_distribution_raw = await results_collection.aggregate([
-        {"$match": {"dealer_id": dealer_id_str, "status": BatchStatus.COMPLETED}},
+        {"$match": dealer_status_match},
         {"$group": {"_id": "$overall_quality_label", "count": {"$sum": 1}}}
     ]).to_list(None)
     quality_distribution = {item['_id']: item['count'] for item in quality_distribution_raw if item['_id']}
 
     low_quality_videos = await results_collection.count_documents({
-        "dealer_id": dealer_id_str,
-        "status": BatchStatus.COMPLETED,
+        **dealer_status_match,
         "video_quality_label": {"$in": ["Poor", "Very Poor", "Analysis Failed", "Error"]}
     })
     low_quality_audio = await results_collection.count_documents({
-        "dealer_id": dealer_id_str,
-        "status": BatchStatus.COMPLETED,
+        **dealer_status_match,
         "audio_clarity_level": {"$in": ["Poor", "Very Poor", "Unusable", "Analysis Failed", "No Audio"]}
     })
 
     recent_videos_raw = await results_collection.find(
-        {"dealer_id": dealer_id_str, "status": BatchStatus.COMPLETED}
+        dealer_status_match
     ).sort("created_at", -1).limit(5).to_list(5)
     recent_analyses = [RecentAnalysis(**clean_results(r)) for r in recent_videos_raw]
 
