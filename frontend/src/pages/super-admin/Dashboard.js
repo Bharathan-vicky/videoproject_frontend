@@ -513,11 +513,13 @@ const StatCard = ({ title, value, change, changeType, icon, color, subtitle }) =
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                 {changeType === 'positive' ? (
                   <ArrowUpward sx={{ fontSize: 16, color: MODERN_BMW_THEME.success, mr: 0.5 }} />
-                ) : (
+                ) : changeType === 'negative' ? (
                   <ArrowDownward sx={{ fontSize: 16, color: MODERN_BMW_THEME.error, mr: 0.5 }} />
-                )}
+                ) : null}
                 <Typography variant="caption" sx={{
-                  color: changeType === 'positive' ? MODERN_BMW_THEME.success : MODERN_BMW_THEME.error,
+                  color: changeType === 'positive' ? MODERN_BMW_THEME.success
+                    : changeType === 'negative' ? MODERN_BMW_THEME.error
+                      : MODERN_BMW_THEME.textTertiary,
                   fontWeight: 600
                 }}>
                   {change}
@@ -1409,6 +1411,7 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
 
 // Main Dashboard Component
 export default function SuperAdminDashboard() {
+  const [allResults, setAllResults] = useState([]);
   const [dashboardData, setDashboardData] = useState({
     overview: {
       totalDealers: 0,
@@ -1478,17 +1481,38 @@ export default function SuperAdminDashboard() {
       // Try to load overview stats (may fail if no analysis data yet)
       let overview = {
         dealers_summary: [],
-        total_videos: 0,
-        avg_overall_quality: 0,
+        total_videos_analyzed: 0,
+        average_overall_quality: 0,
         quality_distribution: {}
       };
 
       try {
         const overviewRes = await api.get('/dashboard/super-admin/overview');
         overview = overviewRes.data;
+        console.log('Overview data:', overview);
       } catch (overviewError) {
-        console.warn('Could not load overview stats (showing partial data):', overviewError);
+        console.warn('Could not load overview stats:', overviewError);
       }
+
+      // Also fetch all results for live trend calculations
+      let resultsArray = [];
+      try {
+        const resultsRes = await api.get('/results?limit=1000');
+        const resData = resultsRes.data;
+        resultsArray = Array.isArray(resData) ? resData : (resData?.results || []);
+      } catch (resError) {
+        console.warn('Could not load results for trends:', resError);
+      }
+      setAllResults(resultsArray);
+
+      // Use results data as fallback if overview returned 0
+      const totalVideos = overview.total_videos_analyzed || resultsArray.length || 0;
+      const validScores = resultsArray
+        .filter(r => r.overall_quality_score != null)
+        .map(r => r.overall_quality_score);
+      const avgFromResults = validScores.length > 0
+        ? Math.round((validScores.reduce((a, b) => a + b, 0) / validScores.length) * 10) / 10 : 0;
+      const avgScore = overview.average_overall_quality || avgFromResults || 0;
 
       // Transform Dealer Performance Data
       const dealerPerformance = (overview.dealers_summary || []).map(d => ({
@@ -1501,19 +1525,55 @@ export default function SuperAdminDashboard() {
         users: 0
       })).sort((a, b) => b.overall - a.overall);
 
+      // If overview didn't return dealer summaries, compute from results
+      if (dealerPerformance.length === 0 && resultsArray.length > 0) {
+        const dealerMap = {};
+        resultsArray.forEach(r => {
+          const did = r.dealer_id;
+          if (!did) return;
+          if (!dealerMap[did]) dealerMap[did] = { scores: [], count: 0 };
+          dealerMap[did].count++;
+          if (r.overall_quality_score != null) dealerMap[did].scores.push(r.overall_quality_score);
+        });
+        Object.entries(dealerMap).forEach(([did, data]) => {
+          const avg = data.scores.length > 0
+            ? Math.round((data.scores.reduce((a, b) => a + b, 0) / data.scores.length) * 10) / 10 : 0;
+          dealerPerformance.push({
+            id: did,
+            name: dealerNames[did] || did,
+            videos: data.count,
+            overall: avg,
+            video: avg,
+            audio: avg,
+            users: 0
+          });
+        });
+        dealerPerformance.sort((a, b) => b.overall - a.overall);
+      }
+
       // Transform Quality Distribution
-      const qualityDist = Object.entries(overview.quality_distribution || {}).map(([name, value]) => ({
+      let qualityDist = Object.entries(overview.quality_distribution || {}).map(([name, value]) => ({
         name,
         value
       }));
 
+      // Fallback: compute from results if empty
+      if (qualityDist.length === 0 && resultsArray.length > 0) {
+        const distMap = {};
+        resultsArray.forEach(r => {
+          const label = r.overall_quality_label;
+          if (label) distMap[label] = (distMap[label] || 0) + 1;
+        });
+        qualityDist = Object.entries(distMap).map(([name, value]) => ({ name, value }));
+      }
+
       setDashboardData({
         overview: {
           totalDealers: dealerIds.size || overview.dealers_summary?.length || 0,
-          totalVideos: overview.total_videos || 0,
+          totalVideos: totalVideos,
           totalUsers: usersArray.length,
-          averageScore: overview.avg_overall_quality || 0,
-          performanceChange: 2.4
+          averageScore: avgScore,
+          performanceChange: 0
         },
         performanceTrend: calculateDealerPerformanceTrend(dealerPerformance),
         dealerRankings: dealerPerformance,
@@ -1743,7 +1803,7 @@ export default function SuperAdminDashboard() {
               <StatCard
                 title="Total Dealers"
                 value={dashboardData.overview.totalDealers}
-                change="Active dealerships"
+                change={`${dashboardData.overview.totalDealers} active dealership${dashboardData.overview.totalDealers !== 1 ? 's' : ''}`}
                 changeType="positive"
                 icon={<Business />}
                 color={MODERN_BMW_THEME.primary}
@@ -1753,8 +1813,8 @@ export default function SuperAdminDashboard() {
               <StatCard
                 title="Total Videos"
                 value={dashboardData.overview.totalVideos}
-                change="All time analyses"
-                changeType="positive"
+                change={dashboardData.overview.totalVideos > 0 ? `${dashboardData.overview.totalVideos} analyses completed` : 'No analyses yet'}
+                changeType={dashboardData.overview.totalVideos > 0 ? 'positive' : 'neutral'}
                 icon={<VideoLibrary />}
                 color={MODERN_BMW_THEME.accent}
               />
@@ -1763,18 +1823,18 @@ export default function SuperAdminDashboard() {
               <StatCard
                 title="Avg Quality Score"
                 value={dashboardData.overview.averageScore.toFixed(1)}
-                change="Network average"
-                changeType="positive"
+                change={dashboardData.overview.averageScore > 0 ? `${dashboardData.overview.averageScore.toFixed(1)}/10 network average` : 'No score data'}
+                changeType={dashboardData.overview.averageScore >= 7 ? 'positive' : dashboardData.overview.averageScore >= 4 ? 'neutral' : dashboardData.overview.averageScore > 0 ? 'negative' : 'neutral'}
                 icon={<Star />}
                 color={MODERN_BMW_THEME.warning}
-              // subtitle="out of 10"
+                subtitle="out of 10"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
                 title="Total Users"
                 value={dashboardData.overview.totalUsers}
-                change="Registered users"
+                change={`${dashboardData.overview.totalUsers} registered user${dashboardData.overview.totalUsers !== 1 ? 's' : ''}`}
                 changeType="positive"
                 icon={<Group />}
                 color={MODERN_BMW_THEME.success}
