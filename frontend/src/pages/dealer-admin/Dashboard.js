@@ -1010,125 +1010,114 @@ export default function DealerAdminDashboard() {
 
           {/* Main Content Area */}
           <Grid container spacing={3} justifyContent="center">
-            {/* Left Column - Performance Charts */}
-            <Grid item xs={12} lg={8}>
-              <Grid container spacing={3}>
-                {/* Service Advisor Quality Comparison */}
-                <Grid item xs={12}>
-                  <Card sx={{
-                    background: MODERN_BMW_THEME.surfaceElevated,
-                    border: `1px solid ${MODERN_BMW_THEME.border}`,
-                    borderRadius: 3,
-                    boxShadow: MODERN_BMW_THEME.shadowSm,
-                    height: '100%'
+            {/* Service Advisor Quality Comparison - Full Width */}
+            <Grid item xs={12}>
+              <Card sx={{
+                background: MODERN_BMW_THEME.surfaceElevated,
+                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                borderRadius: 3,
+                boxShadow: MODERN_BMW_THEME.shadowSm,
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, textAlign: 'center' }}>
+                    <TrendingUp sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 28 }} />
+                    <Typography variant="h5" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700 }}>
+                      Service Advisor Quality Comparison
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" sx={{
+                    color: MODERN_BMW_THEME.textSecondary, mb: 4, textAlign: 'center', maxWidth: '900px', mx: 'auto', lineHeight: 1.6
                   }}>
-                    <CardContent sx={{ p: 3 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, textAlign: 'center' }}>
-                        <TrendingUp sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 28 }} />
-                        <Typography variant="h5" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700 }}>
-                          Service Advisor Quality Comparison
-                        </Typography>
-                      </Box>
-                      <Typography variant="body1" sx={{
-                        color: MODERN_BMW_THEME.textSecondary, mb: 4, textAlign: 'center', maxWidth: '900px', mx: 'auto', lineHeight: 1.6
-                      }}>
-                        Audio quality (🔵 left) and video quality (🟠 right) scores for each service advisor.
-                      </Typography>
+                    Audio quality (🔵 left) and video quality (🟠 right) scores for each service advisor.
+                  </Typography>
 
-                      {dashboardData.serviceAdvisors.length === 0 ? (
-                        <Box sx={{ textAlign: 'center', py: 8, color: MODERN_BMW_THEME.textTertiary }}>
-                          <Person sx={{ fontSize: 56, mb: 3, opacity: 0.5 }} />
-                          <Typography variant="h6">No service advisor data available</Typography>
-                        </Box>
-                      ) : (
-                        <ServiceAdvisorQualityChart data={dashboardData.serviceAdvisors.slice(0, 8)} />
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Daily Performance */}
-                <Grid item xs={12}>
-                  <Card sx={{
-                    background: MODERN_BMW_THEME.surfaceElevated,
-                    border: `1px solid ${MODERN_BMW_THEME.border}`,
-                    borderRadius: 3,
-                    boxShadow: MODERN_BMW_THEME.shadowSm,
-                    height: '100%'
-                  }}>
-                    <CardContent sx={{ p: 3 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Timeline sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
-                          <Typography variant="h6" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
-                            fontWeight: 600
-                          }}>
-                            Daily Performance Trend
-                          </Typography>
-                        </Box>
-                        <Chip
-                          label={`This ${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}`}
-                          size="small"
-                          variant="outlined"
-                          sx={{
-                            borderColor: MODERN_BMW_THEME.primary,
-                            color: MODERN_BMW_THEME.primary,
-                            fontWeight: 500
-                          }}
-                        />
-                      </Box>
-                      <DailyPerformanceChart data={dashboardData.dailyPerformance} />
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
+                  {dashboardData.serviceAdvisors.length === 0 ? (
+                    <Box sx={{ textAlign: 'center', py: 8, color: MODERN_BMW_THEME.textTertiary }}>
+                      <Person sx={{ fontSize: 56, mb: 3, opacity: 0.5 }} />
+                      <Typography variant="h6">No service advisor data available</Typography>
+                    </Box>
+                  ) : (
+                    <ServiceAdvisorQualityChart data={dashboardData.serviceAdvisors.slice(0, 8)} />
+                  )}
+                </CardContent>
+              </Card>
             </Grid>
 
-            {/* Right Column - Rankings & Breakdown */}
-            <Grid item xs={12} lg={4}>
-              <Grid container spacing={3}>
-                {/* Top Performers */}
-                <Grid item xs={12}>
-                  <Card sx={{
-                    background: MODERN_BMW_THEME.surfaceElevated,
-                    border: `1px solid ${MODERN_BMW_THEME.border}`,
-                    borderRadius: 3,
-                    boxShadow: MODERN_BMW_THEME.shadowSm,
-                    height: '610px'
-                  }}>
-                    <CardContent sx={{ p: 3 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                        <EmojiEvents sx={{ color: MODERN_BMW_THEME.warning, mr: 2, fontSize: 24 }} />
-                        <Typography variant="h6" sx={{
-                          color: MODERN_BMW_THEME.textPrimary,
-                          fontWeight: 600
-                        }}>
-                          Top 5 Service Advisors
-                        </Typography>
-                      </Box>
-                      <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
-                        {dashboardData.serviceAdvisors.slice(0, 5).map((advisor, index) => (
-                          <ServiceAdvisorCard
-                            key={advisor.name}
-                            advisor={advisor}
-                            rank={index + 1}
-                          />
-                        ))}
-                        {dashboardData.serviceAdvisors.length === 0 && (
-                          <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textTertiary,
-                            textAlign: 'center',
-                            py: 4
-                          }}>
-                            No advisor data available
-                          </Typography>
-                        )}
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
+            {/* Daily Performance + Top Advisors - Side by Side */}
+            <Grid item xs={12} md={7}>
+              <Card sx={{
+                background: MODERN_BMW_THEME.surfaceElevated,
+                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                borderRadius: 3,
+                boxShadow: MODERN_BMW_THEME.shadowSm,
+                height: '100%'
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Timeline sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
+                      <Typography variant="h6" sx={{
+                        color: MODERN_BMW_THEME.textPrimary,
+                        fontWeight: 600
+                      }}>
+                        Daily Performance Trend
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label={`This ${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}`}
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        borderColor: MODERN_BMW_THEME.primary,
+                        color: MODERN_BMW_THEME.primary,
+                        fontWeight: 500
+                      }}
+                    />
+                  </Box>
+                  <DailyPerformanceChart data={dashboardData.dailyPerformance} />
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Top Performers */}
+            <Grid item xs={12} md={5}>
+              <Card sx={{
+                background: MODERN_BMW_THEME.surfaceElevated,
+                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                borderRadius: 3,
+                boxShadow: MODERN_BMW_THEME.shadowSm,
+                height: '100%'
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                    <EmojiEvents sx={{ color: MODERN_BMW_THEME.warning, mr: 2, fontSize: 24 }} />
+                    <Typography variant="h6" sx={{
+                      color: MODERN_BMW_THEME.textPrimary,
+                      fontWeight: 600
+                    }}>
+                      Top 5 Service Advisors
+                    </Typography>
+                  </Box>
+                  <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
+                    {dashboardData.serviceAdvisors.slice(0, 5).map((advisor, index) => (
+                      <ServiceAdvisorCard
+                        key={advisor.name}
+                        advisor={advisor}
+                        rank={index + 1}
+                      />
+                    ))}
+                    {dashboardData.serviceAdvisors.length === 0 && (
+                      <Typography variant="body2" sx={{
+                        color: MODERN_BMW_THEME.textTertiary,
+                        textAlign: 'center',
+                        py: 4
+                      }}>
+                        No advisor data available
+                      </Typography>
+                    )}
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </Box>
