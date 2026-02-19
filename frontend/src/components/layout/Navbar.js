@@ -113,6 +113,7 @@ const ROLE_LABEL = {
 const ROLE_COLOR = {
   super_admin: BMW.primary,
   dealer_admin: BMW.accent,
+  branch_admin: '#8B5CF6',
   dealer_user: BMW.success,
 };
 
@@ -476,24 +477,31 @@ export default function Navbar() {
                     '100%': { opacity: 1 },
                   }
                 }}
-                onClick={() => navigate((role === 'dealer_admin' || role === 'branch_admin') ? '/dealer/new' : '/dealer/dashboard')} // Navigate to view them
+                onClick={() => navigate((role === 'dealer_admin' || role === 'branch_admin') ? '/dealer/new' : '/dealer/dashboard')}
               />
             )}
 
-            {/* Role Chip */}
-            <Chip
-              label={ROLE_LABEL[role] || 'User'}
-              size="small"
-              sx={{
-                display: { xs: 'none', sm: 'flex' },
-                background: `${ROLE_COLOR[role] || BMW.primary}15`,
+            {/* Username + Role Label */}
+            <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', alignItems: 'flex-end', mr: 0.5 }}>
+              <Typography variant="body2" sx={{
+                fontWeight: 600,
+                color: BMW.textPrimary,
+                lineHeight: 1.3,
+                fontSize: '0.875rem'
+              }}>
+                {user?.username || 'User'}
+              </Typography>
+              <Typography variant="caption" sx={{
+                fontWeight: 600,
                 color: ROLE_COLOR[role] || BMW.primary,
-                fontWeight: 700,
-                height: 28,
-                fontSize: '0.75rem',
-                border: `1px solid ${ROLE_COLOR[role] || BMW.primary}30`
-              }}
-            />
+                lineHeight: 1.2,
+                fontSize: '0.7rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                {ROLE_LABEL[role] || 'User'}
+              </Typography>
+            </Box>
 
             {/* User Avatar */}
             <Tooltip title="Account">
@@ -501,9 +509,9 @@ export default function Navbar() {
                 onClick={openUserMenu}
                 sx={{
                   p: 0.5,
-                  border: `2px solid ${BMW.border}`,
+                  border: `2px solid ${ROLE_COLOR[role] || BMW.border}30`,
                   '&:hover': {
-                    borderColor: BMW.primary,
+                    borderColor: ROLE_COLOR[role] || BMW.primary,
                     background: BMW.primaryUltraLight
                   }
                 }}
@@ -512,12 +520,12 @@ export default function Navbar() {
                   sx={{
                     width: 36,
                     height: 36,
-                    bgcolor: BMW.primary,
-                    fontWeight: 600,
-                    fontSize: '14px'
+                    bgcolor: ROLE_COLOR[role] || BMW.primary,
+                    fontWeight: 700,
+                    fontSize: '15px'
                   }}
                 >
-                  <Person />
+                  {(user?.username || 'U').charAt(0).toUpperCase()}
                 </Avatar>
               </IconButton>
             </Tooltip>
