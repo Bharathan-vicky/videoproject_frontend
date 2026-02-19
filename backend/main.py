@@ -2052,13 +2052,17 @@ async def get_bulk_excel_data(batch_id: str, chunk: int = 0, current_user: UserI
 async def get_all_results(
     page: int = 1,
     per_page: int = 50,
+    limit: Optional[int] = None,
     batch_id: Optional[str] = None,
     dealer_id: Optional[str] = None,
     current_user: UserInDB = Depends(get_current_user)
 ):
+    # Support 'limit' as alias for 'per_page' (frontend compatibility)
+    if limit is not None:
+        per_page = limit
     # Input validation
     page = max(1, page)
-    per_page = max(1, min(per_page, 500))  # Max 500 per page for performance
+    per_page = max(1, min(per_page, 1000))  # Max 1000 per page for performance
     
     query: Dict[str, Any] = {}
 
@@ -2071,7 +2075,7 @@ async def get_all_results(
     if current_user.role == "super_admin":
         if dealer_id:
             query["dealer_id"] = dealer_id
-    elif current_user.role in ("dealer_admin", "dealer_user"):
+    elif current_user.role in ("dealer_admin", "dealer_user", "branch_admin"):
         if not current_user.dealer_id:
             raise HTTPException(status_code=403, detail="User has no assigned dealer_id.")
         query["dealer_id"] = current_user.dealer_id

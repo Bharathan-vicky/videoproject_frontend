@@ -75,16 +75,16 @@ import { listDealerUsers, getDealerUserStats } from '../../services/dealer_user'
 import api from '../../services/api';
 import {
   BarChart,
-Bar,
-XAxis,
-YAxis,
-CartesianGrid,
-ResponsiveContainer,
-ComposedChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  ComposedChart,
 
-Legend,
-LabelList,
-ReferenceLine
+  Legend,
+  LabelList,
+  ReferenceLine
 
 } from 'recharts';
 
@@ -199,7 +199,7 @@ const ScoreTrendChart = ({ data }) => (
           <Typography variant="caption" sx={{
             color: MODERN_BMW_THEME.textPrimary,
             fontWeight: 500,
-            fontSize: '0.75rem',mr:2
+            fontSize: '0.75rem', mr: 2
           }}>
             {item.name}
           </Typography>
@@ -531,7 +531,7 @@ const ServiceAdvisorQualityChart = ({ data = [] }) => {
             dataKey="Audio"
             fill="#1976d2"
             barSize={20}
-             // Rounded corners on the left side
+          // Rounded corners on the left side
           >
             <LabelList
               dataKey="Audio"
@@ -546,7 +546,7 @@ const ServiceAdvisorQualityChart = ({ data = [] }) => {
             dataKey="Video"
             fill="#f57c00"
             barSize={20}
-             // Rounded corners on the right side
+          // Rounded corners on the right side
           >
             <LabelList
               dataKey="Video"
@@ -559,45 +559,45 @@ const ServiceAdvisorQualityChart = ({ data = [] }) => {
       </ResponsiveContainer>
 
       {/* Centered and minimized legend */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
         gap: 3, // Reduced from gap: 4 to gap: 3
-        mt: 2 
+        mt: 2
       }}>
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1 
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
         }}>
-          <Box sx={{ 
+          <Box sx={{
             width: 14, // Reduced from 16 to 14
             height: 14, // Reduced from 16 to 14
-            bgcolor: '#1976d2', 
-            borderRadius: 1 
+            bgcolor: '#1976d2',
+            borderRadius: 1
           }} />
-          <Typography variant="body2" sx={{ 
-            fontWeight: 600, 
+          <Typography variant="body2" sx={{
+            fontWeight: 600,
             color: '#1976d2',
             fontSize: '0.8rem' // Slightly smaller font
           }}>
             Audio Quality â†
           </Typography>
         </Box>
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1 
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
         }}>
-          <Box sx={{ 
+          <Box sx={{
             width: 14, // Reduced from 16 to 14
             height: 14, // Reduced from 16 to 14
-            bgcolor: '#f57c00', 
-            borderRadius: 1 
+            bgcolor: '#f57c00',
+            borderRadius: 1
           }} />
-          <Typography variant="body2" sx={{ 
-            fontWeight: 600, 
+          <Typography variant="body2" sx={{
+            fontWeight: 600,
             color: '#f57c00',
             fontSize: '0.8rem' // Slightly smaller font
           }}>
@@ -659,9 +659,7 @@ export default function DealerManagement() {
       const usersData = await listUsers();
       setUsers(usersData);
 
-      const dashboardRes = await api.get('/dashboard/super-admin/overview');
-      const dashboardDealers = dashboardRes.data?.dealers_summary || [];
-
+      // Build dealer map from users (this always works)
       const dealerMap = new Map();
       usersData.forEach((user) => {
         const did = normalizeId(user.dealer_id);
@@ -677,15 +675,23 @@ export default function DealerManagement() {
         dealerMap.get(did).users.push(user);
       });
 
-      dashboardDealers.forEach((dd) => {
-        const did = normalizeId(dd.dealer_id);
-        if (!did) return;
-        if (dealerMap.has(did)) {
-          const dealer = dealerMap.get(did);
-          dealer.total_videos = dd.total_videos ?? dealer.total_videos ?? 0;
-          dealer.avg_overall_quality = dd.avg_overall_quality ?? dealer.avg_overall_quality ?? 0;
-        }
-      });
+      // Try to enrich with dashboard stats (may fail if no analysis data yet)
+      try {
+        const dashboardRes = await api.get('/dashboard/super-admin/overview');
+        const dashboardDealers = dashboardRes.data?.dealers_summary || [];
+
+        dashboardDealers.forEach((dd) => {
+          const did = normalizeId(dd.dealer_id);
+          if (!did) return;
+          if (dealerMap.has(did)) {
+            const dealer = dealerMap.get(did);
+            dealer.total_videos = dd.total_videos ?? dealer.total_videos ?? 0;
+            dealer.avg_overall_quality = dd.avg_overall_quality ?? dealer.avg_overall_quality ?? 0;
+          }
+        });
+      } catch (dashError) {
+        console.warn('Could not load dashboard stats (will show dealers without stats):', dashError);
+      }
 
       const dealersArray = Array.from(dealerMap.values());
       dealersArray.sort((a, b) => a.dealer_id.localeCompare(b.dealer_id));
@@ -752,67 +758,67 @@ export default function DealerManagement() {
 
 
   const [userStats, setUserStats] = useState({});
-  
+
   const fetchUserStats = async (dealerId) => {
-  if (!dealerId) return;
-  
-  try {
-    const statsData = await getDealerUserStats(dealerId);
-    const statsMap = {};
-    statsData.forEach(user => {
-      statsMap[user.user_id] = user.videos_analyzed;
-    });
-    setUserStats(statsMap);
-  } catch (error) {
-    console.error('Error fetching user stats:', error);
-  }
-};
+    if (!dealerId) return;
+
+    try {
+      const statsData = await getDealerUserStats(dealerId);
+      const statsMap = {};
+      statsData.forEach(user => {
+        statsMap[user.user_id] = user.videos_analyzed;
+      });
+      setUserStats(statsMap);
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+    }
+  };
 
   const handleViewDealer = async (dealerId) => {
-  const did = normalizeId(dealerId);
-  setSelectedDealer(did);
-  setLoadingResults(true);
-  setDialogOpen(true);
-  setTabValue(0);
-  setSearchTerm('');
-  setUserSearchTerm('');
-  setPage(0);
-  setUserPage(0);
+    const did = normalizeId(dealerId);
+    setSelectedDealer(did);
+    setLoadingResults(true);
+    setDialogOpen(true);
+    setTabValue(0);
+    setSearchTerm('');
+    setUserSearchTerm('');
+    setPage(0);
+    setUserPage(0);
 
-  try {
-    const res = await api.get(`/results?dealer_id=${encodeURIComponent(did)}`);
-    const results = res.data || [];
-    setDealerResults(results);
+    try {
+      const res = await api.get(`/results?dealer_id=${encodeURIComponent(did)}`);
+      const results = res.data || [];
+      setDealerResults(results);
 
-    const qualityDistribution = generateQualityDistribution(results);
-    const scoreTrend = generateScoreTrend(results);
-    const serviceAdvisorRankings = generateServiceAdvisorRankings(results);
+      const qualityDistribution = generateQualityDistribution(results);
+      const scoreTrend = generateScoreTrend(results);
+      const serviceAdvisorRankings = generateServiceAdvisorRankings(results);
 
-    const avgVideo = results.reduce((sum, r) => sum + (r.video_analysis?.quality_score || 0), 0) / (results.length || 1);
-    const avgAudio = results.reduce((sum, r) => sum + (r.audio_analysis?.score || 0), 0) / (results.length || 1);
-    const avgOverall = results.reduce((sum, r) => sum + (r.overall_quality?.overall_score || 0), 0) / (results.length || 1);
+      const avgVideo = results.reduce((sum, r) => sum + (r.video_analysis?.quality_score || 0), 0) / (results.length || 1);
+      const avgAudio = results.reduce((sum, r) => sum + (r.audio_analysis?.score || 0), 0) / (results.length || 1);
+      const avgOverall = results.reduce((sum, r) => sum + (r.overall_quality?.overall_score || 0), 0) / (results.length || 1);
 
-    setDashboardData({
-      qualityDistribution, scoreTrend, serviceAdvisorRankings,
-      averageScores: { video: avgVideo, audio: avgAudio, overall: avgOverall },
-      totalVideos: results.length
-    });
+      setDashboardData({
+        qualityDistribution, scoreTrend, serviceAdvisorRankings,
+        averageScores: { video: avgVideo, audio: avgAudio, overall: avgOverall },
+        totalVideos: results.length
+      });
 
-    // Fetch dealer users and their stats
-    const dealerUsersData = await listDealerUsers(did);
-    setDealerUsers(dealerUsersData);
-    
-    // Fetch video counts for each user
-    await fetchUserStats(did);
-    
-  } catch (error) {
-    console.error('Error loading dealer data:', error);
-    setDealerResults([]);
-    setDealerUsers([]);
-  } finally {
-    setLoadingResults(false);
-  }
-};
+      // Fetch dealer users and their stats
+      const dealerUsersData = await listDealerUsers(did);
+      setDealerUsers(dealerUsersData);
+
+      // Fetch video counts for each user
+      await fetchUserStats(did);
+
+    } catch (error) {
+      console.error('Error loading dealer data:', error);
+      setDealerResults([]);
+      setDealerUsers([]);
+    } finally {
+      setLoadingResults(false);
+    }
+  };
 
   const handleCloseDialogs = () => {
     setDialogOpen(false);
@@ -915,61 +921,61 @@ export default function DealerManagement() {
     setUserFormOpen(true);
   };
 
- const handleSubmitUser = () => {
-  setUserError('');
-  
-  // Basic validation
-  if (!userForm.username || !userForm.email) {
-    setUserError('Username and email are required');
-    return;
-  }
+  const handleSubmitUser = () => {
+    setUserError('');
 
-  // Username length validation
-  if (userForm.username.length < 3) {
-    setUserError('Username must be at least 3 characters long');
-    return;
-  }
+    // Basic validation
+    if (!userForm.username || !userForm.email) {
+      setUserError('Username and email are required');
+      return;
+    }
 
-  // Email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(userForm.email)) {
-    setUserError('Please enter a valid email address');
-    return;
-  }
+    // Username length validation
+    if (userForm.username.length < 3) {
+      setUserError('Username must be at least 3 characters long');
+      return;
+    }
 
-  // Password validation for new users
-  if (!editingUser && (!userForm.password || userForm.password.length < 6)) {
-    setUserError('Password must be at least 6 characters long');
-    return;
-  }
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userForm.email)) {
+      setUserError('Please enter a valid email address');
+      return;
+    }
 
-  // Check if username already exists
-  const existingUsername = users.find(u => 
-    u.username.toLowerCase() === userForm.username.toLowerCase() && 
-    u._id !== editingUser?._id
-  );
-  if (existingUsername) {
-    setUserError('Username already exists. Please choose a different username.');
-    return;
-  }
+    // Password validation for new users
+    if (!editingUser && (!userForm.password || userForm.password.length < 6)) {
+      setUserError('Password must be at least 6 characters long');
+      return;
+    }
 
-  // Check if email already exists
-  const existingEmail = users.find(u => 
-    u.email.toLowerCase() === userForm.email.toLowerCase() && 
-    u._id !== editingUser?._id
-  );
-  if (existingEmail) {
-    setUserError('Email address already exists. Please use a different email.');
-    return;
-  }
+    // Check if username already exists
+    const existingUsername = users.find(u =>
+      u.username.toLowerCase() === userForm.username.toLowerCase() &&
+      u._id !== editingUser?._id
+    );
+    if (existingUsername) {
+      setUserError('Username already exists. Please choose a different username.');
+      return;
+    }
 
-  // If all validations pass, proceed with create/update
-  if (editingUser) {
-    handleUpdateUser();
-  } else {
-    handleCreateUser();
-  }
-};
+    // Check if email already exists
+    const existingEmail = users.find(u =>
+      u.email.toLowerCase() === userForm.email.toLowerCase() &&
+      u._id !== editingUser?._id
+    );
+    if (existingEmail) {
+      setUserError('Email address already exists. Please use a different email.');
+      return;
+    }
+
+    // If all validations pass, proceed with create/update
+    if (editingUser) {
+      handleUpdateUser();
+    } else {
+      handleCreateUser();
+    }
+  };
 
   const exportToCsv = () => {
     if (!filteredDealerResults.length) {
@@ -1681,252 +1687,252 @@ export default function DealerManagement() {
               <Box sx={{ p: 3, height: '100%', overflow: 'auto' }}>
                 {/* Dashboard Tab */}
                 {tabValue === 0 && (
-  <Box                 // CENTRE EVERYTHING THAT FOLLOWS
-    sx={{
-      maxWidth: 1400,  // design width â€“ tweak to taste
-      mx: 'auto',      // margin-left / right auto â†’ centre
-      my: 2
-    }}
-  >
-    {/* â”€â”€â”€â”€â”€â”€â”€ 1. Overview cards â”€â”€â”€â”€â”€â”€â”€ */}
-    <Grid
-      container
-      spacing={3}
-      sx={{ mb: 4 }}
-      justifyContent="center"      // horizontally centre row
-    >
-      {[
-        {
-          label : 'Total Videos',
-          value : dashboardData.totalVideos,
-          icon  : VideoLibrary,
-          color : MODERN_BMW_THEME.primary
-        },
-        {
-          label : 'Avg Video Score',
-          value : dashboardData.averageScores.video.toFixed(1),
-          icon  : Videocam,
-          color : MODERN_BMW_THEME.success
-        },
-        {
-          label : 'Avg Audio Score',
-          value : dashboardData.averageScores.audio.toFixed(1),
-          icon  : Mic,
-          color : MODERN_BMW_THEME.accent
-        },
-        {
-          label : 'Avg Overall Score',
-          value : dashboardData.averageScores.overall.toFixed(1),
-          icon  : Score,
-          color : MODERN_BMW_THEME.primary
-        }
-      ].map((stat) => (
-        <Grid item xs={12} sm={6} md={3} key={stat.label}>
-          <Card
-            sx={{
-              background : MODERN_BMW_THEME.surfaceElevated,
-              border     : `1px solid ${MODERN_BMW_THEME.border}`,
-              borderRadius: 3,
-              boxShadow  : MODERN_BMW_THEME.shadowSm,
-              transition : 'all .2s ease-in-out',
-              '&:hover': {
-                boxShadow: MODERN_BMW_THEME.shadowMd,
-                transform: 'translateY(-2px)'
-              }
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700, mb: .5 }}>
-                    {stat.value}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500, fontSize: '.875rem' }}>
-                    {stat.label}
-                  </Typography>
-                </Box>
-                <Box sx={{
-                  width: 44, height: 44, borderRadius: '50%',
-                  bgcolor: `${stat.color}15`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                  <stat.icon sx={{ fontSize: 20, color: stat.color }} />
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+                  <Box                 // CENTRE EVERYTHING THAT FOLLOWS
+                    sx={{
+                      maxWidth: 1400,  // design width â€“ tweak to taste
+                      mx: 'auto',      // margin-left / right auto â†’ centre
+                      my: 2
+                    }}
+                  >
+                    {/* â”€â”€â”€â”€â”€â”€â”€ 1. Overview cards â”€â”€â”€â”€â”€â”€â”€ */}
+                    <Grid
+                      container
+                      spacing={3}
+                      sx={{ mb: 4 }}
+                      justifyContent="center"      // horizontally centre row
+                    >
+                      {[
+                        {
+                          label: 'Total Videos',
+                          value: dashboardData.totalVideos,
+                          icon: VideoLibrary,
+                          color: MODERN_BMW_THEME.primary
+                        },
+                        {
+                          label: 'Avg Video Score',
+                          value: dashboardData.averageScores.video.toFixed(1),
+                          icon: Videocam,
+                          color: MODERN_BMW_THEME.success
+                        },
+                        {
+                          label: 'Avg Audio Score',
+                          value: dashboardData.averageScores.audio.toFixed(1),
+                          icon: Mic,
+                          color: MODERN_BMW_THEME.accent
+                        },
+                        {
+                          label: 'Avg Overall Score',
+                          value: dashboardData.averageScores.overall.toFixed(1),
+                          icon: Score,
+                          color: MODERN_BMW_THEME.primary
+                        }
+                      ].map((stat) => (
+                        <Grid item xs={12} sm={6} md={3} key={stat.label}>
+                          <Card
+                            sx={{
+                              background: MODERN_BMW_THEME.surfaceElevated,
+                              border: `1px solid ${MODERN_BMW_THEME.border}`,
+                              borderRadius: 3,
+                              boxShadow: MODERN_BMW_THEME.shadowSm,
+                              transition: 'all .2s ease-in-out',
+                              '&:hover': {
+                                boxShadow: MODERN_BMW_THEME.shadowMd,
+                                transform: 'translateY(-2px)'
+                              }
+                            }}
+                          >
+                            <CardContent sx={{ p: 3 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Box>
+                                  <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700, mb: .5 }}>
+                                    {stat.value}
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500, fontSize: '.875rem' }}>
+                                    {stat.label}
+                                  </Typography>
+                                </Box>
+                                <Box sx={{
+                                  width: 44, height: 44, borderRadius: '50%',
+                                  bgcolor: `${stat.color}15`,
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}>
+                                  <stat.icon sx={{ fontSize: 20, color: stat.color }} />
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
 
-    {/* Service Advisor Quality Comparison */}
-<Grid item xs={12}>
-  <Card sx={{
-    background: MODERN_BMW_THEME.surfaceElevated,
-    border: `1px solid ${MODERN_BMW_THEME.border}`,
-    borderRadius: 3,
-    boxShadow: MODERN_BMW_THEME.shadowSm,
-    mb: 4
-  }}>
-    <CardContent sx={{ p: 4 }}> {/* Increased padding from p: 3 to p: 4 */}
-      {/* Header with centered alignment */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', // Center the header content
-        mb: 3, // Increased from mb: 2 to mb: 3
-        textAlign: 'center'
-      }}>
-        <TrendingUp sx={{ 
-          color: MODERN_BMW_THEME.primary, 
-          mr: 2, 
-          fontSize: 28 // Slightly larger icon
-        }} />
-        <Typography variant="h5" sx={{ // Changed from h6 to h5 for more prominence
-          color: MODERN_BMW_THEME.textPrimary, 
-          fontWeight: 700 // Increased from 600 to 700
-        }}>
-          Service Advisor Quality Comparison
-        </Typography>
-      </Box>
-      
-      {/* Description with centered alignment */}
-      <Typography variant="body1" sx={{ // Changed from body2 to body1
-        color: MODERN_BMW_THEME.textSecondary,
-        mb: 4, // Increased from mb: 3 to mb: 4
-        textAlign: 'center', // Center the text
-        maxWidth: '900px', // Slightly wider
-        mx: 'auto', // Center the text block
-        lineHeight: 1.6
-      }}>
-        Audio quality (ðŸ”µ left) and video quality (ðŸŸ  right) scores for each service advisor. 
-        Bars extend from the center to show relative performance in each category.
-      </Typography>
+                    {/* Service Advisor Quality Comparison */}
+                    <Grid item xs={12}>
+                      <Card sx={{
+                        background: MODERN_BMW_THEME.surfaceElevated,
+                        border: `1px solid ${MODERN_BMW_THEME.border}`,
+                        borderRadius: 3,
+                        boxShadow: MODERN_BMW_THEME.shadowSm,
+                        mb: 4
+                      }}>
+                        <CardContent sx={{ p: 4 }}> {/* Increased padding from p: 3 to p: 4 */}
+                          {/* Header with centered alignment */}
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center', // Center the header content
+                            mb: 3, // Increased from mb: 2 to mb: 3
+                            textAlign: 'center'
+                          }}>
+                            <TrendingUp sx={{
+                              color: MODERN_BMW_THEME.primary,
+                              mr: 2,
+                              fontSize: 28 // Slightly larger icon
+                            }} />
+                            <Typography variant="h5" sx={{ // Changed from h6 to h5 for more prominence
+                              color: MODERN_BMW_THEME.textPrimary,
+                              fontWeight: 700 // Increased from 600 to 700
+                            }}>
+                              Service Advisor Quality Comparison
+                            </Typography>
+                          </Box>
 
-      {dashboardData.serviceAdvisorRankings.length === 0 ? (
-        <Box sx={{ 
-          textAlign: 'center', 
-          py: 8, // Increased from py: 6 to py: 8
-          color: MODERN_BMW_THEME.textTertiary 
-        }}>
-          <Person sx={{ 
-            fontSize: 56, // Increased from 48 to 56
-            mb: 3, // Increased from mb: 2 to mb: 3
-            opacity: 0.5 
-          }} />
-          <Typography variant="h6">No service advisor data available</Typography>
-        </Box>
-      ) : (
-        <ServiceAdvisorQualityChart 
-          data={dashboardData.serviceAdvisorRankings.slice(0, 8)} // Show top 8 advisors
-        />
-      )}
-    </CardContent>
-  </Card>
-</Grid>
+                          {/* Description with centered alignment */}
+                          <Typography variant="body1" sx={{ // Changed from body2 to body1
+                            color: MODERN_BMW_THEME.textSecondary,
+                            mb: 4, // Increased from mb: 3 to mb: 4
+                            textAlign: 'center', // Center the text
+                            maxWidth: '900px', // Slightly wider
+                            mx: 'auto', // Center the text block
+                            lineHeight: 1.6
+                          }}>
+                            Audio quality (ðŸ”µ left) and video quality (ðŸŸ  right) scores for each service advisor.
+                            Bars extend from the center to show relative performance in each category.
+                          </Typography>
 
-    {/* â”€â”€â”€â”€â”€â”€â”€ 2. Charts grid â”€â”€â”€â”€â”€â”€â”€ */}
-    {/* Three Column Layout */}
-<Grid
-  container
-  spacing={3}
-  sx={{ mb: 4 }}
-  justifyContent="center"
->
-  {/* Left Column - Service Advisor Rankings */}
-  <Grid item xs={12} md={4}>
-    <Card sx={{
-      background: MODERN_BMW_THEME.surfaceElevated,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
-      borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowSm,
-      height: 480 // Fixed standard height
-    }}>
-      <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <EmojiEvents sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }}/>
-          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
-            Service Advisor Rankings
-          </Typography>
-        </Box>
+                          {dashboardData.serviceAdvisorRankings.length === 0 ? (
+                            <Box sx={{
+                              textAlign: 'center',
+                              py: 8, // Increased from py: 6 to py: 8
+                              color: MODERN_BMW_THEME.textTertiary
+                            }}>
+                              <Person sx={{
+                                fontSize: 56, // Increased from 48 to 56
+                                mb: 3, // Increased from mb: 2 to mb: 3
+                                opacity: 0.5
+                              }} />
+                              <Typography variant="h6">No service advisor data available</Typography>
+                            </Box>
+                          ) : (
+                            <ServiceAdvisorQualityChart
+                              data={dashboardData.serviceAdvisorRankings.slice(0, 8)} // Show top 8 advisors
+                            />
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Grid>
 
-        {dashboardData.serviceAdvisorRankings.length === 0 ? (
-          <Box sx={{ 
-            textAlign: 'center', 
-            py: 8, 
-            color: MODERN_BMW_THEME.textTertiary,
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}>
-            <Person sx={{ fontSize: 48, mb: 2, opacity: .5 }}/>
-            <Typography>No service advisor data available</Typography>
-          </Box>
-        ) : (
-          <Box sx={{ 
-            flex: 1, 
-            overflow: 'auto', 
-            pr: 1,
-            maxHeight: 380
-          }}>
-            {dashboardData.serviceAdvisorRankings.map((a, i) => (
-              <ServiceAdvisorRankingCard key={a.name} advisor={a} rank={i + 1}/>
-            ))}
-          </Box>
-        )}
-      </CardContent>
-    </Card>
-  </Grid>
+                    {/* â”€â”€â”€â”€â”€â”€â”€ 2. Charts grid â”€â”€â”€â”€â”€â”€â”€ */}
+                    {/* Three Column Layout */}
+                    <Grid
+                      container
+                      spacing={3}
+                      sx={{ mb: 4 }}
+                      justifyContent="center"
+                    >
+                      {/* Left Column - Service Advisor Rankings */}
+                      <Grid item xs={12} md={4}>
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          height: 480 // Fixed standard height
+                        }}>
+                          <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <EmojiEvents sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
+                              <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                                Service Advisor Rankings
+                              </Typography>
+                            </Box>
 
-  {/* Center Column - Recent Score Trend */}
-  <Grid item xs={12} md={4}>
-    <Card sx={{
-      background: MODERN_BMW_THEME.surfaceElevated,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
-      borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowSm,
-      height: 480 // Fixed standard height
-    }}>
-      <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Timeline sx={{ color: MODERN_BMW_THEME.accent, mr: 2, fontSize: 24 }}/>
-          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
-            Recent Score Trend
-          </Typography>
-        </Box>
-        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center',justifyContent: 'center',justifyItems: 'center' }}>
-          <ScoreTrendChart data={dashboardData.scoreTrend}/>
-        </Box>
-      </CardContent>
-    </Card>
-  </Grid>
+                            {dashboardData.serviceAdvisorRankings.length === 0 ? (
+                              <Box sx={{
+                                textAlign: 'center',
+                                py: 8,
+                                color: MODERN_BMW_THEME.textTertiary,
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                              }}>
+                                <Person sx={{ fontSize: 48, mb: 2, opacity: .5 }} />
+                                <Typography>No service advisor data available</Typography>
+                              </Box>
+                            ) : (
+                              <Box sx={{
+                                flex: 1,
+                                overflow: 'auto',
+                                pr: 1,
+                                maxHeight: 380
+                              }}>
+                                {dashboardData.serviceAdvisorRankings.map((a, i) => (
+                                  <ServiceAdvisorRankingCard key={a.name} advisor={a} rank={i + 1} />
+                                ))}
+                              </Box>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Grid>
 
-  {/* Right Column - Quality Distribution */}
-  <Grid item xs={12} md={4}>
-    <Card sx={{
-      background: MODERN_BMW_THEME.surfaceElevated,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
-      borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowSm,
-      height: 480 // Fixed standard height
-    }}>
-      <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <PieChart sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }}/>
-          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
-            Quality Distribution
-          </Typography>
-        </Box>
-        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-          <QualityDistributionChart data={dashboardData.qualityDistribution}/>
-        </Box>
-      </CardContent>
-    </Card>
-  </Grid>
-</Grid>
-  </Box>
-)}
+                      {/* Center Column - Recent Score Trend */}
+                      <Grid item xs={12} md={4}>
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          height: 480 // Fixed standard height
+                        }}>
+                          <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                              <Timeline sx={{ color: MODERN_BMW_THEME.accent, mr: 2, fontSize: 24 }} />
+                              <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                                Recent Score Trend
+                              </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', justifyItems: 'center' }}>
+                              <ScoreTrendChart data={dashboardData.scoreTrend} />
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+
+                      {/* Right Column - Quality Distribution */}
+                      <Grid item xs={12} md={4}>
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          height: 480 // Fixed standard height
+                        }}>
+                          <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                              <PieChart sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
+                              <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                                Quality Distribution
+                              </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                              <QualityDistributionChart data={dashboardData.qualityDistribution} />
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                )}
                 {/* Results Tab */}
                 {tabValue === 1 && (
                   <Box>
@@ -2327,156 +2333,156 @@ export default function DealerManagement() {
                       </Card>
                     ) : (
                       <>
-                         <TableContainer component={Paper} sx={{
-      background: MODERN_BMW_THEME.background,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
-      borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowSm
-    }}>
-      <Table>
-        <TableHead>
-          <TableRow sx={{
-            backgroundColor: MODERN_BMW_THEME.surface,
-            '& th': {
-              borderBottom: `2px solid ${MODERN_BMW_THEME.border}`,
-              fontWeight: 600,
-              color: MODERN_BMW_THEME.textPrimary,
-              fontSize: '0.875rem',
-              py: 2
-            }
-          }}>
-            <TableCell>User</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Videos Analyzed</TableCell> {/* NEW COLUMN */}
-            <TableCell>Dealer ID</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {paginatedDealerUsers.map((user) => {
-            const userId = user._id || user.id;
-            const videosAnalyzed = userStats[userId] || 0;
-            
-            return (
-              <TableRow
-                key={userId}
-                hover
-                sx={{
-                  '&:hover': {
-                    backgroundColor: MODERN_BMW_THEME.surface
-                  },
-                  '& td': {
-                    borderBottom: `1px solid ${MODERN_BMW_THEME.borderLight}`,
-                    py: 1.5
-                  }
-                }}
-              >
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        background: MODERN_BMW_THEME.gradientPrimary,
-                        fontWeight: 600,
-                        fontSize: '14px',
-                        mr: 2
-                      }}
-                    >
-                      {(user.username || 'U').charAt(0).toUpperCase()}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="body2" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        fontWeight: 600
-                      }}>
-                        {user.username}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary }}>
-                    {user.email}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={user.role === 'dealer_admin' ? 'Dealer Admin' : 'User'}
-                    size="small"
-                    sx={{
-                      background: user.role === 'dealer_admin' ? MODERN_BMW_THEME.accent : MODERN_BMW_THEME.primary,
-                      color: MODERN_BMW_THEME.background,
-                      fontWeight: 600,
-                      fontSize: '0.75rem'
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <VideoLibrary sx={{ 
-                      fontSize: 16, 
-                      color: MODERN_BMW_THEME.primary, 
-                      mr: 1 
-                    }} />
-                    <Typography variant="body2" sx={{
-                      color: MODERN_BMW_THEME.textPrimary,
-                      fontWeight: 600,
-                      fontFamily: 'monospace'
-                    }}>
-                      {videosAnalyzed}
-                    </Typography>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" fontFamily="monospace" sx={{
-                    color: MODERN_BMW_THEME.textPrimary,
-                    fontWeight: 500
-                  }}>
-                    {user.dealer_id || '—'}
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
-                    <Tooltip title="Edit user">
-                      <IconButton
-                        size="small"
-                        sx={{
-                          color: MODERN_BMW_THEME.primary,
-                          background: `${MODERN_BMW_THEME.primary}08`,
-                          '&:hover': {
-                            background: `${MODERN_BMW_THEME.primary}15`
-                          }
-                        }}
-                        onClick={() => handleEditUser(user)}
-                      >
-                        <Edit fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete user">
-                      <IconButton
-                        size="small"
-                        sx={{
-                          color: MODERN_BMW_THEME.error,
-                          background: `${MODERN_BMW_THEME.error}08`,
-                          '&:hover': {
-                            background: `${MODERN_BMW_THEME.error}15`
-                          }
-                        }}
-                        onClick={() => handleDeleteUser(userId)}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                        <TableContainer component={Paper} sx={{
+                          background: MODERN_BMW_THEME.background,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm
+                        }}>
+                          <Table>
+                            <TableHead>
+                              <TableRow sx={{
+                                backgroundColor: MODERN_BMW_THEME.surface,
+                                '& th': {
+                                  borderBottom: `2px solid ${MODERN_BMW_THEME.border}`,
+                                  fontWeight: 600,
+                                  color: MODERN_BMW_THEME.textPrimary,
+                                  fontSize: '0.875rem',
+                                  py: 2
+                                }
+                              }}>
+                                <TableCell>User</TableCell>
+                                <TableCell>Email</TableCell>
+                                <TableCell>Role</TableCell>
+                                <TableCell>Videos Analyzed</TableCell> {/* NEW COLUMN */}
+                                <TableCell>Dealer ID</TableCell>
+                                <TableCell align="center">Actions</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {paginatedDealerUsers.map((user) => {
+                                const userId = user._id || user.id;
+                                const videosAnalyzed = userStats[userId] || 0;
+
+                                return (
+                                  <TableRow
+                                    key={userId}
+                                    hover
+                                    sx={{
+                                      '&:hover': {
+                                        backgroundColor: MODERN_BMW_THEME.surface
+                                      },
+                                      '& td': {
+                                        borderBottom: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                                        py: 1.5
+                                      }
+                                    }}
+                                  >
+                                    <TableCell>
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Avatar
+                                          sx={{
+                                            width: 32,
+                                            height: 32,
+                                            background: MODERN_BMW_THEME.gradientPrimary,
+                                            fontWeight: 600,
+                                            fontSize: '14px',
+                                            mr: 2
+                                          }}
+                                        >
+                                          {(user.username || 'U').charAt(0).toUpperCase()}
+                                        </Avatar>
+                                        <Box>
+                                          <Typography variant="body2" sx={{
+                                            color: MODERN_BMW_THEME.textPrimary,
+                                            fontWeight: 600
+                                          }}>
+                                            {user.username}
+                                          </Typography>
+                                        </Box>
+                                      </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+                                        {user.email}
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Chip
+                                        label={user.role === 'dealer_admin' ? 'Dealer Admin' : 'User'}
+                                        size="small"
+                                        sx={{
+                                          background: user.role === 'dealer_admin' ? MODERN_BMW_THEME.accent : MODERN_BMW_THEME.primary,
+                                          color: MODERN_BMW_THEME.background,
+                                          fontWeight: 600,
+                                          fontSize: '0.75rem'
+                                        }}
+                                      />
+                                    </TableCell>
+                                    <TableCell>
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <VideoLibrary sx={{
+                                          fontSize: 16,
+                                          color: MODERN_BMW_THEME.primary,
+                                          mr: 1
+                                        }} />
+                                        <Typography variant="body2" sx={{
+                                          color: MODERN_BMW_THEME.textPrimary,
+                                          fontWeight: 600,
+                                          fontFamily: 'monospace'
+                                        }}>
+                                          {videosAnalyzed}
+                                        </Typography>
+                                      </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="body2" fontFamily="monospace" sx={{
+                                        color: MODERN_BMW_THEME.textPrimary,
+                                        fontWeight: 500
+                                      }}>
+                                        {user.dealer_id || '—'}
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                                        <Tooltip title="Edit user">
+                                          <IconButton
+                                            size="small"
+                                            sx={{
+                                              color: MODERN_BMW_THEME.primary,
+                                              background: `${MODERN_BMW_THEME.primary}08`,
+                                              '&:hover': {
+                                                background: `${MODERN_BMW_THEME.primary}15`
+                                              }
+                                            }}
+                                            onClick={() => handleEditUser(user)}
+                                          >
+                                            <Edit fontSize="small" />
+                                          </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Delete user">
+                                          <IconButton
+                                            size="small"
+                                            sx={{
+                                              color: MODERN_BMW_THEME.error,
+                                              background: `${MODERN_BMW_THEME.error}08`,
+                                              '&:hover': {
+                                                background: `${MODERN_BMW_THEME.error}15`
+                                              }
+                                            }}
+                                            onClick={() => handleDeleteUser(userId)}
+                                          >
+                                            <DeleteIcon fontSize="small" />
+                                          </IconButton>
+                                        </Tooltip>
+                                      </Box>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
 
                         <TablePagination
                           rowsPerPageOptions={[5, 10, 25, 50]}
@@ -2533,1140 +2539,1140 @@ export default function DealerManagement() {
         </Dialog>
 
         {/* Enhanced User Form Dialog */}
-<Dialog
-  open={userFormOpen}
-  onClose={() => {
-    setUserFormOpen(false);
-    setEditingUser(null);
-    setUserForm({ username: '', email: '', role: 'dealer_admin', password: '', dealer_id: '' });
-    setUserError('');
-  }}
-  maxWidth="sm"
-  fullWidth
-  PaperProps={{
-    sx: {
-      background: MODERN_BMW_THEME.background,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
-      borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowXl
-    }
-  }}
->
-  <DialogTitle sx={{
-    background: MODERN_BMW_THEME.gradientPrimary,
-    color: MODERN_BMW_THEME.background,
-    fontWeight: 600,
-    py: 3
-  }}>
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Person sx={{ mr: 2, fontSize: 24 }} />
-      {editingUser ? 'Edit User' : 'Create New User'}
-    </Box>
-  </DialogTitle>
-
-  <DialogContent sx={{ mt: 2, p: 3 }}>
-    {userError && (
-      <Alert
-        severity="error"
-        sx={{
-          mb: 3,
-          borderRadius: 2,
-          '& .MuiAlert-message': {
-            fontWeight: 500
-          }
-        }}
-        onClose={() => setUserError('')}
-      >
-        {userError}
-      </Alert>
-    )}
-
-    <TextField
-      fullWidth
-      margin="normal"
-      label="Username"
-      value={userForm.username}
-      onChange={(e) => {
-        const username = e.target.value;
-        setUserForm({ ...userForm, username });
-        
-        // Check if username already exists (excluding current user being edited)
-        if (username && username.length >= 3) {
-          const existingUser = users.find(u => 
-            u.username.toLowerCase() === username.toLowerCase() && 
-            u._id !== editingUser?._id
-          );
-          if (existingUser) {
-            setUserError('Username already exists. Please choose a different username.');
-          } else if (userError === 'Username already exists. Please choose a different username.') {
+        <Dialog
+          open={userFormOpen}
+          onClose={() => {
+            setUserFormOpen(false);
+            setEditingUser(null);
+            setUserForm({ username: '', email: '', role: 'dealer_admin', password: '', dealer_id: '' });
             setUserError('');
-          }
-        }
-      }}
-      error={userError.includes('Username already exists')}
-      helperText={
-        userError.includes('Username already exists') 
-          ? userError 
-          : "Username must be at least 3 characters long"
-      }
-      required
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: 2,
-          '&:hover fieldset': {
-            borderColor: MODERN_BMW_THEME.primary,
-          },
-        },
-        '& .MuiInputLabel-root': {
-          color: MODERN_BMW_THEME.textSecondary,
-        }
-      }}
-    />
+          }}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              background: MODERN_BMW_THEME.background,
+              border: `1px solid ${MODERN_BMW_THEME.border}`,
+              borderRadius: 3,
+              boxShadow: MODERN_BMW_THEME.shadowXl
+            }
+          }}
+        >
+          <DialogTitle sx={{
+            background: MODERN_BMW_THEME.gradientPrimary,
+            color: MODERN_BMW_THEME.background,
+            fontWeight: 600,
+            py: 3
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Person sx={{ mr: 2, fontSize: 24 }} />
+              {editingUser ? 'Edit User' : 'Create New User'}
+            </Box>
+          </DialogTitle>
 
-    <TextField
-      fullWidth
-      margin="normal"
-      label="Email"
-      type="email"
-      value={userForm.email}
-      onChange={(e) => {
-        const email = e.target.value;
-        setUserForm({ ...userForm, email });
-        
-        // Check if email already exists (excluding current user being edited)
-        if (email) {
-          const existingUser = users.find(u => 
-            u.email.toLowerCase() === email.toLowerCase() && 
-            u._id !== editingUser?._id
-          );
-          if (existingUser) {
-            setUserError('Email address already exists. Please use a different email.');
-          } else if (userError === 'Email address already exists. Please use a different email.') {
-            setUserError('');
-          }
-        }
-      }}
-      error={userError.includes('Email address already exists')}
-      helperText={
-        userError.includes('Email address already exists') 
-          ? userError 
-          : "Enter a valid email address"
-      }
-      required
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: 2,
-          '&:hover fieldset': {
-            borderColor: MODERN_BMW_THEME.primary,
-          },
-        }
-      }}
-    />
+          <DialogContent sx={{ mt: 2, p: 3 }}>
+            {userError && (
+              <Alert
+                severity="error"
+                sx={{
+                  mb: 3,
+                  borderRadius: 2,
+                  '& .MuiAlert-message': {
+                    fontWeight: 500
+                  }
+                }}
+                onClose={() => setUserError('')}
+              >
+                {userError}
+              </Alert>
+            )}
 
-    <TextField
-      fullWidth
-      margin="normal"
-      label="Password"
-      type="password"
-      value={userForm.password}
-      onChange={(e) => {
-        const password = e.target.value;
-        setUserForm({ ...userForm, password });
-        
-        // Validate password length for new users
-        if (!editingUser && password && password.length < 6) {
-          setUserError('Password must be at least 6 characters long');
-        } else if (userError === 'Password must be at least 6 characters long') {
-          setUserError('');
-        }
-      }}
-      error={userError.includes('Password must be at least 6 characters')}
-      helperText={
-        editingUser 
-          ? "Leave blank to keep current password" 
-          : userError.includes('Password must be at least 6 characters')
-            ? userError
-            : "Password must be at least 6 characters long"
-      }
-      required={!editingUser}
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: 2,
-          '&:hover fieldset': {
-            borderColor: MODERN_BMW_THEME.primary,
-          },
-        }
-      }}
-    />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Username"
+              value={userForm.username}
+              onChange={(e) => {
+                const username = e.target.value;
+                setUserForm({ ...userForm, username });
 
-    <TextField
-      fullWidth
-      margin="normal"
-      select
-      label="Role"
-      value={userForm.role}
-      onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: 2,
-          '&:hover fieldset': {
-            borderColor: MODERN_BMW_THEME.primary,
-          },
-        }
-      }}
-    >
-      {ROLE_OPTS.map(r => (
-        <MenuItem key={r.value} value={r.value}>
-          {r.label}
-        </MenuItem>
-      ))}
-    </TextField>
+                // Check if username already exists (excluding current user being edited)
+                if (username && username.length >= 3) {
+                  const existingUser = users.find(u =>
+                    u.username.toLowerCase() === username.toLowerCase() &&
+                    u._id !== editingUser?._id
+                  );
+                  if (existingUser) {
+                    setUserError('Username already exists. Please choose a different username.');
+                  } else if (userError === 'Username already exists. Please choose a different username.') {
+                    setUserError('');
+                  }
+                }
+              }}
+              error={userError.includes('Username already exists')}
+              helperText={
+                userError.includes('Username already exists')
+                  ? userError
+                  : "Username must be at least 3 characters long"
+              }
+              required
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '&:hover fieldset': {
+                    borderColor: MODERN_BMW_THEME.primary,
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: MODERN_BMW_THEME.textSecondary,
+                }
+              }}
+            />
 
-    <TextField
-      fullWidth
-      margin="normal"
-      label="Dealer ID"
-      value={selectedDealer || ''}
-      disabled
-      helperText="Automatically assigned to this dealer"
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: 2,
-          background: MODERN_BMW_THEME.surface,
-        }
-      }}
-    />
-  </DialogContent>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Email"
+              type="email"
+              value={userForm.email}
+              onChange={(e) => {
+                const email = e.target.value;
+                setUserForm({ ...userForm, email });
 
-  <DialogActions sx={{ px: 3, pb: 3 }}>
-    <Button
-      onClick={() => {
-        setUserFormOpen(false);
-        setEditingUser(null);
-        setUserForm({ username: '', email: '', role: 'dealer_admin', password: '', dealer_id: '' });
-        setUserError('');
-      }}
-      variant="outlined"
-      sx={{
-        borderColor: MODERN_BMW_THEME.border,
-        color: MODERN_BMW_THEME.textSecondary,
-        borderRadius: 2,
-        px: 3,
-        fontWeight: 500,
-        '&:hover': {
-          borderColor: MODERN_BMW_THEME.textSecondary,
-          color: MODERN_BMW_THEME.textPrimary
-        }
-      }}
-    >
-      Cancel
-    </Button>
-    <Button
-      variant="contained"
-      onClick={handleSubmitUser}
-      disabled={!!userError} // Disable button if there are validation errors
-      sx={{
-        background: userError ? MODERN_BMW_THEME.textTertiary : MODERN_BMW_THEME.gradientPrimary,
-        borderRadius: 2,
-        px: 4,
-        fontWeight: 600,
-        boxShadow: MODERN_BMW_THEME.shadowMd,
-        '&:hover:not(:disabled)': {
-          boxShadow: MODERN_BMW_THEME.shadowLg,
-          transform: 'translateY(-1px)'
-        },
-        transition: 'all 0.2s ease-in-out',
-        '&:disabled': {
-          cursor: 'not-allowed',
-          opacity: 0.6
-        }
-      }}
-    >
-      {editingUser ? 'Update' : 'Create'}
-    </Button>
-  </DialogActions>
-</Dialog>
-       {/* Enhanced Analysis Report Dialog */}
-<Dialog
-  open={resultDialogOpen}
-  onClose={() => setResultDialogOpen(false)}
-  maxWidth="lg"
-  fullWidth
-  PaperProps={{
-    sx: {
-      maxHeight: '95vh',
-      background: MODERN_BMW_THEME.background,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
-      borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowXl,
-    }
-  }}
->
-  {/* Modern Header */}
-  <DialogTitle sx={{
-    background: MODERN_BMW_THEME.gradientPrimary,
-    color: MODERN_BMW_THEME.background,
-    fontWeight: 600,
-    py: 3,
-    position: 'relative'
-  }}>
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Assessment sx={{ fontSize: 28, mr: 2, opacity: 0.9 }} />
-        <Box>
-          <Typography variant="h5" fontWeight={600}>
-            Analysis Report
-          </Typography>
-          <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 400 }}>
-            Detailed performance assessment
-          </Typography>
-        </Box>
-      </Box>
-      <IconButton
-        onClick={() => setResultDialogOpen(false)}
-        sx={{ 
-          color: MODERN_BMW_THEME.background,
-          background: 'rgba(255, 255, 255, 0.2)',
-          '&:hover': {
-            background: 'rgba(255, 255, 255, 0.3)'
-          }
-        }}
-      >
-        <ArrowBack />
-      </IconButton>
-    </Box>
-  </DialogTitle>
+                // Check if email already exists (excluding current user being edited)
+                if (email) {
+                  const existingUser = users.find(u =>
+                    u.email.toLowerCase() === email.toLowerCase() &&
+                    u._id !== editingUser?._id
+                  );
+                  if (existingUser) {
+                    setUserError('Email address already exists. Please use a different email.');
+                  } else if (userError === 'Email address already exists. Please use a different email.') {
+                    setUserError('');
+                  }
+                }
+              }}
+              error={userError.includes('Email address already exists')}
+              helperText={
+                userError.includes('Email address already exists')
+                  ? userError
+                  : "Enter a valid email address"
+              }
+              required
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '&:hover fieldset': {
+                    borderColor: MODERN_BMW_THEME.primary,
+                  },
+                }
+              }}
+            />
 
-  <DialogContent dividers sx={{ 
-    background: MODERN_BMW_THEME.background, 
-    p: 0,
-    overflow: 'auto',
-    display: 'flex',
-    flexDirection: 'column'
-  }}>
-    {selectedResult && (
-      <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
-        {/* Modern Header Section */}
-        <Box sx={{ p: 4, borderBottom: `1px solid ${MODERN_BMW_THEME.border}` }}>
-          
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Password"
+              type="password"
+              value={userForm.password}
+              onChange={(e) => {
+                const password = e.target.value;
+                setUserForm({ ...userForm, password });
 
-          {/* Service Information Cards */}
-          <Grid container spacing={3} sx={{ mb: 3 }}>
-            <Grid item xs={12}>
-              <Card sx={{
-                background: MODERN_BMW_THEME.surfaceElevated,
-                border: `1px solid ${MODERN_BMW_THEME.border}`,
-                borderRadius: 3,
-                boxShadow: MODERN_BMW_THEME.shadowSm
-              }}>
-                <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <DirectionsCar sx={{
-                      fontSize: 28,
-                      color: MODERN_BMW_THEME.primary,
-                      mr: 2
-                    }} />
-                    <Typography variant="h6" sx={{
-                      color: MODERN_BMW_THEME.textPrimary,
-                      fontWeight: 600
-                    }}>
-                      Service Information
-                    </Typography>
-                  </Box>
+                // Validate password length for new users
+                if (!editingUser && password && password.length < 6) {
+                  setUserError('Password must be at least 6 characters long');
+                } else if (userError === 'Password must be at least 6 characters long') {
+                  setUserError('');
+                }
+              }}
+              error={userError.includes('Password must be at least 6 characters')}
+              helperText={
+                editingUser
+                  ? "Leave blank to keep current password"
+                  : userError.includes('Password must be at least 6 characters')
+                    ? userError
+                    : "Password must be at least 6 characters long"
+              }
+              required={!editingUser}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '&:hover fieldset': {
+                    borderColor: MODERN_BMW_THEME.primary,
+                  },
+                }
+              }}
+            />
 
-                  <Grid container spacing={2}>
-                    {[
-                      { 
-                        label: 'Dealership', 
-                        value: selectedResult.citnow_metadata?.dealership,
-                        icon: Business
-                      },
-                      { 
-                        label: 'Vehicle', 
-                        value: selectedResult.citnow_metadata?.vehicle || selectedResult.citnow_metadata?.registration,
-                        icon: DirectionsCar
-                      },
-                      { 
-                        label: 'Service Advisor', 
-                        value: selectedResult.citnow_metadata?.service_advisor,
-                        icon: Person
-                      },
-                      { 
-                        label: 'VIN', 
-                        value: selectedResult.citnow_metadata?.vin,
-                        icon: Badge,
-                        monospace: true
-                      },
-                      { 
-                        label: 'Email', 
-                        value: selectedResult.citnow_metadata?.email,
-                        icon: Email
-                      },
-                      { 
-                        label: 'Phone', 
-                        value: selectedResult.citnow_metadata?.phone,
-                        icon: Phone
-                      }
-                    ].map((item, index) => (
-                      <Grid item xs={12} sm={6} md={4} key={item.label}>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          p: 2,
-                          background: MODERN_BMW_THEME.surface,
-                          borderRadius: 2,
-                          border: `1px solid ${MODERN_BMW_THEME.borderLight}`
-                        }}>
-                          <item.icon sx={{ 
-                            fontSize: 20, 
-                            color: MODERN_BMW_THEME.primary, 
-                            mr: 2 
-                          }} />
-                          <Box sx={{ flex: 1 }}>
-                            <Typography variant="caption" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
-                              fontWeight: 500,
-                              display: 'block',
-                              mb: 0.5
-                            }}>
-                              {item.label}
-                            </Typography>
-                            <Typography variant="body2" sx={{
+            <TextField
+              fullWidth
+              margin="normal"
+              select
+              label="Role"
+              value={userForm.role}
+              onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '&:hover fieldset': {
+                    borderColor: MODERN_BMW_THEME.primary,
+                  },
+                }
+              }}
+            >
+              {ROLE_OPTS.map(r => (
+                <MenuItem key={r.value} value={r.value}>
+                  {r.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Dealer ID"
+              value={selectedDealer || ''}
+              disabled
+              helperText="Automatically assigned to this dealer"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  background: MODERN_BMW_THEME.surface,
+                }
+              }}
+            />
+          </DialogContent>
+
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button
+              onClick={() => {
+                setUserFormOpen(false);
+                setEditingUser(null);
+                setUserForm({ username: '', email: '', role: 'dealer_admin', password: '', dealer_id: '' });
+                setUserError('');
+              }}
+              variant="outlined"
+              sx={{
+                borderColor: MODERN_BMW_THEME.border,
+                color: MODERN_BMW_THEME.textSecondary,
+                borderRadius: 2,
+                px: 3,
+                fontWeight: 500,
+                '&:hover': {
+                  borderColor: MODERN_BMW_THEME.textSecondary,
+                  color: MODERN_BMW_THEME.textPrimary
+                }
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmitUser}
+              disabled={!!userError} // Disable button if there are validation errors
+              sx={{
+                background: userError ? MODERN_BMW_THEME.textTertiary : MODERN_BMW_THEME.gradientPrimary,
+                borderRadius: 2,
+                px: 4,
+                fontWeight: 600,
+                boxShadow: MODERN_BMW_THEME.shadowMd,
+                '&:hover:not(:disabled)': {
+                  boxShadow: MODERN_BMW_THEME.shadowLg,
+                  transform: 'translateY(-1px)'
+                },
+                transition: 'all 0.2s ease-in-out',
+                '&:disabled': {
+                  cursor: 'not-allowed',
+                  opacity: 0.6
+                }
+              }}
+            >
+              {editingUser ? 'Update' : 'Create'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Enhanced Analysis Report Dialog */}
+        <Dialog
+          open={resultDialogOpen}
+          onClose={() => setResultDialogOpen(false)}
+          maxWidth="lg"
+          fullWidth
+          PaperProps={{
+            sx: {
+              maxHeight: '95vh',
+              background: MODERN_BMW_THEME.background,
+              border: `1px solid ${MODERN_BMW_THEME.border}`,
+              borderRadius: 3,
+              boxShadow: MODERN_BMW_THEME.shadowXl,
+            }
+          }}
+        >
+          {/* Modern Header */}
+          <DialogTitle sx={{
+            background: MODERN_BMW_THEME.gradientPrimary,
+            color: MODERN_BMW_THEME.background,
+            fontWeight: 600,
+            py: 3,
+            position: 'relative'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Assessment sx={{ fontSize: 28, mr: 2, opacity: 0.9 }} />
+                <Box>
+                  <Typography variant="h5" fontWeight={600}>
+                    Analysis Report
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 400 }}>
+                    Detailed performance assessment
+                  </Typography>
+                </Box>
+              </Box>
+              <IconButton
+                onClick={() => setResultDialogOpen(false)}
+                sx={{
+                  color: MODERN_BMW_THEME.background,
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  '&:hover': {
+                    background: 'rgba(255, 255, 255, 0.3)'
+                  }
+                }}
+              >
+                <ArrowBack />
+              </IconButton>
+            </Box>
+          </DialogTitle>
+
+          <DialogContent dividers sx={{
+            background: MODERN_BMW_THEME.background,
+            p: 0,
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {selectedResult && (
+              <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
+                {/* Modern Header Section */}
+                <Box sx={{ p: 4, borderBottom: `1px solid ${MODERN_BMW_THEME.border}` }}>
+
+
+                  {/* Service Information Cards */}
+                  <Grid container spacing={3} sx={{ mb: 3 }}>
+                    <Grid item xs={12}>
+                      <Card sx={{
+                        background: MODERN_BMW_THEME.surfaceElevated,
+                        border: `1px solid ${MODERN_BMW_THEME.border}`,
+                        borderRadius: 3,
+                        boxShadow: MODERN_BMW_THEME.shadowSm
+                      }}>
+                        <CardContent sx={{ p: 3 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <DirectionsCar sx={{
+                              fontSize: 28,
+                              color: MODERN_BMW_THEME.primary,
+                              mr: 2
+                            }} />
+                            <Typography variant="h6" sx={{
                               color: MODERN_BMW_THEME.textPrimary,
-                              fontWeight: 600,
-                              fontFamily: item.monospace ? 'monospace' : 'inherit'
+                              fontWeight: 600
                             }}>
-                              {item.value || 'N/A'}
+                              Service Information
                             </Typography>
                           </Box>
-                        </Box>
-                      </Grid>
-                    ))}
-                  </Grid>
 
-                  {/* Video Link */}
-                  <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${MODERN_BMW_THEME.borderLight}` }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Videocam sx={{ 
-                          fontSize: 24, 
-                          color: MODERN_BMW_THEME.primary, 
-                          mr: 2 
-                        }} />
-                        <Box>
-                          <Typography variant="body1" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
-                            fontWeight: 600,
-                            mb: 0.5
-                          }}>
-                            Video Recording
-                          </Typography>
-                          <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textSecondary
-                          }}>
-                            {selectedResult.citnow_metadata?.page_url ? 
-                              'Watch the original video recording' : 
-                              'No video URL available'
-                            }
-                          </Typography>
-                        </Box>
+                          <Grid container spacing={2}>
+                            {[
+                              {
+                                label: 'Dealership',
+                                value: selectedResult.citnow_metadata?.dealership,
+                                icon: Business
+                              },
+                              {
+                                label: 'Vehicle',
+                                value: selectedResult.citnow_metadata?.vehicle || selectedResult.citnow_metadata?.registration,
+                                icon: DirectionsCar
+                              },
+                              {
+                                label: 'Service Advisor',
+                                value: selectedResult.citnow_metadata?.service_advisor,
+                                icon: Person
+                              },
+                              {
+                                label: 'VIN',
+                                value: selectedResult.citnow_metadata?.vin,
+                                icon: Badge,
+                                monospace: true
+                              },
+                              {
+                                label: 'Email',
+                                value: selectedResult.citnow_metadata?.email,
+                                icon: Email
+                              },
+                              {
+                                label: 'Phone',
+                                value: selectedResult.citnow_metadata?.phone,
+                                icon: Phone
+                              }
+                            ].map((item, index) => (
+                              <Grid item xs={12} sm={6} md={4} key={item.label}>
+                                <Box sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  p: 2,
+                                  background: MODERN_BMW_THEME.surface,
+                                  borderRadius: 2,
+                                  border: `1px solid ${MODERN_BMW_THEME.borderLight}`
+                                }}>
+                                  <item.icon sx={{
+                                    fontSize: 20,
+                                    color: MODERN_BMW_THEME.primary,
+                                    mr: 2
+                                  }} />
+                                  <Box sx={{ flex: 1 }}>
+                                    <Typography variant="caption" sx={{
+                                      color: MODERN_BMW_THEME.textSecondary,
+                                      fontWeight: 500,
+                                      display: 'block',
+                                      mb: 0.5
+                                    }}>
+                                      {item.label}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{
+                                      color: MODERN_BMW_THEME.textPrimary,
+                                      fontWeight: 600,
+                                      fontFamily: item.monospace ? 'monospace' : 'inherit'
+                                    }}>
+                                      {item.value || 'N/A'}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Grid>
+                            ))}
+                          </Grid>
+
+                          {/* Video Link */}
+                          <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${MODERN_BMW_THEME.borderLight}` }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Videocam sx={{
+                                  fontSize: 24,
+                                  color: MODERN_BMW_THEME.primary,
+                                  mr: 2
+                                }} />
+                                <Box>
+                                  <Typography variant="body1" sx={{
+                                    color: MODERN_BMW_THEME.textPrimary,
+                                    fontWeight: 600,
+                                    mb: 0.5
+                                  }}>
+                                    Video Recording
+                                  </Typography>
+                                  <Typography variant="body2" sx={{
+                                    color: MODERN_BMW_THEME.textSecondary
+                                  }}>
+                                    {selectedResult.citnow_metadata?.page_url ?
+                                      'Watch the original video recording' :
+                                      'No video URL available'
+                                    }
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              {selectedResult.citnow_metadata?.page_url ? (
+                                <Button
+                                  variant="contained"
+                                  href={selectedResult.citnow_metadata.page_url}
+                                  target="_blank"
+                                  startIcon={<Videocam />}
+                                  sx={{
+                                    background: MODERN_BMW_THEME.gradientPrimary,
+                                    borderRadius: 2,
+                                    px: 3,
+                                    fontWeight: 600,
+                                    boxShadow: MODERN_BMW_THEME.shadowMd,
+                                    '&:hover': {
+                                      boxShadow: MODERN_BMW_THEME.shadowLg,
+                                      transform: 'translateY(-1px)'
+                                    },
+                                    transition: 'all 0.2s ease-in-out'
+                                  }}
+                                >
+                                  Watch Video
+                                </Button>
+                              ) : (
+                                <Chip
+                                  label="Not Available"
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{
+                                    borderColor: MODERN_BMW_THEME.textTertiary,
+                                    color: MODERN_BMW_THEME.textTertiary
+                                  }}
+                                />
+                              )}
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                {/* Quality Assessment Section */}
+                <Box sx={{ p: 4 }}>
+                  <Box sx={{ p: 4 }}>
+                    <Box sx={{ mb: 4 }}>
+                      <Typography variant="h5" sx={{
+                        color: MODERN_BMW_THEME.textPrimary,
+                        fontWeight: 600,
+                        mb: 3
+                      }}>
+                        Quality Assessment
+                      </Typography>
+
+                      {/* Video & Audio Quality Side by Side */}
+                      <Box sx={{
+                        display: 'flex',
+                        gap: 3,
+                        mb: 4,
+                        flexDirection: { xs: 'column', md: 'row' }
+                      }}>
+                        {/* Video Quality - Left Side */}
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          flex: 1,
+                          minWidth: { md: 0 }
+                        }}>
+                          <CardContent sx={{ p: 3 }}>
+                            {/* Video Header */}
+                            <Box sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              mb: 3,
+                              gap: 2
+                            }}>
+                              <Box sx={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: '50%',
+                                background: MODERN_BMW_THEME.primaryUltraLight,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                              }}>
+                                <Videocam sx={{ fontSize: 24, color: MODERN_BMW_THEME.primary }} />
+                              </Box>
+                              <Box>
+                                <Typography variant="h4" sx={{
+                                  color: MODERN_BMW_THEME.textPrimary,
+                                  fontWeight: 700,
+                                  lineHeight: 1.2
+                                }}>
+                                  {selectedResult.video_analysis?.quality_score || 0}/10
+                                </Typography>
+                                <Typography variant="body2" sx={{
+                                  color: MODERN_BMW_THEME.textSecondary,
+                                  fontWeight: 500
+                                }}>
+                                  Video Quality
+                                </Typography>
+                              </Box>
+                              <Chip
+                                label={selectedResult.video_analysis?.quality_label || 'N/A'}
+                                size="small"
+                                sx={{
+                                  background:
+                                    selectedResult.video_analysis?.quality_label === 'Excellent' ? MODERN_BMW_THEME.successLight :
+                                      selectedResult.video_analysis?.quality_label === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
+                                        selectedResult.video_analysis?.quality_label === 'Fair' ? MODERN_BMW_THEME.warningLight :
+                                          MODERN_BMW_THEME.errorLight,
+                                  color:
+                                    selectedResult.video_analysis?.quality_label === 'Excellent' ? MODERN_BMW_THEME.success :
+                                      selectedResult.video_analysis?.quality_label === 'Good' ? MODERN_BMW_THEME.primary :
+                                        selectedResult.video_analysis?.quality_label === 'Fair' ? MODERN_BMW_THEME.warning :
+                                          MODERN_BMW_THEME.error,
+                                  fontWeight: 600,
+                                  ml: 'auto'
+                                }}
+                              />
+                            </Box>
+
+                            {/* Video Detailed Metrics */}
+                            <Box sx={{ mb: 3 }}>
+                              <Typography variant="subtitle2" sx={{
+                                color: MODERN_BMW_THEME.textSecondary,
+                                mb: 2,
+                                fontWeight: 600
+                              }}>
+                                VIDEO METRICS
+                              </Typography>
+
+                              <Grid container spacing={2}>
+                                {/* Resolution & Basic Info */}
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Resolution:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.video_analysis?.detailed_analysis?.resolution || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Duration:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.video_analysis?.detailed_analysis?.duration || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Frame Rate:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.video_analysis?.detailed_analysis?.frame_rate || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Stability:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.video_analysis?.shake_level || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            </Box>
+
+                            {/* Quality Scores */}
+                            <Box sx={{ mb: 3 }}>
+                              <Typography variant="subtitle2" sx={{
+                                color: MODERN_BMW_THEME.textSecondary,
+                                mb: 2,
+                                fontWeight: 600
+                              }}>
+                                QUALITY SCORES
+                              </Typography>
+
+                              <Grid container spacing={1}>
+                                <Grid item xs={6}>
+                                  <Box sx={{ textAlign: 'center', p: 1 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                      {selectedResult.video_analysis?.detailed_analysis?.sharpness?.replace('%', '') || '0'}%
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                      Sharpness
+                                    </Typography>
+                                  </Box>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Box sx={{ textAlign: 'center', p: 1 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                      {selectedResult.video_analysis?.detailed_analysis?.brightness?.replace('%', '') || '0'}%
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                      Brightness
+                                    </Typography>
+                                  </Box>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Box sx={{ textAlign: 'center', p: 1 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                      {selectedResult.video_analysis?.detailed_analysis?.contrast?.replace('%', '') || '0'}%
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                      Contrast
+                                    </Typography>
+                                  </Box>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Box sx={{ textAlign: 'center', p: 1 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                      {selectedResult.video_analysis?.detailed_analysis?.color_vibrancy?.replace('%', '') || '0'}%
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                      Color
+                                    </Typography>
+                                  </Box>
+                                </Grid>
+                              </Grid>
+                            </Box>
+
+                            {/* Video Issues */}
+                            {selectedResult.video_analysis?.issues?.length > 0 && (
+                              <Box>
+                                <Typography variant="subtitle2" sx={{
+                                  color: MODERN_BMW_THEME.textSecondary,
+                                  mb: 1,
+                                  fontWeight: 600
+                                }}>
+                                  DETECTED ISSUES
+                                </Typography>
+                                <Box sx={{ pl: 1 }}>
+                                  {selectedResult.video_analysis.issues.map((issue, index) => (
+                                    <Typography key={index} variant="body2" sx={{
+                                      color: MODERN_BMW_THEME.warning,
+                                      mb: 0.5,
+                                      fontSize: '0.8rem',
+                                      display: 'flex',
+                                      alignItems: 'flex-start',
+                                      gap: 1
+                                    }}>
+                                      <Box component="span" sx={{ fontSize: '0.6rem', mt: '0.2rem' }}>â€¢</Box>
+                                      {issue}
+                                    </Typography>
+                                  ))}
+                                </Box>
+                              </Box>
+                            )}
+                          </CardContent>
+                        </Card>
+
+                        {/* Audio Quality - Right Side */}
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          flex: 1,
+                          minWidth: { md: 0 }
+                        }}>
+                          <CardContent sx={{ p: 3 }}>
+                            {/* Audio Header */}
+                            <Box sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              mb: 3,
+                              gap: 2
+                            }}>
+                              <Box sx={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: '50%',
+                                background: MODERN_BMW_THEME.accentUltraLight,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                              }}>
+                                <Mic sx={{ fontSize: 24, color: MODERN_BMW_THEME.accent }} />
+                              </Box>
+                              <Box>
+                                <Typography variant="h4" sx={{
+                                  color: MODERN_BMW_THEME.textPrimary,
+                                  fontWeight: 700,
+                                  lineHeight: 1.2
+                                }}>
+                                  {Math.round(selectedResult.audio_analysis?.score || 0)}/10
+                                </Typography>
+                                <Typography variant="body2" sx={{
+                                  color: MODERN_BMW_THEME.textSecondary,
+                                  fontWeight: 500
+                                }}>
+                                  Audio Quality
+                                </Typography>
+                              </Box>
+                              <Chip
+                                label={
+                                  selectedResult.audio_analysis?.clarity_level ||
+                                  selectedResult.audio_analysis?.prediction ||
+                                  'N/A'
+                                }
+                                size="small"
+                                sx={{
+                                  background:
+                                    selectedResult.audio_analysis?.clarity_level === 'Excellent' ? MODERN_BMW_THEME.successLight :
+                                      selectedResult.audio_analysis?.clarity_level === 'Very Good' ? MODERN_BMW_THEME.successLight :
+                                        selectedResult.audio_analysis?.clarity_level === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
+                                          selectedResult.audio_analysis?.clarity_level === 'Fair' ? MODERN_BMW_THEME.warningLight :
+                                            selectedResult.audio_analysis?.clarity_level === 'Poor' ? MODERN_BMW_THEME.errorLight :
+                                              MODERN_BMW_THEME.errorLight,
+                                  color:
+                                    selectedResult.audio_analysis?.clarity_level === 'Excellent' ? MODERN_BMW_THEME.success :
+                                      selectedResult.audio_analysis?.clarity_level === 'Very Good' ? MODERN_BMW_THEME.success :
+                                        selectedResult.audio_analysis?.clarity_level === 'Good' ? MODERN_BMW_THEME.primary :
+                                          selectedResult.audio_analysis?.clarity_level === 'Fair' ? MODERN_BMW_THEME.warning :
+                                            selectedResult.audio_analysis?.clarity_level === 'Poor' ? MODERN_BMW_THEME.error :
+                                              MODERN_BMW_THEME.error,
+                                  fontWeight: 600,
+                                  ml: 'auto'
+                                }}
+                              />
+                            </Box>
+
+                            {/* Audio Detailed Metrics */}
+                            <Box sx={{ mb: 3 }}>
+                              <Typography variant="subtitle2" sx={{
+                                color: MODERN_BMW_THEME.textSecondary,
+                                mb: 2,
+                                fontWeight: 600
+                              }}>
+                                AUDIO METRICS
+                              </Typography>
+
+                              <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Volume Level:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.audio_analysis?.detailed_analysis?.volume_level || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Noise Level:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.audio_analysis?.detailed_analysis?.noise_level || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Speech Clarity:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.audio_analysis?.detailed_analysis?.speech_clarity || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                                    Background Noise:
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                                    {selectedResult.audio_analysis?.detailed_analysis?.background_noise || 'N/A'}
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            </Box>
+
+                            {/* Audio Component Scores */}
+                            {selectedResult.audio_analysis?.component_scores && (
+                              <Box sx={{ mb: 3 }}>
+                                <Typography variant="subtitle2" sx={{
+                                  color: MODERN_BMW_THEME.textSecondary,
+                                  mb: 2,
+                                  fontWeight: 600
+                                }}>
+                                  COMPONENT SCORES
+                                </Typography>
+
+                                <Grid container spacing={1}>
+                                  {Object.entries(selectedResult.audio_analysis.component_scores).map(([key, value]) => (
+                                    <Grid item xs={6} key={key}>
+                                      <Box sx={{ textAlign: 'center', p: 1 }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.accent }}>
+                                          {Math.round(value)}%
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                          {key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')}
+                                        </Typography>
+                                      </Box>
+                                    </Grid>
+                                  ))}
+                                </Grid>
+                              </Box>
+                            )}
+
+                            {/* Audio Issues */}
+                            {selectedResult.audio_analysis?.issues?.length > 0 && (
+                              <Box>
+                                <Typography variant="subtitle2" sx={{
+                                  color: MODERN_BMW_THEME.textSecondary,
+                                  mb: 1,
+                                  fontWeight: 600
+                                }}>
+                                  DETECTED ISSUES
+                                </Typography>
+                                <Box sx={{ pl: 1 }}>
+                                  {selectedResult.audio_analysis.issues.map((issue, index) => (
+                                    <Typography key={index} variant="body2" sx={{
+                                      color: MODERN_BMW_THEME.warning,
+                                      mb: 0.5,
+                                      fontSize: '0.8rem',
+                                      display: 'flex',
+                                      alignItems: 'flex-start',
+                                      gap: 1
+                                    }}>
+                                      <Box component="span" sx={{ fontSize: '0.6rem', mt: '0.2rem' }}>â€¢</Box>
+                                      {issue}
+                                    </Typography>
+                                  ))}
+                                </Box>
+                              </Box>
+                            )}
+                          </CardContent>
+                        </Card>
                       </Box>
-                      {selectedResult.citnow_metadata?.page_url ? (
-                        <Button
-                          variant="contained"
-                          href={selectedResult.citnow_metadata.page_url}
-                          target="_blank"
-                          startIcon={<Videocam />}
-                          sx={{
-                            background: MODERN_BMW_THEME.gradientPrimary,
-                            borderRadius: 2,
-                            px: 3,
-                            fontWeight: 600,
-                            boxShadow: MODERN_BMW_THEME.shadowMd,
-                            '&:hover': {
-                              boxShadow: MODERN_BMW_THEME.shadowLg,
-                              transform: 'translateY(-1px)'
-                            },
-                            transition: 'all 0.2s ease-in-out'
-                          }}
-                        >
-                          Watch Video
-                        </Button>
-                      ) : (
-                        <Chip
-                          label="Not Available"
-                          size="small"
-                          variant="outlined"
-                          sx={{
-                            borderColor: MODERN_BMW_THEME.textTertiary,
-                            color: MODERN_BMW_THEME.textTertiary
-                          }}
-                        />
-                      )}
+
+                      {/* Overall Quality Card */}
+                      <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                          <Card sx={{
+                            background: MODERN_BMW_THEME.surfaceElevated,
+                            border: `1px solid ${MODERN_BMW_THEME.border}`,
+                            borderRadius: 3,
+                            boxShadow: MODERN_BMW_THEME.shadowSm
+                          }}>
+                            <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                              <Box sx={{
+                                width: 60,
+                                height: 60,
+                                borderRadius: '50%',
+                                background: MODERN_BMW_THEME.successUltraLight,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mx: 'auto',
+                                mb: 2
+                              }}>
+                                <Assessment sx={{ fontSize: 28, color: MODERN_BMW_THEME.success }} />
+                              </Box>
+                              <Typography variant="h3" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                fontWeight: 700,
+                                mb: 1
+                              }}>
+                                {selectedResult.overall_quality?.overall_score || 0}/10
+                              </Typography>
+                              <Typography variant="body2" sx={{
+                                color: MODERN_BMW_THEME.textSecondary,
+                                fontWeight: 800,
+                                mb: 2
+                              }}>
+                                OVERALL QUALITY
+                              </Typography>
+                              <Chip
+                                label={selectedResult.overall_quality?.overall_label || 'N/A'}
+                                size="small"
+                                sx={{
+                                  background:
+                                    selectedResult.overall_quality?.overall_label === 'Excellent' ? MODERN_BMW_THEME.successLight :
+                                      selectedResult.overall_quality?.overall_label === 'Very Good' ? MODERN_BMW_THEME.successLight :
+                                        selectedResult.overall_quality?.overall_label === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
+                                          selectedResult.overall_quality?.overall_label === 'Fair' ? MODERN_BMW_THEME.warningLight :
+                                            selectedResult.overall_quality?.overall_label === 'Poor' ? MODERN_BMW_THEME.errorLight :
+                                              MODERN_BMW_THEME.errorLight,
+                                  color:
+                                    selectedResult.overall_quality?.overall_label === 'Excellent' ? MODERN_BMW_THEME.success :
+                                      selectedResult.overall_quality?.overall_label === 'Very Good' ? MODERN_BMW_THEME.success :
+                                        selectedResult.overall_quality?.overall_label === 'Good' ? MODERN_BMW_THEME.primary :
+                                          selectedResult.overall_quality?.overall_label === 'Fair' ? MODERN_BMW_THEME.warning :
+                                            selectedResult.overall_quality?.overall_label === 'Poor' ? MODERN_BMW_THEME.error :
+                                              MODERN_BMW_THEME.error,
+                                  fontWeight: 600
+                                }}
+                              />
+
+                              {/* Breakdown */}
+                              {selectedResult.overall_quality?.breakdown && (
+                                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 4 }}>
+                                  <Box sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                      Audio
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.accent, fontWeight: 600 }}>
+                                      {selectedResult.overall_quality.breakdown.audio_quality}/10
+                                    </Typography>
+                                  </Box>
+                                  <Box sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                      Video
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.primary, fontWeight: 600 }}>
+                                      {selectedResult.overall_quality.breakdown.video_quality}/10
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      </Grid>
                     </Box>
                   </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
 
-        {/* Quality Assessment Section */}
-        <Box sx={{ p: 4 }}>
-          <Box sx={{ p: 4 }}>
-  <Box sx={{ mb: 4 }}>
-    <Typography variant="h5" sx={{
-      color: MODERN_BMW_THEME.textPrimary,
-      fontWeight: 600,
-      mb: 3
-    }}>
-      Quality Assessment
-    </Typography>
+                  {/* Content Analysis Section */}
+                  <Box>
+                    <Typography variant="h5" sx={{
+                      color: MODERN_BMW_THEME.textPrimary,
+                      fontWeight: 600,
+                      mb: 3
+                    }}>
+                      Content Analysis
+                    </Typography>
 
-    {/* Video & Audio Quality Side by Side */}
-    <Box sx={{ 
-      display: 'flex', 
-      gap: 3, 
-      mb: 4,
-      flexDirection: { xs: 'column', md: 'row' }
-    }}>
-      {/* Video Quality - Left Side */}
-      <Card sx={{
-        background: MODERN_BMW_THEME.surfaceElevated,
-        border: `1px solid ${MODERN_BMW_THEME.border}`,
-        borderRadius: 3,
-        boxShadow: MODERN_BMW_THEME.shadowSm,
-        flex: 1,
-        minWidth: { md: 0 }
-      }}>
-        <CardContent sx={{ p: 3 }}>
-          {/* Video Header */}
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            mb: 3,
-            gap: 2 
-          }}>
-            <Box sx={{
-              width: 50,
-              height: 50,
-              borderRadius: '50%',
-              background: MODERN_BMW_THEME.primaryUltraLight,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <Videocam sx={{ fontSize: 24, color: MODERN_BMW_THEME.primary }} />
-            </Box>
-            <Box>
-              <Typography variant="h4" sx={{
-                color: MODERN_BMW_THEME.textPrimary,
-                fontWeight: 700,
-                lineHeight: 1.2
-              }}>
-                {selectedResult.video_analysis?.quality_score || 0}/10
-              </Typography>
-              <Typography variant="body2" sx={{
-                color: MODERN_BMW_THEME.textSecondary,
-                fontWeight: 500
-              }}>
-                Video Quality
-              </Typography>
-            </Box>
-            <Chip
-              label={selectedResult.video_analysis?.quality_label || 'N/A'}
-              size="small"
-              sx={{
-                background: 
-                  selectedResult.video_analysis?.quality_label === 'Excellent' ? MODERN_BMW_THEME.successLight :
-                  selectedResult.video_analysis?.quality_label === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
-                  selectedResult.video_analysis?.quality_label === 'Fair' ? MODERN_BMW_THEME.warningLight :
-                  MODERN_BMW_THEME.errorLight,
-                color: 
-                  selectedResult.video_analysis?.quality_label === 'Excellent' ? MODERN_BMW_THEME.success :
-                  selectedResult.video_analysis?.quality_label === 'Good' ? MODERN_BMW_THEME.primary :
-                  selectedResult.video_analysis?.quality_label === 'Fair' ? MODERN_BMW_THEME.warning :
-                  MODERN_BMW_THEME.error,
-                fontWeight: 600,
-                ml: 'auto'
-              }}
-            />
-          </Box>
+                    <Grid container spacing={3}>
+                      {/* Transcription */}
+                      <Grid item xs={12} md={4}>
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          height: '100%'
+                        }}>
+                          <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                              <Description sx={{
+                                color: MODERN_BMW_THEME.primary,
+                                mr: 2,
+                                fontSize: 20
+                              }} />
+                              <Typography variant="h6" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                fontWeight: 600
+                              }}>
+                                Transcription
+                              </Typography>
+                            </Box>
+                            <Paper sx={{
+                              p: 2,
+                              background: MODERN_BMW_THEME.surface,
+                              border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                              borderRadius: 2,
+                              flex: 1,
+                              overflow: 'auto',
+                              maxHeight: 300
+                            }}>
+                              <Typography variant="body2" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                whiteSpace: 'pre-wrap',
+                                lineHeight: 1.6,
+                                fontSize: '0.875rem'
+                              }}>
+                                {selectedResult.transcription?.text || 'No transcription available'}
+                              </Typography>
+                            </Paper>
+                          </CardContent>
+                        </Card>
+                      </Grid>
 
-          {/* Video Detailed Metrics */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" sx={{ 
-              color: MODERN_BMW_THEME.textSecondary, 
-              mb: 2,
-              fontWeight: 600
-            }}>
-              VIDEO METRICS
-            </Typography>
-            
-            <Grid container spacing={2}>
-              {/* Resolution & Basic Info */}
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Resolution:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.video_analysis?.detailed_analysis?.resolution || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Duration:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.video_analysis?.detailed_analysis?.duration || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Frame Rate:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.video_analysis?.detailed_analysis?.frame_rate || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Stability:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.video_analysis?.shake_level || 'N/A'}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
+                      {/* Summary */}
+                      <Grid item xs={12} md={4}>
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          height: '100%'
+                        }}>
+                          <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                              <Description sx={{
+                                color: MODERN_BMW_THEME.accent,
+                                mr: 2,
+                                fontSize: 20
+                              }} />
+                              <Typography variant="h6" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                fontWeight: 600
+                              }}>
+                                Summary
+                              </Typography>
+                            </Box>
+                            <Paper sx={{
+                              p: 2,
+                              background: MODERN_BMW_THEME.surface,
+                              border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                              borderRadius: 2,
+                              flex: 1,
+                              overflow: 'auto',
+                              maxHeight: 300
+                            }}>
+                              <Typography variant="body2" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                whiteSpace: 'pre-wrap',
+                                lineHeight: 1.6,
+                                fontSize: '0.875rem'
+                              }}>
+                                {selectedResult.summarization?.summary || 'No summary available'}
+                              </Typography>
+                            </Paper>
+                          </CardContent>
+                        </Card>
+                      </Grid>
 
-          {/* Quality Scores */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" sx={{ 
-              color: MODERN_BMW_THEME.textSecondary, 
-              mb: 2,
-              fontWeight: 600
-            }}>
-              QUALITY SCORES
-            </Typography>
-            
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
-                <Box sx={{ textAlign: 'center', p: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
-                    {selectedResult.video_analysis?.detailed_analysis?.sharpness?.replace('%', '') || '0'}%
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                    Sharpness
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{ textAlign: 'center', p: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
-                    {selectedResult.video_analysis?.detailed_analysis?.brightness?.replace('%', '') || '0'}%
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                    Brightness
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{ textAlign: 'center', p: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
-                    {selectedResult.video_analysis?.detailed_analysis?.contrast?.replace('%', '') || '0'}%
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                    Contrast
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{ textAlign: 'center', p: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
-                    {selectedResult.video_analysis?.detailed_analysis?.color_vibrancy?.replace('%', '') || '0'}%
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                    Color
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* Video Issues */}
-          {selectedResult.video_analysis?.issues?.length > 0 && (
-            <Box>
-              <Typography variant="subtitle2" sx={{ 
-                color: MODERN_BMW_THEME.textSecondary, 
-                mb: 1,
-                fontWeight: 600
-              }}>
-                DETECTED ISSUES
-              </Typography>
-              <Box sx={{ pl: 1 }}>
-                {selectedResult.video_analysis.issues.map((issue, index) => (
-                  <Typography key={index} variant="body2" sx={{ 
-                    color: MODERN_BMW_THEME.warning, 
-                    mb: 0.5,
-                    fontSize: '0.8rem',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 1
-                  }}>
-                    <Box component="span" sx={{ fontSize: '0.6rem', mt: '0.2rem' }}>â€¢</Box>
-                    {issue}
-                  </Typography>
-                ))}
-              </Box>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Audio Quality - Right Side */}
-      <Card sx={{
-        background: MODERN_BMW_THEME.surfaceElevated,
-        border: `1px solid ${MODERN_BMW_THEME.border}`,
-        borderRadius: 3,
-        boxShadow: MODERN_BMW_THEME.shadowSm,
-        flex: 1,
-        minWidth: { md: 0 }
-      }}>
-        <CardContent sx={{ p: 3 }}>
-          {/* Audio Header */}
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            mb: 3,
-            gap: 2 
-          }}>
-            <Box sx={{
-              width: 50,
-              height: 50,
-              borderRadius: '50%',
-              background: MODERN_BMW_THEME.accentUltraLight,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <Mic sx={{ fontSize: 24, color: MODERN_BMW_THEME.accent }} />
-            </Box>
-            <Box>
-              <Typography variant="h4" sx={{
-                color: MODERN_BMW_THEME.textPrimary,
-                fontWeight: 700,
-                lineHeight: 1.2
-              }}>
-                {Math.round(selectedResult.audio_analysis?.score || 0)}/10
-              </Typography>
-              <Typography variant="body2" sx={{
-                color: MODERN_BMW_THEME.textSecondary,
-                fontWeight: 500
-              }}>
-                Audio Quality
-              </Typography>
-            </Box>
-            <Chip
-              label={
-                selectedResult.audio_analysis?.clarity_level ||
-                selectedResult.audio_analysis?.prediction ||
-                'N/A'
-              }
-              size="small"
-              sx={{
-                background: 
-                  selectedResult.audio_analysis?.clarity_level === 'Excellent' ? MODERN_BMW_THEME.successLight :
-                  selectedResult.audio_analysis?.clarity_level === 'Very Good' ? MODERN_BMW_THEME.successLight :
-                  selectedResult.audio_analysis?.clarity_level === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
-                  selectedResult.audio_analysis?.clarity_level === 'Fair' ? MODERN_BMW_THEME.warningLight :
-                  selectedResult.audio_analysis?.clarity_level === 'Poor' ? MODERN_BMW_THEME.errorLight :
-                  MODERN_BMW_THEME.errorLight,
-                color: 
-                  selectedResult.audio_analysis?.clarity_level === 'Excellent' ? MODERN_BMW_THEME.success :
-                  selectedResult.audio_analysis?.clarity_level === 'Very Good' ? MODERN_BMW_THEME.success :
-                  selectedResult.audio_analysis?.clarity_level === 'Good' ? MODERN_BMW_THEME.primary :
-                  selectedResult.audio_analysis?.clarity_level === 'Fair' ? MODERN_BMW_THEME.warning :
-                  selectedResult.audio_analysis?.clarity_level === 'Poor' ? MODERN_BMW_THEME.error :
-                  MODERN_BMW_THEME.error,
-                fontWeight: 600,
-                ml: 'auto'
-              }}
-            />
-          </Box>
-
-          {/* Audio Detailed Metrics */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" sx={{ 
-              color: MODERN_BMW_THEME.textSecondary, 
-              mb: 2,
-              fontWeight: 600
-            }}>
-              AUDIO METRICS
-            </Typography>
-            
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Volume Level:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.audio_analysis?.detailed_analysis?.volume_level || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Noise Level:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.audio_analysis?.detailed_analysis?.noise_level || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Speech Clarity:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.audio_analysis?.detailed_analysis?.speech_clarity || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
-                  Background Noise:
-                </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
-                  {selectedResult.audio_analysis?.detailed_analysis?.background_noise || 'N/A'}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* Audio Component Scores */}
-          {selectedResult.audio_analysis?.component_scores && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" sx={{ 
-                color: MODERN_BMW_THEME.textSecondary, 
-                mb: 2,
-                fontWeight: 600
-              }}>
-                COMPONENT SCORES
-              </Typography>
-              
-              <Grid container spacing={1}>
-                {Object.entries(selectedResult.audio_analysis.component_scores).map(([key, value]) => (
-                  <Grid item xs={6} key={key}>
-                    <Box sx={{ textAlign: 'center', p: 1 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.accent }}>
-                        {Math.round(value)}%
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                        {key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-          )}
-
-          {/* Audio Issues */}
-          {selectedResult.audio_analysis?.issues?.length > 0 && (
-            <Box>
-              <Typography variant="subtitle2" sx={{ 
-                color: MODERN_BMW_THEME.textSecondary, 
-                mb: 1,
-                fontWeight: 600
-              }}>
-                DETECTED ISSUES
-              </Typography>
-              <Box sx={{ pl: 1 }}>
-                {selectedResult.audio_analysis.issues.map((issue, index) => (
-                  <Typography key={index} variant="body2" sx={{ 
-                    color: MODERN_BMW_THEME.warning, 
-                    mb: 0.5,
-                    fontSize: '0.8rem',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 1
-                  }}>
-                    <Box component="span" sx={{ fontSize: '0.6rem', mt: '0.2rem' }}>â€¢</Box>
-                    {issue}
-                  </Typography>
-                ))}
-              </Box>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
-    </Box>
-
-    {/* Overall Quality Card */}
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Card sx={{
-          background: MODERN_BMW_THEME.surfaceElevated,
-          border: `1px solid ${MODERN_BMW_THEME.border}`,
-          borderRadius: 3,
-          boxShadow: MODERN_BMW_THEME.shadowSm
-        }}>
-          <CardContent sx={{ p: 3, textAlign: 'center' }}>
-            <Box sx={{
-              width: 60,
-              height: 60,
-              borderRadius: '50%',
-              background: MODERN_BMW_THEME.successUltraLight,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mx: 'auto',
-              mb: 2
-            }}>
-              <Assessment sx={{ fontSize: 28, color: MODERN_BMW_THEME.success }} />
-            </Box>
-            <Typography variant="h3" sx={{
-              color: MODERN_BMW_THEME.textPrimary,
-              fontWeight: 700,
-              mb: 1
-            }}>
-              {selectedResult.overall_quality?.overall_score || 0}/10
-            </Typography>
-            <Typography variant="body2" sx={{
-              color: MODERN_BMW_THEME.textSecondary,
-              fontWeight: 800,
-              mb: 2
-            }}>
-              OVERALL QUALITY
-            </Typography>
-            <Chip
-              label={selectedResult.overall_quality?.overall_label || 'N/A'}
-              size="small"
-              sx={{
-                background: 
-                  selectedResult.overall_quality?.overall_label === 'Excellent' ? MODERN_BMW_THEME.successLight :
-                  selectedResult.overall_quality?.overall_label === 'Very Good' ? MODERN_BMW_THEME.successLight :
-                  selectedResult.overall_quality?.overall_label === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
-                  selectedResult.overall_quality?.overall_label === 'Fair' ? MODERN_BMW_THEME.warningLight :
-                  selectedResult.overall_quality?.overall_label === 'Poor' ? MODERN_BMW_THEME.errorLight :
-                  MODERN_BMW_THEME.errorLight,
-                color: 
-                  selectedResult.overall_quality?.overall_label === 'Excellent' ? MODERN_BMW_THEME.success :
-                  selectedResult.overall_quality?.overall_label === 'Very Good' ? MODERN_BMW_THEME.success :
-                  selectedResult.overall_quality?.overall_label === 'Good' ? MODERN_BMW_THEME.primary :
-                  selectedResult.overall_quality?.overall_label === 'Fair' ? MODERN_BMW_THEME.warning :
-                  selectedResult.overall_quality?.overall_label === 'Poor' ? MODERN_BMW_THEME.error :
-                  MODERN_BMW_THEME.error,
-                fontWeight: 600
-              }}
-            />
-            
-            {/* Breakdown */}
-            {selectedResult.overall_quality?.breakdown && (
-              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 4 }}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                    Audio
-                  </Typography>
-                  <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.accent, fontWeight: 600 }}>
-                    {selectedResult.overall_quality.breakdown.audio_quality}/10
-                  </Typography>
-                </Box>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
-                    Video
-                  </Typography>
-                  <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.primary, fontWeight: 600 }}>
-                    {selectedResult.overall_quality.breakdown.video_quality}/10
-                  </Typography>
+                      {/* Translation */}
+                      <Grid item xs={12} md={4}>
+                        <Card sx={{
+                          background: MODERN_BMW_THEME.surfaceElevated,
+                          border: `1px solid ${MODERN_BMW_THEME.border}`,
+                          borderRadius: 3,
+                          boxShadow: MODERN_BMW_THEME.shadowSm,
+                          height: '100%'
+                        }}>
+                          <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                              <Description sx={{
+                                color: MODERN_BMW_THEME.success,
+                                mr: 2,
+                                fontSize: 20
+                              }} />
+                              <Typography variant="h6" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                fontWeight: 600
+                              }}>
+                                Translation
+                              </Typography>
+                            </Box>
+                            <Paper sx={{
+                              p: 2,
+                              background: MODERN_BMW_THEME.surface,
+                              border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                              borderRadius: 2,
+                              flex: 1,
+                              overflow: 'auto',
+                              maxHeight: 300
+                            }}>
+                              <Typography variant="body2" sx={{
+                                color: MODERN_BMW_THEME.textPrimary,
+                                whiteSpace: 'pre-wrap',
+                                lineHeight: 1.6,
+                                fontSize: '0.875rem'
+                              }}>
+                                {selectedResult.translation?.translated_text || 'No translation available'}
+                              </Typography>
+                            </Paper>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    </Grid>
+                  </Box>
                 </Box>
               </Box>
             )}
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
-  </Box>
-</Box>
+          </DialogContent>
 
-          {/* Content Analysis Section */}
-          <Box>
-            <Typography variant="h5" sx={{
-              color: MODERN_BMW_THEME.textPrimary,
-              fontWeight: 600,
-              mb: 3
-            }}>
-              Content Analysis
-            </Typography>
-
-            <Grid container spacing={3}>
-              {/* Transcription */}
-              <Grid item xs={12} md={4}>
-                <Card sx={{
-                  background: MODERN_BMW_THEME.surfaceElevated,
-                  border: `1px solid ${MODERN_BMW_THEME.border}`,
-                  borderRadius: 3,
-                  boxShadow: MODERN_BMW_THEME.shadowSm,
-                  height: '100%'
-                }}>
-                  <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Description sx={{ 
-                        color: MODERN_BMW_THEME.primary, 
-                        mr: 2,
-                        fontSize: 20 
-                      }} />
-                      <Typography variant="h6" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        fontWeight: 600
-                      }}>
-                        Transcription
-                      </Typography>
-                    </Box>
-                    <Paper sx={{
-                      p: 2,
-                      background: MODERN_BMW_THEME.surface,
-                      border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
-                      borderRadius: 2,
-                      flex: 1,
-                      overflow: 'auto',
-                      maxHeight: 300
-                    }}>
-                      <Typography variant="body2" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.6,
-                        fontSize: '0.875rem'
-                      }}>
-                        {selectedResult.transcription?.text || 'No transcription available'}
-                      </Typography>
-                    </Paper>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              {/* Summary */}
-              <Grid item xs={12} md={4}>
-                <Card sx={{
-                  background: MODERN_BMW_THEME.surfaceElevated,
-                  border: `1px solid ${MODERN_BMW_THEME.border}`,
-                  borderRadius: 3,
-                  boxShadow: MODERN_BMW_THEME.shadowSm,
-                  height: '100%'
-                }}>
-                  <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Description sx={{ 
-                        color: MODERN_BMW_THEME.accent, 
-                        mr: 2,
-                        fontSize: 20 
-                      }} />
-                      <Typography variant="h6" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        fontWeight: 600
-                      }}>
-                        Summary
-                      </Typography>
-                    </Box>
-                    <Paper sx={{
-                      p: 2,
-                      background: MODERN_BMW_THEME.surface,
-                      border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
-                      borderRadius: 2,
-                      flex: 1,
-                      overflow: 'auto',
-                      maxHeight: 300
-                    }}>
-                      <Typography variant="body2" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.6,
-                        fontSize: '0.875rem'
-                      }}>
-                        {selectedResult.summarization?.summary || 'No summary available'}
-                      </Typography>
-                    </Paper>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              {/* Translation */}
-              <Grid item xs={12} md={4}>
-                <Card sx={{
-                  background: MODERN_BMW_THEME.surfaceElevated,
-                  border: `1px solid ${MODERN_BMW_THEME.border}`,
-                  borderRadius: 3,
-                  boxShadow: MODERN_BMW_THEME.shadowSm,
-                  height: '100%'
-                }}>
-                  <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Description sx={{ 
-                        color: MODERN_BMW_THEME.success, 
-                        mr: 2,
-                        fontSize: 20 
-                      }} />
-                      <Typography variant="h6" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        fontWeight: 600
-                      }}>
-                        Translation
-                      </Typography>
-                    </Box>
-                    <Paper sx={{
-                      p: 2,
-                      background: MODERN_BMW_THEME.surface,
-                      border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
-                      borderRadius: 2,
-                      flex: 1,
-                      overflow: 'auto',
-                      maxHeight: 300
-                    }}>
-                      <Typography variant="body2" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.6,
-                        fontSize: '0.875rem'
-                      }}>
-                        {selectedResult.translation?.translated_text || 'No translation available'}
-                      </Typography>
-                    </Paper>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Box>
-    )}
-  </DialogContent>
-
-  <DialogActions sx={{ 
-    px: 3, 
-    py: 2, 
-    background: MODERN_BMW_THEME.surface,
-    borderTop: `1px solid ${MODERN_BMW_THEME.border}`
-  }}>
-    <Button
-      onClick={() => setResultDialogOpen(false)}
-      variant="outlined"
-      sx={{
-        borderColor: MODERN_BMW_THEME.border,
-        color: MODERN_BMW_THEME.textSecondary,
-        borderRadius: 2,
-        px: 4,
-        fontWeight: 500,
-        '&:hover': {
-          borderColor: MODERN_BMW_THEME.textSecondary,
-          color: MODERN_BMW_THEME.textPrimary,
-          background: `${MODERN_BMW_THEME.textSecondary}08`
-        }
-      }}
-    >
-      Close Report
-    </Button>
-  </DialogActions>
-</Dialog>
+          <DialogActions sx={{
+            px: 3,
+            py: 2,
+            background: MODERN_BMW_THEME.surface,
+            borderTop: `1px solid ${MODERN_BMW_THEME.border}`
+          }}>
+            <Button
+              onClick={() => setResultDialogOpen(false)}
+              variant="outlined"
+              sx={{
+                borderColor: MODERN_BMW_THEME.border,
+                color: MODERN_BMW_THEME.textSecondary,
+                borderRadius: 2,
+                px: 4,
+                fontWeight: 500,
+                '&:hover': {
+                  borderColor: MODERN_BMW_THEME.textSecondary,
+                  color: MODERN_BMW_THEME.textPrimary,
+                  background: `${MODERN_BMW_THEME.textSecondary}08`
+                }
+              }}
+            >
+              Close Report
+            </Button>
+          </DialogActions>
+        </Dialog>
 
 
         <style jsx>{`
@@ -3677,7 +3683,7 @@ export default function DealerManagement() {
         `}</style>
       </Container>
     </Box>
-    
+
   );
-  
+
 }
