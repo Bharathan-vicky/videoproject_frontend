@@ -140,8 +140,8 @@ const UserCard = ({ user, onEdit, onDelete }) => (
             <Chip
               label={
                 user.role === 'dealer_admin' ? 'Dealer Admin' :
-                  user.role === 'branch_admin' ? `Branch Admin${user.branch_name ? ` - ${user.branch_name}` : ''}` :
-                    `User${user.branch_name ? ` (${user.branch_name})` : ''}`
+                  user.role === 'branch_admin' ? 'Branch Admin' :
+                    'User'
               }
               size="small"
               sx={{
