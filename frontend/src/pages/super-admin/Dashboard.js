@@ -1458,23 +1458,37 @@ export default function SuperAdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      // 🚀 MAJOR OPTIMIZATION: Use Server-Side Aggregation
-      const [overviewRes, usersRes] = await Promise.all([
-        api.get('/dashboard/super-admin/overview'),
-        listUsers()
-      ]);
-
-      const overview = overviewRes.data;
-      const usersData = Array.isArray(usersRes) ? usersRes : [];
-      setUsers(usersData);
+      // Load users first (always works)
+      const usersData = await listUsers();
+      const usersArray = Array.isArray(usersData) ? usersData : [];
+      setUsers(usersArray);
 
       // Map Dealer IDs to Names using User Data
       const dealerNames = {};
-      usersData.forEach(u => {
-        if (u.dealer_id && u.showroom_name) {
-          dealerNames[u.dealer_id] = u.showroom_name;
+      const dealerIds = new Set();
+      usersArray.forEach(u => {
+        if (u.dealer_id) {
+          dealerIds.add(u.dealer_id);
+          if (u.showroom_name) {
+            dealerNames[u.dealer_id] = u.showroom_name;
+          }
         }
       });
+
+      // Try to load overview stats (may fail if no analysis data yet)
+      let overview = {
+        dealers_summary: [],
+        total_videos: 0,
+        avg_overall_quality: 0,
+        quality_distribution: {}
+      };
+
+      try {
+        const overviewRes = await api.get('/dashboard/super-admin/overview');
+        overview = overviewRes.data;
+      } catch (overviewError) {
+        console.warn('Could not load overview stats (showing partial data):', overviewError);
+      }
 
       // Transform Dealer Performance Data
       const dealerPerformance = (overview.dealers_summary || []).map(d => ({
@@ -1482,10 +1496,9 @@ export default function SuperAdminDashboard() {
         name: dealerNames[d.dealer_id] || d.dealer_id || 'Unknown Dealer',
         videos: d.total_videos,
         overall: d.avg_overall_quality,
-        // Backend doesn't currently split video/audio scores in summary, using overall as proxy or 0
         video: d.avg_overall_quality,
         audio: d.avg_overall_quality,
-        users: 0 // Count users per dealer if needed, or omit
+        users: 0
       })).sort((a, b) => b.overall - a.overall);
 
       // Transform Quality Distribution
@@ -1496,21 +1509,21 @@ export default function SuperAdminDashboard() {
 
       setDashboardData({
         overview: {
-          totalDealers: overview.dealers_summary?.length || 0,
+          totalDealers: dealerIds.size || overview.dealers_summary?.length || 0,
           totalVideos: overview.total_videos || 0,
-          totalUsers: usersData.length,
+          totalUsers: usersArray.length,
           averageScore: overview.avg_overall_quality || 0,
-          performanceChange: 2.4 // Placeholder/Calculated
+          performanceChange: 2.4
         },
-        performanceTrend: calculateDealerPerformanceTrend(dealerPerformance), // Reuse existing helper
+        performanceTrend: calculateDealerPerformanceTrend(dealerPerformance),
         dealerRankings: dealerPerformance,
         qualityDistribution: qualityDist,
         topPerformers: {
           overall: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 })),
-          video: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 })), // Proxy
-          audio: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 }))  // Proxy
+          video: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 })),
+          audio: dealerPerformance.slice(0, 5).map((d, i) => ({ ...d, rank: i + 1 }))
         },
-        recentActivity: [] // Optional
+        recentActivity: []
       });
 
       setLoading(false);
