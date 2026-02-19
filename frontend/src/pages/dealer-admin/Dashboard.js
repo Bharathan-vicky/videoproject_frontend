@@ -62,6 +62,7 @@ export default function DealerAdminDashboard() {
     recentVideos: [],
     performanceTrend: []
   });
+  const [allResults, setAllResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('week');
   const [refreshCounter, setRefreshCounter] = useState(0);
@@ -159,11 +160,13 @@ export default function DealerAdminDashboard() {
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                 {changeType === 'positive' ? (
                   <ArrowUpward sx={{ fontSize: 16, color: MODERN_BMW_THEME.success, mr: 0.5 }} />
-                ) : (
+                ) : changeType === 'negative' ? (
                   <ArrowDownward sx={{ fontSize: 16, color: MODERN_BMW_THEME.error, mr: 0.5 }} />
-                )}
+                ) : null}
                 <Typography variant="caption" sx={{
-                  color: changeType === 'positive' ? MODERN_BMW_THEME.success : MODERN_BMW_THEME.error,
+                  color: changeType === 'positive' ? MODERN_BMW_THEME.success
+                    : changeType === 'negative' ? MODERN_BMW_THEME.error
+                      : MODERN_BMW_THEME.textTertiary,
                   fontWeight: 600
                 }}>
                   {change}
@@ -569,12 +572,15 @@ export default function DealerAdminDashboard() {
 
       console.log(`✅ Processed ${resultsArray.length} results`);
 
+      // Store raw results for trend calculations
+      setAllResults(resultsArray);
+
       // Process data on frontend
       const processedData = processDashboardData(resultsArray, timeRange);
 
       // Update dealer info
       setDealerInfo({
-        name: 'Your Dealership',
+        name: authUser?.showroom_name || 'Your Dealership',
         location: 'Your Location',
         id: 'current'
       });
@@ -818,15 +824,112 @@ export default function DealerAdminDashboard() {
     setError(null);
   };
 
-  // Calculate trends for stat cards
+  // Calculate REAL trends by comparing current period vs previous period
   const calculateTrends = () => {
-    const hasData = dashboardData.overview.totalVideos > 0;
+    if (!allResults || allResults.length === 0) {
+      return {
+        totalVideosChange: 'No data yet',
+        totalVideosChangeType: 'neutral',
+        averageScoreChange: 'No data yet',
+        averageScoreChangeType: 'neutral'
+      };
+    }
+
+    const now = new Date();
+    let periodMs;
+    let periodLabel;
+
+    switch (timeRange) {
+      case 'today':
+        periodMs = 24 * 60 * 60 * 1000;
+        periodLabel = 'vs yesterday';
+        break;
+      case 'week':
+        periodMs = 7 * 24 * 60 * 60 * 1000;
+        periodLabel = 'vs last week';
+        break;
+      case 'month':
+        periodMs = 30 * 24 * 60 * 60 * 1000;
+        periodLabel = 'vs last month';
+        break;
+      case 'quarter':
+        periodMs = 90 * 24 * 60 * 60 * 1000;
+        periodLabel = 'vs last quarter';
+        break;
+      default:
+        periodMs = 7 * 24 * 60 * 60 * 1000;
+        periodLabel = 'vs last week';
+    }
+
+    const currentStart = new Date(now.getTime() - periodMs);
+    const previousStart = new Date(currentStart.getTime() - periodMs);
+
+    const currentResults = allResults.filter(r => {
+      const d = new Date(r.created_at);
+      return d >= currentStart && d <= now;
+    });
+
+    const previousResults = allResults.filter(r => {
+      const d = new Date(r.created_at);
+      return d >= previousStart && d < currentStart;
+    });
+
+    // Video count trend
+    const currentCount = currentResults.length;
+    const previousCount = previousResults.length;
+    const countDiff = currentCount - previousCount;
+
+    let totalVideosChange;
+    let totalVideosChangeType;
+    if (previousCount === 0 && currentCount > 0) {
+      totalVideosChange = `${currentCount} new ${periodLabel}`;
+      totalVideosChangeType = 'positive';
+    } else if (countDiff > 0) {
+      totalVideosChange = `+${countDiff} ${periodLabel}`;
+      totalVideosChangeType = 'positive';
+    } else if (countDiff < 0) {
+      totalVideosChange = `${countDiff} ${periodLabel}`;
+      totalVideosChangeType = 'negative';
+    } else {
+      totalVideosChange = `No change ${periodLabel}`;
+      totalVideosChangeType = 'neutral';
+    }
+
+    // Average score trend
+    const currentScores = currentResults
+      .filter(r => r.overall_quality_score != null)
+      .map(r => r.overall_quality_score);
+    const previousScores = previousResults
+      .filter(r => r.overall_quality_score != null)
+      .map(r => r.overall_quality_score);
+
+    const currentAvg = currentScores.length > 0
+      ? currentScores.reduce((a, b) => a + b, 0) / currentScores.length : 0;
+    const previousAvg = previousScores.length > 0
+      ? previousScores.reduce((a, b) => a + b, 0) / previousScores.length : 0;
+    const scoreDiff = Math.round((currentAvg - previousAvg) * 10) / 10;
+
+    let averageScoreChange;
+    let averageScoreChangeType;
+    if (previousScores.length === 0 && currentScores.length > 0) {
+      averageScoreChange = `${currentAvg.toFixed(1)} avg ${periodLabel}`;
+      averageScoreChangeType = 'positive';
+    } else if (scoreDiff > 0) {
+      averageScoreChange = `+${scoreDiff.toFixed(1)} ${periodLabel}`;
+      averageScoreChangeType = 'positive';
+    } else if (scoreDiff < 0) {
+      averageScoreChange = `${scoreDiff.toFixed(1)} ${periodLabel}`;
+      averageScoreChangeType = 'negative';
+    } else {
+      averageScoreChange = `No change ${periodLabel}`;
+      averageScoreChangeType = 'neutral';
+    }
 
     return {
-      totalVideosChange: hasData ? "+12 this week" : "No data yet",
-      averageScoreChange: hasData ? "+0.3 from last week" : "No data yet",
-      advisorsChange: hasData ? `${dashboardData.overview.serviceAdvisors} active` : "No data yet",
-      completionChange: hasData ? "+5% improvement" : "No data yet"
+      totalVideosChange,
+      totalVideosChangeType,
+      averageScoreChange,
+      averageScoreChangeType
     };
   };
 
@@ -967,7 +1070,7 @@ export default function DealerAdminDashboard() {
                 title="Total Videos"
                 value={dashboardData.overview.totalVideos}
                 change={trends.totalVideosChange}
-                changeType="positive"
+                changeType={trends.totalVideosChangeType || 'positive'}
                 icon={<VideoLibrary />}
                 color={MODERN_BMW_THEME.primary}
                 onClick={() => handleViewDetails('videos')}
@@ -978,7 +1081,7 @@ export default function DealerAdminDashboard() {
                 title="Average Quality Score"
                 value={dashboardData.overview.averageScore.toFixed(1)}
                 change={trends.averageScoreChange}
-                changeType="positive"
+                changeType={trends.averageScoreChangeType || 'positive'}
                 icon={<Star />}
                 color={MODERN_BMW_THEME.warning}
                 subtitle="out of 10"
