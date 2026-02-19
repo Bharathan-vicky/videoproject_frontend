@@ -76,6 +76,7 @@ export default function LoginPage() {
       const roleLabels = {
         super_admin: 'Super Admin',
         dealer_admin: 'Dealer Admin',
+        branch_admin: 'Branch Admin',
         dealer_user: 'Dealer User'
       };
 
@@ -90,6 +91,7 @@ export default function LoginPage() {
         const roleRedirects = {
           super_admin: '/super-admin/dashboard',
           dealer_admin: '/dealer/dashboard',
+          branch_admin: '/dealer/dashboard',
           dealer_user: '/dealer/new'
         };
         navigate(roleRedirects[role] || '/');

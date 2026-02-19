@@ -141,7 +141,7 @@ const UserCard = ({ user, onEdit, onDelete }) => (
               label={
                 user.role === 'dealer_admin' ? 'Dealer Admin' :
                   user.role === 'branch_admin' ? `Branch Admin${user.branch_name ? ` - ${user.branch_name}` : ''}` :
-                    `Dealer User${user.branch_name ? ` (${user.branch_name})` : ''}`
+                    `User${user.branch_name ? ` (${user.branch_name})` : ''}`
               }
               size="small"
               sx={{
@@ -902,7 +902,7 @@ export default function DealerUsers() {
                   }
                 }}
               >
-                <MenuItem value="dealer_user">Dealer User</MenuItem>
+                <MenuItem value="dealer_user">User</MenuItem>
                 <MenuItem value="branch_admin">Branch Admin</MenuItem>
               </TextField>
             ) : (
@@ -910,7 +910,7 @@ export default function DealerUsers() {
                 fullWidth
                 margin="normal"
                 label="Role"
-                value="Dealer User"
+                value="User"
                 disabled
                 sx={{
                   '& .MuiOutlinedInput-root': {

@@ -47,10 +47,14 @@ import {
   SmartDisplay,
   SpaceDashboard,
   AddToQueue,
-  UploadFile
+  UploadFile,
+  Group,
+  Settings,
+  ManageAccounts
 } from '@mui/icons-material';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTasks } from '../../contexts/TaskContext';
 
 // Professional BMW Theme Colors
 const BMW = {
@@ -71,10 +75,10 @@ const BMW = {
 };
 
 // Menu configuration
-const MENU_BY_ROLE = {
+const ROLE_ACCESS = {
   super_admin: [
     { text: 'Dashboard', path: '/super-admin/dashboard', icon: SpaceDashboard },
-    { text: 'User Management', path: '/super-admin/users', icon: People },
+    { text: 'User Management', path: '/super-admin/users', icon: Group },
     { text: 'Dealer Network', path: '/super-admin/dealers', icon: Business }
   ],
   dealer_admin: [
@@ -82,11 +86,19 @@ const MENU_BY_ROLE = {
     { text: 'New Analysis', path: '/dealer/new', icon: AddToQueue },
     { text: 'Bulk Upload', path: '/dealer/bulk', icon: UploadFile },
     { text: 'Results', path: '/dealer/results', icon: Assessment },
-    { text: 'User Management', path: '/dealer/users', icon: People }
+    { text: 'Team Management', path: '/dealer/users', icon: ManageAccounts }
+  ],
+  branch_admin: [
+    { text: 'Dashboard', path: '/dealer/dashboard', icon: SpaceDashboard },
+    { text: 'New Analysis', path: '/dealer/new', icon: AddToQueue },
+    { text: 'Bulk Upload', path: '/dealer/bulk', icon: UploadFile },
+    { text: 'Results', path: '/dealer/results', icon: Assessment },
+    { text: 'Team Management', path: '/dealer/users', icon: ManageAccounts }
   ],
   dealer_user: [
     { text: 'Dashboard', path: '/dealer/dashboard', icon: SpaceDashboard },
     { text: 'New Analysis', path: '/dealer/new', icon: AddToQueue },
+    { text: 'Bulk Upload', path: '/dealer/bulk', icon: UploadFile },
     { text: 'Results', path: '/dealer/results', icon: Assessment }
   ],
 };
@@ -94,7 +106,8 @@ const MENU_BY_ROLE = {
 const ROLE_LABEL = {
   super_admin: 'Super Admin',
   dealer_admin: 'Dealer Admin',
-  dealer_user: 'Dealer User',
+  branch_admin: 'Branch Admin',
+  dealer_user: 'User', // "User" level
 };
 
 const ROLE_COLOR = {
@@ -105,6 +118,7 @@ const ROLE_COLOR = {
 
 export default function Navbar() {
   const { user, role, logout, updateProfile } = useContext(AuthContext);
+  const { tasks } = useTasks(); // Access global tasks
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -288,7 +302,7 @@ export default function Navbar() {
 
       {/* Navigation Menu */}
       <List sx={{ p: 2 }}>
-        {(MENU_BY_ROLE[role] || []).map(({ text, path, icon: Icon }) => (
+        {(ROLE_ACCESS[role] || []).map(({ text, path, icon: Icon }) => (
           <ListItemButton
             key={path}
             component={RouterLink}
@@ -398,9 +412,9 @@ export default function Navbar() {
                   }}
                 >
                   {/* ✅ DYNAMIC: Show CITNOW for super_admin, showroom name for dealer_admin */}
-                  {role === 'super_admin' ? 'FOCUS' : (user?.showroom_name || 'Dealer Portal')}
+                  {role === 'super_admin' ? 'FOCUS' : (user?.username || 'Dealer Portal')}
                 </Typography>
-                {role === 'dealer_admin' && user?.showroom_name && (
+                {(role === 'dealer_admin' || role === 'branch_admin') && user?.showroom_name && (
                   <Typography
                     variant="caption"
                     sx={{
@@ -409,7 +423,7 @@ export default function Navbar() {
                       fontWeight: 500
                     }}
                   >
-                    Powered by Focus
+                    {user?.showroom_name || 'Powered by Focus'}
                   </Typography>
                 )}
               </Box>
@@ -427,7 +441,7 @@ export default function Navbar() {
               border: `1px solid ${BMW.border}`,
               backdropFilter: 'blur(10px)'
             }}>
-              {(MENU_BY_ROLE[role] || []).map(({ text, path, icon: Icon }) => (
+              {(ROLE_ACCESS[role] || []).map(({ text, path, icon: Icon }) => (
                 <NavButton
                   key={path}
                   to={path}
@@ -442,6 +456,30 @@ export default function Navbar() {
 
           {/* Right: Role + User */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+
+            {/* Global Task Indicator */}
+            {tasks && tasks.filter(t => ['pending', 'processing'].includes(t.status)).length > 0 && (
+              <Chip
+                icon={<CircularProgress size={16} color="inherit" />}
+                label={`Processing (${tasks.filter(t => ['pending', 'processing'].includes(t.status)).length})`}
+                size="small"
+                sx={{
+                  background: BMW.primaryUltraLight,
+                  color: BMW.primary,
+                  borderColor: BMW.primary,
+                  fontWeight: 600,
+                  border: `1px solid ${BMW.primary}40`,
+                  animation: 'pulse 2s infinite',
+                  '@keyframes pulse': {
+                    '0%': { opacity: 1 },
+                    '50%': { opacity: 0.7 },
+                    '100%': { opacity: 1 },
+                  }
+                }}
+                onClick={() => navigate((role === 'dealer_admin' || role === 'branch_admin') ? '/dealer/new' : '/dealer/dashboard')} // Navigate to view them
+              />
+            )}
+
             {/* Role Chip */}
             <Chip
               label={ROLE_LABEL[role] || 'User'}

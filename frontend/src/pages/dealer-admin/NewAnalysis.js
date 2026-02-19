@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTasks } from '../../contexts/TaskContext';
 import {
   Card, CardContent, Grid, TextField, MenuItem, Button, Typography, Alert,
   Box, LinearProgress, Chip, Paper, IconButton, Tooltip, Container
@@ -91,66 +92,29 @@ const STATUS_CONFIG = {
 };
 
 export default function NewAnalysis() {
+  const { tasks, addTask } = useTasks();
   const [url, setUrl] = useState('');
   const [lang, setLang] = useState('auto');
   const [target, setTarget] = useState('en');
-  const [loading, setLoading] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false); // Only for submission request
   const [error, setError] = useState('');
-  const [taskId, setTaskId] = useState('');
-  const [currentTask, setCurrentTask] = useState(null);
-  const [pollingInterval, setPollingInterval] = useState(null);
+  const [currentTaskId, setCurrentTaskId] = useState(null);
 
-  // Poll for task status
-  const pollTaskStatus = async (taskId) => {
-    try {
-      const response = await api.get(`/analyze-status/${taskId}`);
-      setCurrentTask(response.data);
+  // Derived state: find the task in global context
+  const currentTask = tasks.find(t => t.task_id === currentTaskId) || null;
 
-      // Stop polling if task is completed or failed
-      if (response.data.status === 'completed' || response.data.status === 'failed') {
-        if (pollingInterval) {
-          clearInterval(pollingInterval);
-          setPollingInterval(null);
-        }
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error('Error polling task status:', err);
-      // If task not found, stop polling
-      if (err.response?.status === 404) {
-        if (pollingInterval) {
-          clearInterval(pollingInterval);
-          setPollingInterval(null);
-        }
-        setError('Task not found or expired');
-        setLoading(false);
-      }
-    }
-  };
-
-  // Start polling when taskId changes
+  // Cleanup: if task completes/fails, we stop local "loading" if we were waiting (though we rely on context now)
   useEffect(() => {
-    if (taskId && !pollingInterval) {
-      const interval = setInterval(() => pollTaskStatus(taskId), 3000);
-      setPollingInterval(interval);
-
-      // Initial poll
-      pollTaskStatus(taskId);
+    if (currentTask && (currentTask.status === 'completed' || currentTask.status === 'failed')) {
+      setLocalLoading(false);
     }
-
-    return () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-      }
-    };
-  }, [taskId]);
+  }, [currentTask]);
 
   const submit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLocalLoading(true);
     setError('');
-    setTaskId('');
-    setCurrentTask(null);
+    setCurrentTaskId(null);
 
     try {
       const res = await api.post('/analyze', {
@@ -164,16 +128,20 @@ export default function NewAnalysis() {
         throw new Error('No task ID returned from server');
       }
 
-      setTaskId(newTaskId);
-      setCurrentTask({
+      // Add to global context to start tracking
+      addTask({
         task_id: newTaskId,
         status: 'pending',
-        message: 'Queued for processing...'
+        message: 'Queued for processing...',
+        type: 'analysis',
+        created_at: new Date().toISOString()
       });
+
+      setCurrentTaskId(newTaskId);
 
     } catch (err) {
       setError(err.response?.data?.detail || err.message || 'Analysis failed to start');
-      setLoading(false);
+      setLocalLoading(false);
     }
   };
 
@@ -181,20 +149,9 @@ export default function NewAnalysis() {
     setUrl('');
     setLang('auto');
     setTarget('en');
-    setTaskId('');
-    setCurrentTask(null);
+    setCurrentTaskId(null);
     setError('');
-    setLoading(false);
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      setPollingInterval(null);
-    }
-  };
-
-  const manuallyCheckStatus = () => {
-    if (taskId) {
-      pollTaskStatus(taskId);
-    }
+    setLocalLoading(false);
   };
 
   return (
@@ -368,24 +325,6 @@ export default function NewAnalysis() {
                       </Typography>
                     </Box>
                   )}
-
-                  {currentTask.status === 'processing' && (
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        startIcon={<Refresh />}
-                        onClick={manuallyCheckStatus}
-                        sx={{
-                          borderColor: MODERN_BMW_THEME.primary,
-                          color: MODERN_BMW_THEME.primary,
-                          fontWeight: 500
-                        }}
-                      >
-                        Refresh Status
-                      </Button>
-                    </Box>
-                  )}
                 </Paper>
               )}
 
@@ -403,7 +342,7 @@ export default function NewAnalysis() {
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       required
-                      disabled={loading || currentTask}
+                      disabled={localLoading || (currentTask && ['pending', 'processing'].includes(currentTask.status))}
                       helperText="Enter the full URL of your CitNow video for analysis"
                       sx={{
                         '& .MuiOutlinedInput-root': {
@@ -426,7 +365,7 @@ export default function NewAnalysis() {
                       }
                       value={lang}
                       onChange={(e) => setLang(e.target.value)}
-                      disabled={loading || currentTask}
+                      disabled={localLoading || (currentTask && ['pending', 'processing'].includes(currentTask.status))}
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
@@ -457,7 +396,7 @@ export default function NewAnalysis() {
                       }
                       value={target}
                       onChange={(e) => setTarget(e.target.value)}
-                      disabled={loading || currentTask}
+                      disabled={localLoading || (currentTask && ['pending', 'processing'].includes(currentTask.status))}
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
@@ -481,7 +420,7 @@ export default function NewAnalysis() {
                       <Button
                         type="submit"
                         variant="contained"
-                        disabled={loading || currentTask}
+                        disabled={localLoading || (currentTask && ['pending', 'processing'].includes(currentTask.status))}
                         startIcon={<PlayArrow />}
                         sx={{
                           background: MODERN_BMW_THEME.gradientPrimary,
@@ -504,7 +443,7 @@ export default function NewAnalysis() {
                           minWidth: 140
                         }}
                       >
-                        {loading ? 'Starting...' : 'Start Analysis'}
+                        {localLoading ? 'Starting...' : 'Start Analysis'}
                       </Button>
 
                       {(currentTask && (currentTask.status === 'completed' || currentTask.status === 'failed')) && (

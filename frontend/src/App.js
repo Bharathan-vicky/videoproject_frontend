@@ -3,6 +3,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import theme from './styles/theme';
 import AuthProvider from './contexts/AuthContext';
+import { TaskProvider } from './contexts/TaskContext';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/auth/LoginPage';
@@ -21,29 +22,31 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
+        <TaskProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
 
-          <Route element={<ProtectedRoute roles={["super_admin"]} />}>
-            <Route path="/super-admin/dashboard" element={<Layout><SuperAdminDashboard /></Layout>} />
-            <Route path="/super-admin/users" element={<Layout><UserManagement /></Layout>} />
-            <Route path="/super-admin/dealers" element={<Layout><DealerManagement /></Layout>} />
-          </Route>
+            <Route element={<ProtectedRoute roles={["super_admin"]} />}>
+              <Route path="/super-admin/dashboard" element={<Layout><SuperAdminDashboard /></Layout>} />
+              <Route path="/super-admin/users" element={<Layout><UserManagement /></Layout>} />
+              <Route path="/super-admin/dealers" element={<Layout><DealerManagement /></Layout>} />
+            </Route>
 
-          <Route element={<ProtectedRoute roles={["dealer_admin", "dealer_user"]} />}>
-            <Route path="/dealer/dashboard" element={<Layout><DealerDashboard /></Layout>} />
-            <Route path="/dealer/new" element={<Layout><NewAnalysis /></Layout>} />
-            <Route path="/dealer/bulk" element={<Layout><BulkUpload /></Layout>} />
-            <Route path="/dealer/results" element={<Layout><Results /></Layout>} />
-            <Route path="/dealer/users" element={<Layout><DealerUsers /></Layout>} />
+            <Route element={<ProtectedRoute roles={["dealer_admin", "dealer_user", "branch_admin"]} />}>
+              <Route path="/dealer/dashboard" element={<Layout><DealerDashboard /></Layout>} />
+              <Route path="/dealer/new" element={<Layout><NewAnalysis /></Layout>} />
+              <Route path="/dealer/bulk" element={<Layout><BulkUpload /></Layout>} />
+              <Route path="/dealer/results" element={<Layout><Results /></Layout>} />
+              <Route path="/dealer/users" element={<Layout><DealerUsers /></Layout>} />
 
-          </Route>
+            </Route>
 
 
 
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </TaskProvider>
       </AuthProvider>
     </ThemeProvider>
   );

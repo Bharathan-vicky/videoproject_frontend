@@ -1835,8 +1835,8 @@ async def list_all_batches(limit: int = 50, status_filter: Optional[str] = None,
             raise HTTPException(status_code=400, detail=f"Invalid status_filter. Must be one of: {[s.value for s in BatchStatus]}.")
         query["status"] = status_filter
     
-    # Authorization: Filter batches by dealer_id for Dealer Admins. Super Admins see all.
-    if current_user.role == "dealer_admin" and current_user.dealer_id:
+    # Authorization: Filter batches by dealer_id for Dealer Admins & Users. Super Admins see all.
+    if current_user.role in ["dealer_admin", "dealer_user"] and current_user.dealer_id:
         query["dealer_id"] = current_user.dealer_id # Simple string comparison
     
     batches_cursor = batch_collection.find(query).sort("created_at", -1)
@@ -2181,10 +2181,12 @@ async def get_super_admin_dashboard_overview(current_user: UserInDB = Depends(ge
 
 
 @app.get("/dashboard/dealer/overview", response_model=DealerAdminDashboardOverview)
-async def get_dealer_dashboard_overview(current_user: UserInDB = Depends(get_current_dealer_admin)):
+async def get_dealer_dashboard_overview(current_user: UserInDB = Depends(get_current_user)):
     """
-    Retrieves aggregated data for a specific Dealer Admin's dashboard.
+    Retrieves aggregated data for a specific Dealer Admin or Branch Admin dashboard.
     """
+    if current_user.role not in ["dealer_admin", "branch_admin"]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to access dealer dashboard.")
     if not current_user.dealer_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Dealer Admin is not assigned to a dealer.")
 
@@ -2242,11 +2244,21 @@ async def get_dealer_user_stats(
     Get video analysis statistics for all users in a dealer
     """
     # Authorization check
-    if current_user.role == "dealer_admin" and current_user.dealer_id != dealer_id:
-        raise HTTPException(status_code=403, detail="Not authorized to view this dealer's user stats")
+    if current_user.role == "dealer_admin":
+        if current_user.dealer_id != dealer_id:
+             raise HTTPException(status_code=403, detail="Not authorized to view this dealer's user stats")
+        query = {"dealer_id": dealer_id}
+    elif current_user.role == "branch_admin":
+        if current_user.dealer_id != dealer_id:
+             raise HTTPException(status_code=403, detail="Not authorized to view this dealer's user stats")
+        query = {"dealer_id": dealer_id}
+        if current_user.branch_id:
+            query["branch_id"] = current_user.branch_id
+    else:
+        raise HTTPException(status_code=403, detail="Not authorized")
     
-    # Get all users for this dealer
-    users_cursor = users_collection.find({"dealer_id": dealer_id})
+    # Get filtered users
+    users_cursor = users_collection.find(query)
     users = await users_cursor.to_list(None)
     
     user_stats = []
