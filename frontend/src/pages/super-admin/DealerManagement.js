@@ -58,6 +58,7 @@ import {
   Assessment,
   Dashboard as DashboardIcon,
   Analytics,
+  AccountTree,
   PieChart,
   Timeline,
   Speed,
@@ -672,7 +673,21 @@ export default function DealerManagement() {
             avg_overall_quality: 0
           });
         }
-        dealerMap.get(did).users.push(user);
+        if (dealerMap.has(did)) {
+          dealerMap.get(did).users.push(user);
+        } else {
+          // Create if not exists (handled above but safe here)
+        }
+      });
+
+      // Calculate branches per dealer
+      dealerMap.forEach(dealer => {
+        const branches = new Set();
+        dealer.users.forEach(u => {
+          if (u.branch_name) branches.add(u.branch_name);
+        });
+        dealer.branches_count = branches.size;
+        dealer.branches_list = Array.from(branches);
       });
 
       // Try to enrich with dashboard stats (may fail if no analysis data yet)
@@ -1498,6 +1513,61 @@ export default function DealerManagement() {
                               {dealer.users.length > 3 && (
                                 <Chip
                                   label={`+${dealer.users.length - 3} more`}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{
+                                    borderColor: MODERN_BMW_THEME.textTertiary,
+                                    color: MODERN_BMW_THEME.textTertiary,
+                                    fontSize: '0.7rem'
+                                  }}
+                                />
+                              )}
+                            </Box>
+                          )}
+                        </Box>
+
+                        <Divider sx={{ borderColor: MODERN_BMW_THEME.borderLight, mb: 3 }} />
+
+                        {/* Branches */}
+                        <Box sx={{ mb: 3 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                            <AccountTree sx={{ fontSize: 18, color: MODERN_BMW_THEME.textSecondary, mr: 1.5 }} />
+                            <Typography variant="subtitle2" sx={{
+                              color: MODERN_BMW_THEME.textPrimary,
+                              fontWeight: 600,
+                              fontSize: '0.875rem'
+                            }}>
+                              BRANCHES ({dealer.branches_count || 0})
+                            </Typography>
+                          </Box>
+                          {(!dealer.branches_list || dealer.branches_list.length === 0) ? (
+                            <Typography variant="body2" sx={{
+                              color: MODERN_BMW_THEME.textTertiary,
+                              fontStyle: 'italic',
+                              fontSize: '0.875rem'
+                            }}>
+                              No branches found
+                            </Typography>
+                          ) : (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                              {dealer.branches_list.slice(0, 3).map((branch, idx) => (
+                                <Chip
+                                  key={branch + idx}
+                                  label={branch}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{
+                                    borderColor: MODERN_BMW_THEME.primaryLight,
+                                    color: MODERN_BMW_THEME.textSecondary,
+                                    fontWeight: 600,
+                                    fontSize: '0.7rem',
+                                    background: MODERN_BMW_THEME.surface
+                                  }}
+                                />
+                              ))}
+                              {dealer.branches_list.length > 3 && (
+                                <Chip
+                                  label={`+${dealer.branches_list.length - 3} more`}
                                   size="small"
                                   variant="outlined"
                                   sx={{
