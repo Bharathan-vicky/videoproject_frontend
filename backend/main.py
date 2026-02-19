@@ -874,14 +874,20 @@ async def update_user_profile(
 # ===============================
 
 @app.get("/users/", response_model=List[UserInDB])
-async def read_users(current_user: UserInDB = Depends(get_current_user)):
+async def read_users(
+    dealer_id: Optional[str] = None,
+    current_user: UserInDB = Depends(get_current_user)
+):
     """
-    Super Admin → all users
+    Super Admin → all users (or filter by dealer_id)
     Dealer Admin → users belonging to their own dealer_id
     Dealer User → forbidden
     """
     if current_user.role == "super_admin":
-        users_cursor = users_collection.find()
+        if dealer_id:
+            users_cursor = users_collection.find({"dealer_id": dealer_id})
+        else:
+            users_cursor = users_collection.find()
     elif current_user.role == "dealer_admin":
         if not current_user.dealer_id:
             raise HTTPException(403, detail="Dealer Admin has no assigned dealer_id.")
@@ -2262,7 +2268,11 @@ async def get_dealer_user_stats(
     Get video analysis statistics for all users in a dealer
     """
     # Authorization check
-    if current_user.role == "dealer_admin":
+    # Authorization check
+    if current_user.role == "super_admin":
+        # Super admin can view any dealer's stats
+        query = {"dealer_id": dealer_id}
+    elif current_user.role == "dealer_admin":
         if current_user.dealer_id != dealer_id:
              raise HTTPException(status_code=403, detail="Not authorized to view this dealer's user stats")
         query = {"dealer_id": dealer_id}
