@@ -2154,11 +2154,8 @@ async def get_super_admin_dashboard_overview(current_user: UserInDB = Depends(ge
     Retrieves aggregated data for the Super Admin dashboard.
     Includes ALL results (completed or without status field for backward compatibility).
     """
-    # Match condition: completed OR no status field (older results)
-    status_match = {"$or": [
-        {"status": BatchStatus.COMPLETED},
-        {"status": {"$exists": False}}
-    ]}
+    # Match all records in system
+    status_match = {}
 
     total_videos = await results_collection.count_documents(status_match)
     
@@ -2177,7 +2174,7 @@ async def get_super_admin_dashboard_overview(current_user: UserInDB = Depends(ge
 
     # Dealer-wise summary
     dealers_summary_raw = await results_collection.aggregate([
-        {"$match": {**status_match, "dealer_id": {"$exists": True, "$ne": None}}},
+        {"$match": {"dealer_id": {"$exists": True, "$ne": None}}},
         {"$group": {
             "_id": "$dealer_id",
             "total_videos": {"$sum": 1},
@@ -2212,11 +2209,8 @@ async def get_dealer_dashboard_overview(current_user: UserInDB = Depends(get_cur
 
     dealer_id_str = current_user.dealer_id
 
-    # Match condition: completed OR no status field (older results)
-    dealer_status_match = {"dealer_id": dealer_id_str, "$or": [
-        {"status": BatchStatus.COMPLETED},
-        {"status": {"$exists": False}}
-    ]}
+    # Match all records for this dealer (including pending/failed/completed)
+    dealer_status_match = {"dealer_id": dealer_id_str}
     
     total_videos = await results_collection.count_documents(dealer_status_match)
 
