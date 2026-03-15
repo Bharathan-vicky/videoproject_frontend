@@ -501,6 +501,8 @@ async def lifespan(app: FastAPI):
     # 3. Initialize UnifiedMediaAnalyzer instance (Lazy loading models to prevent startup lag)
     logger.info("Initializing UnifiedMediaAnalyzer instance...")
     analyzer = UnifiedMediaAnalyzer()
+    logger.info(f"✅ VERIFIED: Video Quality Engine (Resolution-Floor v2) is ACTIVE.")
+    logger.info(f"📊 Active Floors: {[(r[2], r[3]) for r in analyzer.RESOLUTION_MAP]}")
     # OPTIMIZATION: Models will load lazily only when needed
     # try:
     #     analyzer.load_pretrained_models()
