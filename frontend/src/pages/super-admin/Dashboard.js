@@ -103,15 +103,15 @@ import {
 import api from '../../services/api';
 import { listUsers, createUser, updateUser, deleteUser } from '../../services/users.js';
 import { listDealerUsers, getDealerUserStats } from '../../services/dealer_user.js';
-// Use the same BMW theme from your dealer management
-const MODERN_BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0A4B9C',
-  primaryLight: '#4D8FDF',
-  primaryUltraLight: '#E8F1FD',
-  accent: '#FF6D00',
-  accentLight: '#FF9D45',
-  accentUltraLight: '#FFF3E8',
+// QualityLens Dashboard Theme
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#F0FDFA',
+  accent: '#00B4DB',
+  accentLight: '#E0F2FE',
+  accentUltraLight: '#F8FAFC',
   background: '#FFFFFF',
   surface: '#F8FAFC',
   surfaceElevated: '#FFFFFF',
@@ -126,8 +126,8 @@ const MODERN_BMW_THEME = {
   warningLight: '#FEF3C7',
   error: '#EF4444',
   errorLight: '#FEE2E2',
-  gradientPrimary: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
-  gradientAccent: 'linear-gradient(135deg, #FF6D00 0%, #FF8A00 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
+  gradientAccent: 'linear-gradient(135deg, #0DA1B8 0%, #0C587D 100%)',
   gradientSuccess: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   gradientWarning: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
   shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -138,39 +138,39 @@ const MODERN_BMW_THEME = {
 
 // Chart color schemes
 const CHART_COLORS = {
-  primary: MODERN_BMW_THEME.primary,
-  success: MODERN_BMW_THEME.success,
-  warning: MODERN_BMW_THEME.warning,
-  error: MODERN_BMW_THEME.error,
-  accent: MODERN_BMW_THEME.accent,
+  primary: THEME.primary,
+  success: THEME.success,
+  warning: THEME.warning,
+  error: THEME.error,
+  accent: THEME.accent,
   blueGradient: ['#1C69D4', '#4D8FDF', '#7AB6FF'],
-  qualityGradient: [MODERN_BMW_THEME.success, MODERN_BMW_THEME.primary, MODERN_BMW_THEME.warning, MODERN_BMW_THEME.error]
+  qualityGradient: [THEME.success, THEME.primary, THEME.warning, THEME.error]
 };
 
 // Custom Chart Components
 const PerformanceTrendChart = ({ data }) => (
   <ResponsiveContainer width="100%" height={300}>
     <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-      <CartesianGrid strokeDasharray="3 3" stroke={MODERN_BMW_THEME.borderLight} />
+      <CartesianGrid strokeDasharray="3 3" stroke={THEME.borderLight} />
       <XAxis
         dataKey="name"
-        stroke={MODERN_BMW_THEME.textSecondary}
+        stroke={THEME.textSecondary}
         fontSize={11}
         angle={-45}
         textAnchor="end"
         height={60}
       />
       <YAxis
-        stroke={MODERN_BMW_THEME.textSecondary}
+        stroke={THEME.textSecondary}
         fontSize={12}
         domain={[0, 10]}
       />
       <RechartsTooltip
         contentStyle={{
-          background: MODERN_BMW_THEME.background,
-          border: `1px solid ${MODERN_BMW_THEME.border}`,
+          background: THEME.background,
+          border: `1px solid ${THEME.border}`,
           borderRadius: 8,
-          boxShadow: MODERN_BMW_THEME.shadowMd
+          boxShadow: THEME.shadowMd
         }}
         formatter={(value, name) => {
           const labelMap = {
@@ -184,28 +184,28 @@ const PerformanceTrendChart = ({ data }) => (
       <Line
         type="monotone"
         dataKey="overall"
-        stroke={MODERN_BMW_THEME.primary}
+        stroke={THEME.primary}
         strokeWidth={3}
-        dot={{ fill: MODERN_BMW_THEME.primary, strokeWidth: 2, r: 4 }}
-        activeDot={{ r: 6, fill: MODERN_BMW_THEME.primary }}
+        dot={{ fill: THEME.primary, strokeWidth: 2, r: 4 }}
+        activeDot={{ r: 6, fill: THEME.primary }}
         name="Overall Score"
       />
       <Line
         type="monotone"
         dataKey="video"
-        stroke={MODERN_BMW_THEME.accent}
+        stroke={THEME.accent}
         strokeWidth={2}
         strokeDasharray="3 3"
-        dot={{ fill: MODERN_BMW_THEME.accent, r: 3 }}
+        dot={{ fill: THEME.accent, r: 3 }}
         name="Video Quality"
       />
       <Line
         type="monotone"
         dataKey="audio"
-        stroke={MODERN_BMW_THEME.success}
+        stroke={THEME.success}
         strokeWidth={2}
         strokeDasharray="3 3"
-        dot={{ fill: MODERN_BMW_THEME.success, r: 3 }}
+        dot={{ fill: THEME.success, r: 3 }}
         name="Audio Quality"
       />
     </LineChart>
@@ -266,17 +266,17 @@ const DealerPerformanceChart = ({ data }) => {
           borderRadius: 2,
           p: 1.5,
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          border: `1px solid ${MODERN_BMW_THEME.border}`,
+          border: `1px solid ${THEME.border}`,
           minWidth: 140
         }}>
-          <Typography variant="caption" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.textPrimary, display: 'block', mb: 0.5 }}>
+          <Typography variant="caption" sx={{ fontWeight: 700, color: THEME.textPrimary, display: 'block', mb: 0.5 }}>
             {label}
           </Typography>
           {payload.map((entry, i) => (
             <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 0.25 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: entry.color, flexShrink: 0 }} />
-                <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '11px' }}>
+                <Typography variant="caption" sx={{ color: THEME.textSecondary, fontSize: '11px' }}>
                   {entry.name}
                 </Typography>
               </Box>
@@ -320,36 +320,36 @@ const DealerPerformanceChart = ({ data }) => {
       }}>
         <Box sx={{ textAlign: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 0.5 }}>
-            <TrendingUp sx={{ fontSize: 16, color: MODERN_BMW_THEME.success, mr: 0.5 }} />
-            <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.success }}>
+            <TrendingUp sx={{ fontSize: 16, color: THEME.success, mr: 0.5 }} />
+            <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.success }}>
               {Math.max(...data.map(d => d.overall)).toFixed(1)}
             </Typography>
           </Box>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600 }}>
+          <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600 }}>
             TOP SCORE
           </Typography>
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 0.5 }}>
-            <Star sx={{ fontSize: 16, color: MODERN_BMW_THEME.warning, mr: 0.5 }} />
-            <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.warning }}>
+            <Star sx={{ fontSize: 16, color: THEME.warning, mr: 0.5 }} />
+            <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.warning }}>
               {avgScore}
             </Typography>
           </Box>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600 }}>
+          <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600 }}>
             AVG SCORE
           </Typography>
         </Box>
 
         <Box sx={{ textAlign: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 0.5 }}>
-            <Business sx={{ fontSize: 16, color: MODERN_BMW_THEME.primary, mr: 0.5 }} />
-            <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+            <Business sx={{ fontSize: 16, color: THEME.primary, mr: 0.5 }} />
+            <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.primary }}>
               {data.length}
             </Typography>
           </Box>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600 }}>
+          <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600 }}>
             DEALERS
           </Typography>
         </Box>
@@ -358,15 +358,15 @@ const DealerPerformanceChart = ({ data }) => {
       {/* Radar / Spider Chart */}
       <ResponsiveContainer width="100%" height={320}>
         <RadarChart data={radarData} outerRadius="75%">
-          <PolarGrid stroke={MODERN_BMW_THEME.border} />
+          <PolarGrid stroke={THEME.border} />
           <PolarAngleAxis
             dataKey="metric"
-            tick={{ fontSize: 11, fontWeight: 600, fill: MODERN_BMW_THEME.textSecondary }}
+            tick={{ fontSize: 11, fontWeight: 600, fill: THEME.textSecondary }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 10]}
-            tick={{ fontSize: 10, fill: MODERN_BMW_THEME.textTertiary }}
+            tick={{ fontSize: 10, fill: THEME.textTertiary }}
             axisLine={false}
           />
           {data.map((dealer, i) => (
@@ -401,7 +401,7 @@ const QualityDistributionChart = ({ data }) => {
   if (filteredData.length === 0) {
     return (
       <Box sx={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-        <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textTertiary, mb: 2 }}>No quality data available</Typography>
+        <Typography variant="body2" sx={{ color: THEME.textTertiary, mb: 2 }}>No quality data available</Typography>
       </Box>
     );
   }
@@ -428,10 +428,10 @@ const QualityDistributionChart = ({ data }) => {
           <RechartsTooltip
             formatter={(value, name) => [`${value} videos`, name]}
             contentStyle={{
-              background: MODERN_BMW_THEME.background,
-              border: `1px solid ${MODERN_BMW_THEME.border}`,
+              background: THEME.background,
+              border: `1px solid ${THEME.border}`,
               borderRadius: 8,
-              boxShadow: MODERN_BMW_THEME.shadowMd,
+              boxShadow: THEME.shadowMd,
               fontSize: '12px'
             }}
           />
@@ -451,39 +451,39 @@ const QualityDistributionChart = ({ data }) => {
 const StatCard = ({ title, value, change, changeType, icon, color, subtitle }) => (
   <Fade in={true}>
     <Card sx={{
-      background: MODERN_BMW_THEME.surfaceElevated,
-      border: `1px solid ${MODERN_BMW_THEME.border}`,
+      background: THEME.surfaceElevated,
+      border: `1px solid ${THEME.border}`,
       borderRadius: 3,
-      boxShadow: MODERN_BMW_THEME.shadowSm,
+      boxShadow: THEME.shadowSm,
       transition: 'all 0.2s ease-in-out',
-      '&:hover': { boxShadow: MODERN_BMW_THEME.shadowMd, transform: 'translateY(-2px)' },
+      '&:hover': { boxShadow: THEME.shadowMd, transform: 'translateY(-2px)' },
       height: '100%'
     }}>
       <CardContent sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600, mb: 1, fontSize: '0.875rem' }}>
+            <Typography variant="body2" sx={{ color: THEME.textSecondary, fontWeight: 600, mb: 1, fontSize: '0.875rem' }}>
               {title}
             </Typography>
-            <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700, mb: 1, lineHeight: 1.2 }}>
+            <Typography variant="h4" sx={{ color: THEME.textPrimary, fontWeight: 700, mb: 1, lineHeight: 1.2 }}>
               {value}
             </Typography>
             {subtitle && (
-              <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textTertiary, display: 'block', mb: 1 }}>
+              <Typography variant="caption" sx={{ color: THEME.textTertiary, display: 'block', mb: 1 }}>
                 {subtitle}
               </Typography>
             )}
             {change && (
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                 {changeType === 'positive' ? (
-                  <ArrowUpward sx={{ fontSize: 16, color: MODERN_BMW_THEME.success, mr: 0.5 }} />
+                  <ArrowUpward sx={{ fontSize: 16, color: THEME.success, mr: 0.5 }} />
                 ) : changeType === 'negative' ? (
-                  <ArrowDownward sx={{ fontSize: 16, color: MODERN_BMW_THEME.error, mr: 0.5 }} />
+                  <ArrowDownward sx={{ fontSize: 16, color: THEME.error, mr: 0.5 }} />
                 ) : null}
                 <Typography variant="caption" sx={{
-                  color: changeType === 'positive' ? MODERN_BMW_THEME.success
-                    : changeType === 'negative' ? MODERN_BMW_THEME.error
-                      : MODERN_BMW_THEME.textTertiary,
+                  color: changeType === 'positive' ? THEME.success
+                    : changeType === 'negative' ? THEME.error
+                      : THEME.textTertiary,
                   fontWeight: 600
                 }}>
                   {change}
@@ -493,14 +493,14 @@ const StatCard = ({ title, value, change, changeType, icon, color, subtitle }) =
           </Box>
           <Box sx={{
             width: 48, height: 48, borderRadius: '50%',
-            background: color === MODERN_BMW_THEME.primary ? MODERN_BMW_THEME.gradientPrimary :
-              color === MODERN_BMW_THEME.accent ? MODERN_BMW_THEME.gradientAccent :
-                color === MODERN_BMW_THEME.success ? MODERN_BMW_THEME.gradientSuccess :
-                  color === MODERN_BMW_THEME.warning ? MODERN_BMW_THEME.gradientWarning :
-                    MODERN_BMW_THEME.gradientPrimary,
+            background: color === THEME.primary ? THEME.gradientPrimary :
+              color === THEME.accent ? THEME.gradientAccent :
+                color === THEME.success ? THEME.gradientSuccess :
+                  color === THEME.warning ? THEME.gradientWarning :
+                    THEME.gradientPrimary,
             display: 'flex',
             alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            boxShadow: MODERN_BMW_THEME.shadowSm
+            boxShadow: THEME.shadowSm
           }}>
             {React.cloneElement(icon, { sx: { fontSize: 24, color: '#FFFFFF' } })}
           </Box>
@@ -520,25 +520,25 @@ const TopPerformerCard = ({ dealer, rank, metric, value }) => {
       justifyContent: 'space-between',
       px: 2,
       py: 1.5,
-      borderBottom: `1px solid ${MODERN_BMW_THEME.border}`,
+      borderBottom: `1px solid ${THEME.border}`,
       transition: 'all 0.2s ease-in-out',
       '&:last-child': { borderBottom: 'none' },
-      '&:hover': { background: MODERN_BMW_THEME.primaryUltraLight }
+      '&:hover': { background: THEME.primaryUltraLight }
     }}>
       <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
         <Box sx={{
-          width: 32, height: 32, borderRadius: '50%', background: rank === 1 ? MODERN_BMW_THEME.gradientAccent :
-            rank === 2 ? MODERN_BMW_THEME.gradientPrimary : rank === 3 ? MODERN_BMW_THEME.gradientSuccess : MODERN_BMW_THEME.surface,
+          width: 32, height: 32, borderRadius: '50%', background: rank === 1 ? THEME.gradientAccent :
+            rank === 2 ? THEME.gradientPrimary : rank === 3 ? THEME.gradientSuccess : THEME.surface,
           display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2, fontWeight: 700, fontSize: '14px',
-          color: rank <= 3 ? MODERN_BMW_THEME.background : MODERN_BMW_THEME.textSecondary, boxShadow: MODERN_BMW_THEME.shadowMd, flexShrink: 0
+          color: rank <= 3 ? THEME.background : THEME.textSecondary, boxShadow: THEME.shadowMd, flexShrink: 0
         }}>
           {rank}
         </Box>
         <Box sx={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-          <Typography variant="subtitle2" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, mb: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography variant="subtitle2" sx={{ color: THEME.textPrimary, fontWeight: 600, mb: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {dealer.name}
           </Typography>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, display: 'block' }}>
+          <Typography variant="caption" sx={{ color: THEME.textSecondary, display: 'block' }}>
             {metric}
           </Typography>
         </Box>
@@ -547,10 +547,10 @@ const TopPerformerCard = ({ dealer, rank, metric, value }) => {
         label={value}
         size="small"
         sx={{
-          background: numericValue >= 8.5 ? MODERN_BMW_THEME.successLight : numericValue >= 7 ? MODERN_BMW_THEME.primaryUltraLight :
-            numericValue >= 5 ? MODERN_BMW_THEME.warningLight : MODERN_BMW_THEME.errorLight,
-          color: numericValue >= 8.5 ? MODERN_BMW_THEME.success : numericValue >= 7 ? MODERN_BMW_THEME.primary :
-            numericValue >= 5 ? MODERN_BMW_THEME.warning : MODERN_BMW_THEME.error,
+          background: numericValue >= 8.5 ? THEME.successLight : numericValue >= 7 ? THEME.primaryUltraLight :
+            numericValue >= 5 ? THEME.warningLight : THEME.errorLight,
+          color: numericValue >= 8.5 ? THEME.success : numericValue >= 7 ? THEME.primary :
+            numericValue >= 5 ? THEME.warning : THEME.error,
           fontWeight: 700, fontSize: '0.75rem', flexShrink: 0, ml: 1
         }}
       />
@@ -567,15 +567,15 @@ const QualityDistributionChartDetail = ({ data }) => (
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 100 }}>
             <Box sx={{
               width: 12, height: 12, borderRadius: '50%', backgroundColor:
-                item.label === 'Excellent' ? MODERN_BMW_THEME.success : item.label === 'Very Good' ? MODERN_BMW_THEME.primary :
-                  item.label === 'Good' ? MODERN_BMW_THEME.accent : item.label === 'Fair' ? MODERN_BMW_THEME.warning : MODERN_BMW_THEME.error,
+                item.label === 'Excellent' ? THEME.success : item.label === 'Very Good' ? THEME.primary :
+                  item.label === 'Good' ? THEME.accent : item.label === 'Fair' ? THEME.warning : THEME.error,
               mr: 2
             }} />
-            <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 500, fontSize: '0.875rem' }}>
+            <Typography variant="body2" sx={{ color: THEME.textPrimary, fontWeight: 500, fontSize: '0.875rem' }}>
               {item.label}
             </Typography>
           </Box>
-          <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600, fontSize: '0.875rem' }}>
+          <Typography variant="body2" sx={{ color: THEME.textSecondary, fontWeight: 600, fontSize: '0.875rem' }}>
             {item.value} ({item.percentage}%)
           </Typography>
         </Box>
@@ -583,10 +583,10 @@ const QualityDistributionChartDetail = ({ data }) => (
           variant="determinate"
           value={item.percentage}
           sx={{
-            height: 8, borderRadius: 4, backgroundColor: MODERN_BMW_THEME.borderLight,
+            height: 8, borderRadius: 4, backgroundColor: THEME.borderLight,
             '& .MuiLinearProgress-bar': {
-              backgroundColor: item.label === 'Excellent' ? MODERN_BMW_THEME.success : item.label === 'Very Good' ? MODERN_BMW_THEME.primary :
-                item.label === 'Good' ? MODERN_BMW_THEME.accent : item.label === 'Fair' ? MODERN_BMW_THEME.warning : MODERN_BMW_THEME.error,
+              backgroundColor: item.label === 'Excellent' ? THEME.success : item.label === 'Very Good' ? THEME.primary :
+                item.label === 'Good' ? THEME.accent : item.label === 'Fair' ? THEME.warning : THEME.error,
               borderRadius: 4
             }
           }}
@@ -601,32 +601,32 @@ const ScoreTrendChartDetail = ({ data }) => (
     {data.slice(0, 5).map((item, index) => (
       <Box key={index} sx={{ mb: 2.5 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 500, fontSize: '0.75rem', mr: 2 }}>
+          <Typography variant="caption" sx={{ color: THEME.textPrimary, fontWeight: 500, fontSize: '0.75rem', mr: 2 }}>
             {item.name}
           </Typography>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500 }}>
+          <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 500 }}>
             Overall: {item.overall.toFixed(1)}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-              <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.primary, fontWeight: 500 }}>Video</Typography>
-              <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600 }}>{item.video}</Typography>
+              <Typography variant="caption" sx={{ color: THEME.primary, fontWeight: 500 }}>Video</Typography>
+              <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600 }}>{item.video}</Typography>
             </Box>
             <LinearProgress variant="determinate" value={item.video} sx={{
-              height: 6, borderRadius: 3, backgroundColor: MODERN_BMW_THEME.borderLight,
-              '& .MuiLinearProgress-bar': { backgroundColor: MODERN_BMW_THEME.primary, borderRadius: 3 }
+              height: 6, borderRadius: 3, backgroundColor: THEME.borderLight,
+              '& .MuiLinearProgress-bar': { backgroundColor: THEME.primary, borderRadius: 3 }
             }} />
           </Box>
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-              <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.accent, fontWeight: 500 }}>Audio</Typography>
-              <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600 }}>{item.audio}</Typography>
+              <Typography variant="caption" sx={{ color: THEME.accent, fontWeight: 500 }}>Audio</Typography>
+              <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600 }}>{item.audio}</Typography>
             </Box>
             <LinearProgress variant="determinate" value={item.audio} sx={{
-              height: 6, borderRadius: 3, backgroundColor: MODERN_BMW_THEME.borderLight,
-              '& .MuiLinearProgress-bar': { backgroundColor: MODERN_BMW_THEME.accent, borderRadius: 3 }
+              height: 6, borderRadius: 3, backgroundColor: THEME.borderLight,
+              '& .MuiLinearProgress-bar': { backgroundColor: THEME.accent, borderRadius: 3 }
             }} />
           </Box>
         </Box>
@@ -637,38 +637,38 @@ const ScoreTrendChartDetail = ({ data }) => (
 
 const ServiceAdvisorRankingCard = ({ advisor, rank }) => (
   <Card sx={{
-    background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`, borderRadius: 3, mb: 2,
-    transition: 'all 0.2s ease-in-out', boxShadow: MODERN_BMW_THEME.shadowSm,
-    '&:hover': { boxShadow: MODERN_BMW_THEME.shadowMd, borderColor: MODERN_BMW_THEME.primaryLight, transform: 'translateY(-2px)' }
+    background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`, borderRadius: 3, mb: 2,
+    transition: 'all 0.2s ease-in-out', boxShadow: THEME.shadowSm,
+    '&:hover': { boxShadow: THEME.shadowMd, borderColor: THEME.primaryLight, transform: 'translateY(-2px)' }
   }}>
     <CardContent sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
           <Box sx={{
-            width: 36, height: 36, borderRadius: '50%', background: rank === 1 ? MODERN_BMW_THEME.gradientAccent :
-              rank === 2 ? MODERN_BMW_THEME.gradientPrimary : rank === 3 ? MODERN_BMW_THEME.gradientSuccess : MODERN_BMW_THEME.surface,
+            width: 36, height: 36, borderRadius: '50%', background: rank === 1 ? THEME.gradientAccent :
+              rank === 2 ? THEME.gradientPrimary : rank === 3 ? THEME.gradientSuccess : THEME.surface,
             display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2, fontWeight: 700, fontSize: '14px',
-            color: rank <= 3 ? MODERN_BMW_THEME.background : MODERN_BMW_THEME.textSecondary, boxShadow: MODERN_BMW_THEME.shadowMd
+            color: rank <= 3 ? THEME.background : THEME.textSecondary, boxShadow: THEME.shadowMd
           }}>
             {rank}
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Typography variant="subtitle1" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, mb: 0.5, fontSize: '1rem' }}>
+            <Typography variant="subtitle1" sx={{ color: THEME.textPrimary, fontWeight: 600, mb: 0.5, fontSize: '1rem' }}>
               {advisor.name}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <VideoLibrary sx={{ fontSize: 14, color: MODERN_BMW_THEME.textTertiary, mr: 0.5 }} />
-              <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textTertiary, fontWeight: 500 }}>
+              <VideoLibrary sx={{ fontSize: 14, color: THEME.textTertiary, mr: 0.5 }} />
+              <Typography variant="caption" sx={{ color: THEME.textTertiary, fontWeight: 500 }}>
                 {advisor.totalVideos} video{advisor.totalVideos !== 1 ? 's' : ''}
               </Typography>
             </Box>
           </Box>
         </Box>
-        <Box sx={{ textAlign: 'center', minWidth: 80, background: MODERN_BMW_THEME.primaryUltraLight, borderRadius: 3, p: 1.5, border: `1px solid ${MODERN_BMW_THEME.border}` }}>
-          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.primary, fontWeight: 700, lineHeight: 1, mb: 0.5 }}>
+        <Box sx={{ textAlign: 'center', minWidth: 80, background: THEME.primaryUltraLight, borderRadius: 3, p: 1.5, border: `1px solid ${THEME.border}` }}>
+          <Typography variant="h6" sx={{ color: THEME.primary, fontWeight: 700, lineHeight: 1, mb: 0.5 }}>
             {advisor.averageOverallScore.toFixed(1)}
           </Typography>
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 600, fontSize: '0.7rem' }}>
+          <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600, fontSize: '0.7rem' }}>
             Overall
           </Typography>
         </Box>
@@ -676,27 +676,27 @@ const ServiceAdvisorRankingCard = ({ advisor, rank }) => (
       <Box sx={{ mt: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 100 }}>
-            <Videocam sx={{ fontSize: 16, color: MODERN_BMW_THEME.primary, mr: 1 }} />
-            <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500 }}>Video</Typography>
+            <Videocam sx={{ fontSize: 16, color: THEME.primary, mr: 1 }} />
+            <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 500 }}>Video</Typography>
           </Box>
           <LinearProgress variant="determinate" value={advisor.averageVideoScore} sx={{
-            flex: 1, height: 8, borderRadius: 4, backgroundColor: MODERN_BMW_THEME.borderLight,
-            '& .MuiLinearProgress-bar': { backgroundColor: MODERN_BMW_THEME.primary, borderRadius: 4 }
+            flex: 1, height: 8, borderRadius: 4, backgroundColor: THEME.borderLight,
+            '& .MuiLinearProgress-bar': { backgroundColor: THEME.primary, borderRadius: 4 }
           }} />
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textPrimary, minWidth: 35, textAlign: 'right', ml: 1.5, fontWeight: 600 }}>
+          <Typography variant="caption" sx={{ color: THEME.textPrimary, minWidth: 35, textAlign: 'right', ml: 1.5, fontWeight: 600 }}>
             {advisor.averageVideoScore.toFixed(1)}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 100 }}>
-            <Mic sx={{ fontSize: 16, color: MODERN_BMW_THEME.accent, mr: 1 }} />
-            <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500 }}>Audio</Typography>
+            <Mic sx={{ fontSize: 16, color: THEME.accent, mr: 1 }} />
+            <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 500 }}>Audio</Typography>
           </Box>
           <LinearProgress variant="determinate" value={advisor.averageAudioScore} sx={{
-            flex: 1, height: 8, borderRadius: 4, backgroundColor: MODERN_BMW_THEME.borderLight,
-            '& .MuiLinearProgress-bar': { backgroundColor: MODERN_BMW_THEME.accent, borderRadius: 4 }
+            flex: 1, height: 8, borderRadius: 4, backgroundColor: THEME.borderLight,
+            '& .MuiLinearProgress-bar': { backgroundColor: THEME.accent, borderRadius: 4 }
           }} />
-          <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textPrimary, minWidth: 35, textAlign: 'right', ml: 1.5, fontWeight: 600 }}>
+          <Typography variant="caption" sx={{ color: THEME.textPrimary, minWidth: 35, textAlign: 'right', ml: 1.5, fontWeight: 600 }}>
             {advisor.averageAudioScore.toFixed(1)}
           </Typography>
         </Box>
@@ -714,27 +714,27 @@ const ServiceAdvisorQualityChart = ({ data = [] }) => {
   });
 
   return (
-    <Box sx={{ mt: 3, p: 3, background: MODERN_BMW_THEME.surface, borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-      <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700, mb: -2, textAlign: 'center' }}>
+    <Box sx={{ mt: 3, p: 3, background: THEME.surface, borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+      <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 700, mb: -2, textAlign: 'center' }}>
         Audio & Video Quality by Dealer
       </Typography>
       <ResponsiveContainer width="100%" height={Math.max(350, chartData.length * 50)}>
         <ComposedChart layout="vertical" data={chartData} margin={{ top: 30, right: 30, left: 100, bottom: 30 }}>
-          <CartesianGrid stroke={MODERN_BMW_THEME.borderLight} horizontal={false} />
-          <XAxis type="number" domain={[-10, 10]} ticks={[-10, -5, 0, 5, 10]} tickFormatter={(value) => Math.abs(value).toString()} stroke={MODERN_BMW_THEME.textSecondary} fontSize={12} />
-          <YAxis dataKey="name" type="category" scale="band" stroke={MODERN_BMW_THEME.textSecondary} fontSize={12} width={80} />
+          <CartesianGrid stroke={THEME.borderLight} horizontal={false} />
+          <XAxis type="number" domain={[-10, 10]} ticks={[-10, -5, 0, 5, 10]} tickFormatter={(value) => Math.abs(value).toString()} stroke={THEME.textSecondary} fontSize={12} />
+          <YAxis dataKey="name" type="category" scale="band" stroke={THEME.textSecondary} fontSize={12} width={80} />
           <RechartsTooltip formatter={(value, name) => [Math.abs(Number(value)).toFixed(1), name]} contentStyle={{
-            background: MODERN_BMW_THEME.background, border: `1px solid ${MODERN_BMW_THEME.border}`, borderRadius: 8, boxShadow: MODERN_BMW_THEME.shadowMd
+            background: THEME.background, border: `1px solid ${THEME.border}`, borderRadius: 8, boxShadow: THEME.shadowMd
           }} />
           <Legend verticalAlign="top" height={36} formatter={(value) => (
-            <span style={{ color: MODERN_BMW_THEME.textPrimary, fontSize: '12px' }}>{value}</span>
+            <span style={{ color: THEME.textPrimary, fontSize: '12px' }}>{value}</span>
           )} />
-          <ReferenceLine x={0} stroke={MODERN_BMW_THEME.textTertiary} strokeWidth={2} />
-          <Bar dataKey="Audio" fill={MODERN_BMW_THEME.accent} barSize={20} radius={[0, 4, 4, 0]}>
-            <LabelList dataKey="Audio" position="insideLeft" formatter={(value) => Math.abs(value).toFixed(1)} style={{ fill: MODERN_BMW_THEME.background, fontSize: 11, fontWeight: 'bold' }} />
+          <ReferenceLine x={0} stroke={THEME.textTertiary} strokeWidth={2} />
+          <Bar dataKey="Audio" fill={THEME.accent} barSize={20} radius={[0, 4, 4, 0]}>
+            <LabelList dataKey="Audio" position="insideLeft" formatter={(value) => Math.abs(value).toFixed(1)} style={{ fill: THEME.background, fontSize: 11, fontWeight: 'bold' }} />
           </Bar>
-          <Bar dataKey="Video" fill={MODERN_BMW_THEME.primary} barSize={20} radius={[4, 0, 0, 4]}>
-            <LabelList dataKey="Video" position="insideRight" formatter={(value) => Math.abs(value).toFixed(1)} style={{ fill: MODERN_BMW_THEME.background, fontSize: 11, fontWeight: 'bold' }} />
+          <Bar dataKey="Video" fill={THEME.primary} barSize={20} radius={[4, 0, 0, 4]}>
+            <LabelList dataKey="Video" position="insideRight" formatter={(value) => Math.abs(value).toFixed(1)} style={{ fill: THEME.background, fontSize: 11, fontWeight: 'bold' }} />
           </Bar>
         </ComposedChart>
       </ResponsiveContainer>
@@ -938,22 +938,22 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
         sx: {
           maxHeight: '95vh',
           height: '95vh',
-          background: MODERN_BMW_THEME.background,
-          border: `1px solid ${MODERN_BMW_THEME.border}`,
+          background: THEME.background,
+          border: `1px solid ${THEME.border}`,
           borderRadius: 3,
-          boxShadow: MODERN_BMW_THEME.shadowXl,
+          boxShadow: THEME.shadowXl,
           overflow: 'hidden'
         }
       }}
     >
       {/* Header */}
       <DialogTitle sx={{
-        background: MODERN_BMW_THEME.gradientPrimary,
-        color: MODERN_BMW_THEME.background,
+        background: THEME.gradientPrimary,
+        color: THEME.background,
         fontWeight: 600,
         py: 3,
         position: 'relative',
-        boxShadow: MODERN_BMW_THEME.shadowMd
+        boxShadow: THEME.shadowMd
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -961,7 +961,7 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
               width: 48, height: 48, borderRadius: '50%', background: 'rgba(255, 255, 255, 0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2, backdropFilter: 'blur(10px)'
             }}>
-              <Business sx={{ fontSize: 24, color: MODERN_BMW_THEME.background }} />
+              <Business sx={{ fontSize: 24, color: THEME.background }} />
             </Box>
             <Box>
               <Typography variant="h5" fontWeight={600}>{dealer.name}</Typography>
@@ -973,7 +973,7 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
           <IconButton
             onClick={onClose}
             sx={{
-              color: MODERN_BMW_THEME.background,
+              color: THEME.background,
               background: 'rgba(255, 255, 255, 0.2)',
               '&:hover': { background: 'rgba(255, 255, 255, 0.3)' }
             }}
@@ -984,16 +984,16 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
       </DialogTitle>
 
       {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: MODERN_BMW_THEME.border, background: MODERN_BMW_THEME.surface, px: 3 }}>
+      <Box sx={{ borderBottom: 1, borderColor: THEME.border, background: THEME.surface, px: 3 }}>
         <Tabs
           value={activeTab}
           onChange={(e, newValue) => setActiveTab(newValue)}
           sx={{
             '& .MuiTab-root': {
-              color: MODERN_BMW_THEME.textSecondary, fontWeight: 500, textTransform: 'none', fontSize: '0.875rem',
-              py: 2, minHeight: 'auto', '&.Mui-selected': { color: MODERN_BMW_THEME.primary }
+              color: THEME.textSecondary, fontWeight: 500, textTransform: 'none', fontSize: '0.875rem',
+              py: 2, minHeight: 'auto', '&.Mui-selected': { color: THEME.primary }
             },
-            '& .MuiTabs-indicator': { backgroundColor: MODERN_BMW_THEME.primary, height: 3, borderRadius: '2px 2px 0 0' }
+            '& .MuiTabs-indicator': { backgroundColor: THEME.primary, height: 3, borderRadius: '2px 2px 0 0' }
           }}
         >
           <Tab icon={<DashboardIcon sx={{ fontSize: 20, mb: 0.5 }} />} iconPosition="start" label="Dashboard" />
@@ -1002,14 +1002,14 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
         </Tabs>
       </Box>
 
-      <DialogContent dividers sx={{ p: 0, background: MODERN_BMW_THEME.background, overflow: 'hidden' }}>
+      <DialogContent dividers sx={{ p: 0, background: THEME.background, overflow: 'hidden' }}>
         {loading ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
             <Box sx={{
-              width: 60, height: 60, borderRadius: '50%', border: `3px solid ${MODERN_BMW_THEME.border}`,
-              borderTop: `3px solid ${MODERN_BMW_THEME.primary}`, animation: 'spin 1s linear infinite', mb: 3
+              width: 60, height: 60, borderRadius: '50%', border: `3px solid ${THEME.border}`,
+              borderTop: `3px solid ${THEME.primary}`, animation: 'spin 1s linear infinite', mb: 3
             }} />
-            <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500 }}>
+            <Typography variant="h6" sx={{ color: THEME.textSecondary, fontWeight: 500 }}>
               Loading Analytics...
             </Typography>
           </Box>
@@ -1021,24 +1021,24 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                 {/* Overview Cards */}
                 <Grid container spacing={3} sx={{ mb: 4 }} justifyContent="center">
                   {[
-                    { label: 'Total Videos', value: dashboardData.totalVideos, icon: VideoLibrary, color: MODERN_BMW_THEME.primary },
-                    { label: 'Avg Video Score', value: dashboardData.averageScores.video.toFixed(1), icon: Videocam, color: MODERN_BMW_THEME.success },
-                    { label: 'Avg Audio Score', value: dashboardData.averageScores.audio.toFixed(1), icon: Mic, color: MODERN_BMW_THEME.accent },
-                    { label: 'Avg Overall Score', value: dashboardData.averageScores.overall.toFixed(1), icon: Score, color: MODERN_BMW_THEME.primary }
+                    { label: 'Total Videos', value: dashboardData.totalVideos, icon: VideoLibrary, color: THEME.primary },
+                    { label: 'Avg Video Score', value: dashboardData.averageScores.video.toFixed(1), icon: Videocam, color: THEME.success },
+                    { label: 'Avg Audio Score', value: dashboardData.averageScores.audio.toFixed(1), icon: Mic, color: THEME.accent },
+                    { label: 'Avg Overall Score', value: dashboardData.averageScores.overall.toFixed(1), icon: Score, color: THEME.primary }
                   ].map((stat) => (
                     <Grid item xs={12} sm={6} md={3} key={stat.label}>
                       <Card sx={{
-                        background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`, borderRadius: 3,
-                        boxShadow: MODERN_BMW_THEME.shadowSm, transition: 'all .2s ease-in-out',
-                        '&:hover': { boxShadow: MODERN_BMW_THEME.shadowMd, transform: 'translateY(-2px)' }
+                        background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`, borderRadius: 3,
+                        boxShadow: THEME.shadowSm, transition: 'all .2s ease-in-out',
+                        '&:hover': { boxShadow: THEME.shadowMd, transform: 'translateY(-2px)' }
                       }}>
                         <CardContent sx={{ p: 3 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Box>
-                              <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700, mb: .5 }}>
+                              <Typography variant="h4" sx={{ color: THEME.textPrimary, fontWeight: 700, mb: .5 }}>
                                 {stat.value}
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500, fontSize: '.875rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontWeight: 500, fontSize: '.875rem' }}>
                                 {stat.label}
                               </Typography>
                             </Box>
@@ -1058,24 +1058,24 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                 {/* Service Advisor Quality Comparison */}
                 <Grid item xs={12}>
                   <Card sx={{
-                    background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`,
-                    borderRadius: 3, boxShadow: MODERN_BMW_THEME.shadowSm, mb: 4
+                    background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`,
+                    borderRadius: 3, boxShadow: THEME.shadowSm, mb: 4
                   }}>
                     <CardContent sx={{ p: 4 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, textAlign: 'center' }}>
-                        <TrendingUp sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 28 }} />
-                        <Typography variant="h5" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700 }}>
+                        <TrendingUp sx={{ color: THEME.primary, mr: 2, fontSize: 28 }} />
+                        <Typography variant="h5" sx={{ color: THEME.textPrimary, fontWeight: 700 }}>
                           Service Advisor Quality Comparison
                         </Typography>
                       </Box>
                       <Typography variant="body1" sx={{
-                        color: MODERN_BMW_THEME.textSecondary, mb: 4, textAlign: 'center', maxWidth: '900px', mx: 'auto', lineHeight: 1.6
+                        color: THEME.textSecondary, mb: 4, textAlign: 'center', maxWidth: '900px', mx: 'auto', lineHeight: 1.6
                       }}>
                         Audio quality (🔵 left) and video quality (🟠 right) scores for each service advisor.
                       </Typography>
 
                       {dashboardData.serviceAdvisorRankings.length === 0 ? (
-                        <Box sx={{ textAlign: 'center', py: 8, color: MODERN_BMW_THEME.textTertiary }}>
+                        <Box sx={{ textAlign: 'center', py: 8, color: THEME.textTertiary }}>
                           <Person sx={{ fontSize: 56, mb: 3, opacity: 0.5 }} />
                           <Typography variant="h6">No service advisor data available</Typography>
                         </Box>
@@ -1091,18 +1091,18 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                   {/* Service Advisor Rankings */}
                   <Grid item xs={12} md={4}>
                     <Card sx={{
-                      background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`,
-                      borderRadius: 3, boxShadow: MODERN_BMW_THEME.shadowSm, height: 480
+                      background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`,
+                      borderRadius: 3, boxShadow: THEME.shadowSm, height: 480
                     }}>
                       <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <EmojiEvents sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
-                          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                          <EmojiEvents sx={{ color: THEME.primary, mr: 2, fontSize: 24 }} />
+                          <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
                             Service Advisor Rankings
                           </Typography>
                         </Box>
                         {dashboardData.serviceAdvisorRankings.length === 0 ? (
-                          <Box sx={{ textAlign: 'center', py: 8, color: MODERN_BMW_THEME.textTertiary, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                          <Box sx={{ textAlign: 'center', py: 8, color: THEME.textTertiary, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             <Person sx={{ fontSize: 48, mb: 2, opacity: .5 }} />
                             <Typography>No service advisor data available</Typography>
                           </Box>
@@ -1120,13 +1120,13 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                   {/* Recent Score Trend */}
                   <Grid item xs={12} md={4}>
                     <Card sx={{
-                      background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`,
-                      borderRadius: 3, boxShadow: MODERN_BMW_THEME.shadowSm, height: 480
+                      background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`,
+                      borderRadius: 3, boxShadow: THEME.shadowSm, height: 480
                     }}>
                       <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                          <Timeline sx={{ color: MODERN_BMW_THEME.accent, mr: 2, fontSize: 24 }} />
-                          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                          <Timeline sx={{ color: THEME.accent, mr: 2, fontSize: 24 }} />
+                          <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
                             Recent Score Trend
                           </Typography>
                         </Box>
@@ -1140,13 +1140,13 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                   {/* Quality Distribution */}
                   <Grid item xs={12} md={4}>
                     <Card sx={{
-                      background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`,
-                      borderRadius: 3, boxShadow: MODERN_BMW_THEME.shadowSm, height: 480
+                      background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`,
+                      borderRadius: 3, boxShadow: THEME.shadowSm, height: 480
                     }}>
                       <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                          <PieChart sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
-                          <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                          <PieChart sx={{ color: THEME.primary, mr: 2, fontSize: 24 }} />
+                          <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
                             Quality Distribution
                           </Typography>
                         </Box>
@@ -1165,7 +1165,7 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
               <Box>
                 {/* Search Bar */}
                 <Box sx={{
-                  p: 3, background: MODERN_BMW_THEME.surface, borderRadius: 3, border: `1px solid ${MODERN_BMW_THEME.border}`, mb: 3
+                  p: 3, background: THEME.surface, borderRadius: 3, border: `1px solid ${THEME.border}`, mb: 3
                 }}>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <TextField
@@ -1176,15 +1176,15 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <SearchIcon sx={{ color: MODERN_BMW_THEME.textTertiary }} />
+                            <SearchIcon sx={{ color: THEME.textTertiary }} />
                           </InputAdornment>
                         )
                       }}
                       sx={{
                         flexGrow: 1,
                         '& .MuiOutlinedInput-root': {
-                          background: MODERN_BMW_THEME.background, borderRadius: 2,
-                          '&:hover fieldset': { borderColor: MODERN_BMW_THEME.primary }
+                          background: THEME.background, borderRadius: 2,
+                          '&:hover fieldset': { borderColor: THEME.primary }
                         }
                       }}
                     />
@@ -1194,8 +1194,8 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                       onClick={exportToCsv}
                       disabled={!filteredResults.length}
                       sx={{
-                        borderColor: MODERN_BMW_THEME.primary, color: MODERN_BMW_THEME.primary, borderRadius: 2, fontWeight: 500,
-                        '&:hover': { borderColor: MODERN_BMW_THEME.primaryDark, backgroundColor: `${MODERN_BMW_THEME.primary}08` }
+                        borderColor: THEME.primary, color: THEME.primary, borderRadius: 2, fontWeight: 500,
+                        '&:hover': { borderColor: THEME.primaryDark, backgroundColor: `${THEME.primary}08` }
                       }}
                     >
                       Export CSV
@@ -1205,30 +1205,30 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
 
                 {filteredResults.length === 0 ? (
                   <Card sx={{
-                    background: MODERN_BMW_THEME.surfaceElevated, border: `1px solid ${MODERN_BMW_THEME.border}`,
-                    borderRadius: 3, textAlign: 'center', p: 8, boxShadow: MODERN_BMW_THEME.shadowSm
+                    background: THEME.surfaceElevated, border: `1px solid ${THEME.border}`,
+                    borderRadius: 3, textAlign: 'center', p: 8, boxShadow: THEME.shadowSm
                   }}>
-                    <Assessment sx={{ fontSize: 64, color: MODERN_BMW_THEME.textTertiary, mb: 3, opacity: 0.5 }} />
-                    <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textSecondary, fontWeight: 500, mb: 1 }}>
+                    <Assessment sx={{ fontSize: 64, color: THEME.textTertiary, mb: 3, opacity: 0.5 }} />
+                    <Typography variant="h6" sx={{ color: THEME.textSecondary, fontWeight: 500, mb: 1 }}>
                       {searchTerm ? 'No results found' : 'No results available'}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textTertiary }}>
+                    <Typography variant="body2" sx={{ color: THEME.textTertiary }}>
                       {searchTerm ? 'Try adjusting your search terms' : 'This dealer has no analysis results yet'}
                     </Typography>
                   </Card>
                 ) : (
                   <>
                     <TableContainer component={Paper} sx={{
-                      background: MODERN_BMW_THEME.background, border: `1px solid ${MODERN_BMW_THEME.border}`,
-                      borderRadius: 3, boxShadow: MODERN_BMW_THEME.shadowSm
+                      background: THEME.background, border: `1px solid ${THEME.border}`,
+                      borderRadius: 3, boxShadow: THEME.shadowSm
                     }}>
                       <Table>
                         <TableHead>
                           <TableRow sx={{
-                            backgroundColor: MODERN_BMW_THEME.surface,
+                            backgroundColor: THEME.surface,
                             '& th': {
-                              borderBottom: `2px solid ${MODERN_BMW_THEME.border}`, fontWeight: 600,
-                              color: MODERN_BMW_THEME.textPrimary, fontSize: '0.875rem', py: 2
+                              borderBottom: `2px solid ${THEME.border}`, fontWeight: 600,
+                              color: THEME.textPrimary, fontSize: '0.875rem', py: 2
                             }
                           }}>
                             <TableCell>Dealership</TableCell>
@@ -1244,32 +1244,32 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                         <TableBody>
                           {paginatedResults.map((r) => (
                             <TableRow key={r._id} hover sx={{
-                              '&:hover': { backgroundColor: MODERN_BMW_THEME.surface },
-                              '& td': { borderBottom: `1px solid ${MODERN_BMW_THEME.borderLight}`, py: 1.5 }
+                              '&:hover': { backgroundColor: THEME.surface },
+                              '& td': { borderBottom: `1px solid ${THEME.borderLight}`, py: 1.5 }
                             }}>
                               <TableCell>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                  <Business sx={{ color: MODERN_BMW_THEME.primary, mr: 1.5, fontSize: 18 }} />
-                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 500 }}>
+                                  <Business sx={{ color: THEME.primary, mr: 1.5, fontSize: 18 }} />
+                                  <Typography variant="body2" sx={{ color: THEME.textPrimary, fontWeight: 500 }}>
                                     {r.citnow_metadata?.dealership || '—'}
                                   </Typography>
                                 </Box>
                               </TableCell>
                               <TableCell>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                  <DirectionsCar sx={{ color: MODERN_BMW_THEME.textSecondary, mr: 1.5, fontSize: 18 }} />
-                                  <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 500 }}>
+                                  <DirectionsCar sx={{ color: THEME.textSecondary, mr: 1.5, fontSize: 18 }} />
+                                  <Typography variant="body2" sx={{ color: THEME.textPrimary, fontWeight: 500 }}>
                                     {r.citnow_metadata?.vehicle || r.citnow_metadata?.registration || '—'}
                                   </Typography>
                                 </Box>
                               </TableCell>
                               <TableCell>
-                                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+                                <Typography variant="body2" sx={{ color: THEME.textPrimary }}>
                                   {r.citnow_metadata?.email || '—'}
                                 </Typography>
                               </TableCell>
                               <TableCell>
-                                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+                                <Typography variant="body2" sx={{ color: THEME.textPrimary }}>
                                   {r.citnow_metadata?.phone || '—'}
                                 </Typography>
                               </TableCell>
@@ -1278,12 +1278,12 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                                   label={`${r.video_analysis?.quality_score || 0}/10`}
                                   size="small"
                                   sx={{
-                                    background: (r.video_analysis?.quality_score || 0) >= 8 ? MODERN_BMW_THEME.successLight :
-                                      (r.video_analysis?.quality_score || 0) >= 6 ? MODERN_BMW_THEME.primaryUltraLight :
-                                        (r.video_analysis?.quality_score || 0) >= 4 ? MODERN_BMW_THEME.warningLight : MODERN_BMW_THEME.errorLight,
-                                    color: (r.video_analysis?.quality_score || 0) >= 8 ? MODERN_BMW_THEME.success :
-                                      (r.video_analysis?.quality_score || 0) >= 6 ? MODERN_BMW_THEME.primary :
-                                        (r.video_analysis?.quality_score || 0) >= 4 ? MODERN_BMW_THEME.warning : MODERN_BMW_THEME.error,
+                                    background: (r.video_analysis?.quality_score || 0) >= 8 ? THEME.successLight :
+                                      (r.video_analysis?.quality_score || 0) >= 6 ? THEME.primaryUltraLight :
+                                        (r.video_analysis?.quality_score || 0) >= 4 ? THEME.warningLight : THEME.errorLight,
+                                    color: (r.video_analysis?.quality_score || 0) >= 8 ? THEME.success :
+                                      (r.video_analysis?.quality_score || 0) >= 6 ? THEME.primary :
+                                        (r.video_analysis?.quality_score || 0) >= 4 ? THEME.warning : THEME.error,
                                     fontWeight: 600, fontSize: '0.75rem'
                                   }}
                                 />
@@ -1293,12 +1293,12 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                                   label={`${Math.round(r.audio_analysis?.score || 0)}/10`}
                                   size="small"
                                   sx={{
-                                    background: (r.audio_analysis?.score || 0) >= 8 ? MODERN_BMW_THEME.successLight :
-                                      (r.audio_analysis?.score || 0) >= 6 ? MODERN_BMW_THEME.primaryUltraLight :
-                                        (r.audio_analysis?.score || 0) >= 4 ? MODERN_BMW_THEME.warningLight : MODERN_BMW_THEME.errorLight,
-                                    color: (r.audio_analysis?.score || 0) >= 8 ? MODERN_BMW_THEME.success :
-                                      (r.audio_analysis?.score || 0) >= 6 ? MODERN_BMW_THEME.primary :
-                                        (r.audio_analysis?.score || 0) >= 4 ? MODERN_BMW_THEME.warning : MODERN_BMW_THEME.error,
+                                    background: (r.audio_analysis?.score || 0) >= 8 ? THEME.successLight :
+                                      (r.audio_analysis?.score || 0) >= 6 ? THEME.primaryUltraLight :
+                                        (r.audio_analysis?.score || 0) >= 4 ? THEME.warningLight : THEME.errorLight,
+                                    color: (r.audio_analysis?.score || 0) >= 8 ? THEME.success :
+                                      (r.audio_analysis?.score || 0) >= 6 ? THEME.primary :
+                                        (r.audio_analysis?.score || 0) >= 4 ? THEME.warning : THEME.error,
                                     fontWeight: 600, fontSize: '0.75rem'
                                   }}
                                 />
@@ -1308,8 +1308,8 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                                   label={`${r.overall_quality?.overall_score?.toFixed(1) || 0}/10`}
                                   size="small"
                                   sx={{
-                                    background: MODERN_BMW_THEME.primaryUltraLight, color: MODERN_BMW_THEME.primary,
-                                    fontWeight: 700, fontSize: '0.75rem', border: `1px solid ${MODERN_BMW_THEME.primaryLight}`
+                                    background: THEME.primaryUltraLight, color: THEME.primary,
+                                    fontWeight: 700, fontSize: '0.75rem', border: `1px solid ${THEME.primaryLight}`
                                   }}
                                 />
                               </TableCell>
@@ -1317,16 +1317,16 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
                                   <Tooltip title="View details">
                                     <IconButton size="small" sx={{
-                                      color: MODERN_BMW_THEME.primary, background: `${MODERN_BMW_THEME.primary}08`,
-                                      '&:hover': { background: `${MODERN_BMW_THEME.primary}15` }
+                                      color: THEME.primary, background: `${THEME.primary}08`,
+                                      '&:hover': { background: `${THEME.primary}15` }
                                     }}>
                                       <Visibility fontSize="small" />
                                     </IconButton>
                                   </Tooltip>
                                   <Tooltip title="Delete">
                                     <IconButton size="small" sx={{
-                                      color: MODERN_BMW_THEME.error, background: `${MODERN_BMW_THEME.error}08`,
-                                      '&:hover': { background: `${MODERN_BMW_THEME.error}15` }
+                                      color: THEME.error, background: `${THEME.error}08`,
+                                      '&:hover': { background: `${THEME.error}15` }
                                     }}>
                                       <DeleteIcon fontSize="small" />
                                     </IconButton>
@@ -1351,7 +1351,7 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
                         setPage(0);
                       }}
                       sx={{
-                        borderTop: `1px solid ${MODERN_BMW_THEME.border}`, mt: 2,
+                        borderTop: `1px solid ${THEME.border}`, mt: 2,
                         '& .MuiTablePagination-toolbar': { padding: 2 }
                       }}
                     />
@@ -1364,14 +1364,14 @@ const DealerDetailDialog = ({ open, onClose, dealer }) => {
       </DialogContent>
 
       <DialogActions sx={{
-        px: 3, py: 2, background: MODERN_BMW_THEME.surface, borderTop: `1px solid ${MODERN_BMW_THEME.border}`
+        px: 3, py: 2, background: THEME.surface, borderTop: `1px solid ${THEME.border}`
       }}>
         <Button
           onClick={onClose}
           variant="outlined"
           sx={{
-            borderColor: MODERN_BMW_THEME.border, color: MODERN_BMW_THEME.textSecondary, borderRadius: 2, px: 4, fontWeight: 500,
-            '&:hover': { borderColor: MODERN_BMW_THEME.textSecondary, color: MODERN_BMW_THEME.textPrimary, background: `${MODERN_BMW_THEME.textSecondary}08` }
+            borderColor: THEME.border, color: THEME.textSecondary, borderRadius: 2, px: 4, fontWeight: 500,
+            '&:hover': { borderColor: THEME.textSecondary, color: THEME.textPrimary, background: `${THEME.textSecondary}08` }
           }}
         >
           Close
@@ -1649,9 +1649,9 @@ export default function SuperAdminDashboard() {
             variant="h3"
             sx={{
               fontWeight: 700,
-              color: MODERN_BMW_THEME.textPrimary,
+              color: THEME.textPrimary,
               mb: 2,
-              background: MODERN_BMW_THEME.gradientPrimary,
+              background: THEME.gradientPrimary,
               backgroundClip: 'text',
               textFillColor: 'transparent',
               WebkitBackgroundClip: 'text',
@@ -1663,7 +1663,7 @@ export default function SuperAdminDashboard() {
           <Typography
             variant="h6"
             sx={{
-              color: MODERN_BMW_THEME.textSecondary,
+              color: THEME.textSecondary,
               fontWeight: 400,
               maxWidth: '800px',
               mx: 'auto',
@@ -1678,13 +1678,13 @@ export default function SuperAdminDashboard() {
             <Box sx={{ textAlign: 'left' }}>
               <Typography variant="h4" sx={{
                 fontWeight: 600,
-                color: MODERN_BMW_THEME.textPrimary,
+                color: THEME.textPrimary,
                 mb: 1
               }}>
                 Super Admin Dashboard
               </Typography>
               <Typography variant="body1" sx={{
-                color: MODERN_BMW_THEME.textSecondary,
+                color: THEME.textSecondary,
                 fontWeight: 400
               }}>
                 Real-time monitoring and performance tracking
@@ -1712,7 +1712,7 @@ export default function SuperAdminDashboard() {
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
             <Paper sx={{
               background: 'rgba(0,0,0,0.03)',
-              border: `1px solid ${MODERN_BMW_THEME.border}`,
+              border: `1px solid ${THEME.border}`,
               borderRadius: 50,
               display: 'inline-flex',
               p: 0.75,
@@ -1732,13 +1732,13 @@ export default function SuperAdminDashboard() {
                       fontWeight: isActive ? 600 : 500,
                       textTransform: 'none',
                       fontSize: '14px',
-                      color: isActive ? MODERN_BMW_THEME.primary : MODERN_BMW_THEME.textSecondary,
+                      color: isActive ? THEME.primary : THEME.textSecondary,
                       background: isActive ? '#FFFFFF' : 'transparent',
                       boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.08)' : 'none',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         background: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
-                        color: MODERN_BMW_THEME.primary,
+                        color: THEME.primary,
                         transform: 'translateY(-1px)'
                       }
                     }}
@@ -1754,14 +1754,14 @@ export default function SuperAdminDashboard() {
         {/* Performance Overview Section */}
         <Box sx={{ mb: 6, textAlign: 'center' }}>
           <Typography variant="h4" sx={{
-            color: MODERN_BMW_THEME.textPrimary,
+            color: THEME.textPrimary,
             fontWeight: 600,
             mb: 1
           }}>
             Network Performance Overview
           </Typography>
           <Typography variant="body1" sx={{
-            color: MODERN_BMW_THEME.textSecondary,
+            color: THEME.textSecondary,
             mb: 4,
             maxWidth: '600px',
             mx: 'auto'
@@ -1778,7 +1778,7 @@ export default function SuperAdminDashboard() {
                 change={`${dashboardData.overview.totalDealers} active dealership${dashboardData.overview.totalDealers !== 1 ? 's' : ''}`}
                 changeType="positive"
                 icon={<Business />}
-                color={MODERN_BMW_THEME.primary}
+                color={THEME.primary}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -1788,7 +1788,7 @@ export default function SuperAdminDashboard() {
                 change={dashboardData.overview.totalVideos > 0 ? `${dashboardData.overview.totalVideos} analyses completed` : 'No analyses yet'}
                 changeType={dashboardData.overview.totalVideos > 0 ? 'positive' : 'neutral'}
                 icon={<VideoLibrary />}
-                color={MODERN_BMW_THEME.accent}
+                color={THEME.accent}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -1798,7 +1798,7 @@ export default function SuperAdminDashboard() {
                 change={dashboardData.overview.averageScore > 0 ? `${dashboardData.overview.averageScore.toFixed(1)}/10 network average` : 'No score data'}
                 changeType={dashboardData.overview.averageScore >= 7 ? 'positive' : dashboardData.overview.averageScore >= 4 ? 'neutral' : dashboardData.overview.averageScore > 0 ? 'negative' : 'neutral'}
                 icon={<Star />}
-                color={MODERN_BMW_THEME.warning}
+                color={THEME.warning}
                 subtitle="out of 10"
               />
             </Grid>
@@ -1809,7 +1809,7 @@ export default function SuperAdminDashboard() {
                 change={`${dashboardData.overview.totalUsers} registered user${dashboardData.overview.totalUsers !== 1 ? 's' : ''}`}
                 changeType="positive"
                 icon={<Group />}
-                color={MODERN_BMW_THEME.success}
+                color={THEME.success}
               />
             </Grid>
           </Grid>
@@ -1818,14 +1818,14 @@ export default function SuperAdminDashboard() {
         {/* Analytics & Insights Section */}
         <Box sx={{ mb: 6, textAlign: 'center' }}>
           <Typography variant="h4" sx={{
-            color: MODERN_BMW_THEME.textPrimary,
+            color: THEME.textPrimary,
             fontWeight: 600,
             mb: 1
           }}>
             Analytics & Insights
           </Typography>
           <Typography variant="body1" sx={{
-            color: MODERN_BMW_THEME.textSecondary,
+            color: THEME.textSecondary,
             mb: 4,
             maxWidth: '600px',
             mx: 'auto'
@@ -1838,18 +1838,18 @@ export default function SuperAdminDashboard() {
             {/* Performance Trend */}
             <Grid item xs={12} lg={8}>
               <Card sx={{
-                background: MODERN_BMW_THEME.surfaceElevated,
-                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                background: THEME.surfaceElevated,
+                border: `1px solid ${THEME.border}`,
                 borderRadius: 3,
-                boxShadow: MODERN_BMW_THEME.shadowSm,
+                boxShadow: THEME.shadowSm,
                 height: '100%'
               }}>
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Timeline sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
+                      <Timeline sx={{ color: THEME.primary, mr: 2, fontSize: 24 }} />
                       <Typography variant="h6" sx={{
-                        color: MODERN_BMW_THEME.textPrimary,
+                        color: THEME.textPrimary,
                         fontWeight: 600
                       }}>
                         Network Performance Trend
@@ -1860,8 +1860,8 @@ export default function SuperAdminDashboard() {
                       size="small"
                       variant="outlined"
                       sx={{
-                        borderColor: MODERN_BMW_THEME.primary,
-                        color: MODERN_BMW_THEME.primary,
+                        borderColor: THEME.primary,
+                        color: THEME.primary,
                         fontWeight: 500
                       }}
                     />
@@ -1874,10 +1874,10 @@ export default function SuperAdminDashboard() {
             {/* Quality Distribution */}
             <Grid item xs={12} lg={4}>
               <Card sx={{
-                background: MODERN_BMW_THEME.surfaceElevated,
-                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                background: THEME.surfaceElevated,
+                border: `1px solid ${THEME.border}`,
                 borderRadius: 3,
-                boxShadow: MODERN_BMW_THEME.shadowSm,
+                boxShadow: THEME.shadowSm,
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
@@ -1891,9 +1891,9 @@ export default function SuperAdminDashboard() {
                   '&:last-child': { pb: 3 }
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <PieChart sx={{ color: MODERN_BMW_THEME.accent, mr: 2, fontSize: 24 }} />
+                    <PieChart sx={{ color: THEME.accent, mr: 2, fontSize: 24 }} />
                     <Typography variant="h6" sx={{
-                      color: MODERN_BMW_THEME.textPrimary,
+                      color: THEME.textPrimary,
                       fontWeight: 600
                     }}>
                       Quality Distribution
@@ -1911,14 +1911,14 @@ export default function SuperAdminDashboard() {
         {/* Dealer Performance Section */}
         <Box sx={{ mb: 6, textAlign: 'center' }}>
           <Typography variant="h4" sx={{
-            color: MODERN_BMW_THEME.textPrimary,
+            color: THEME.textPrimary,
             fontWeight: 600,
             mb: 1
           }}>
             Dealer Performance Rankings
           </Typography>
           <Typography variant="body1" sx={{
-            color: MODERN_BMW_THEME.textSecondary,
+            color: THEME.textSecondary,
             mb: 4,
             maxWidth: '600px',
             mx: 'auto'
@@ -1930,10 +1930,10 @@ export default function SuperAdminDashboard() {
             {/* Dealer Performance Chart */}
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <Card sx={{
-                background: MODERN_BMW_THEME.surfaceElevated,
-                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                background: THEME.surfaceElevated,
+                border: `1px solid ${THEME.border}`,
                 borderRadius: 3,
-                boxShadow: MODERN_BMW_THEME.shadowSm,
+                boxShadow: THEME.shadowSm,
                 height: '100%',
                 userSelect: 'none',
                 cursor: 'pointer'
@@ -1947,19 +1947,19 @@ export default function SuperAdminDashboard() {
             {/* Top Performers */}
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <Card sx={{
-                background: MODERN_BMW_THEME.surfaceElevated,
-                border: `1px solid ${MODERN_BMW_THEME.border}`,
+                background: THEME.surfaceElevated,
+                border: `1px solid ${THEME.border}`,
                 borderRadius: 3,
-                boxShadow: MODERN_BMW_THEME.shadowSm,
+                boxShadow: THEME.shadowSm,
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column'
               }}>
                 <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <EmojiEvents sx={{ color: MODERN_BMW_THEME.warning, mr: 2, fontSize: 24 }} />
+                    <EmojiEvents sx={{ color: THEME.warning, mr: 2, fontSize: 24 }} />
                     <Typography variant="h6" sx={{
-                      color: MODERN_BMW_THEME.textPrimary,
+                      color: THEME.textPrimary,
                       fontWeight: 600
                     }}>
                       Top 5 Performers
@@ -1992,7 +1992,7 @@ export default function SuperAdminDashboard() {
                         sx={{
                           borderRadius: 0,
                           '&:hover': {
-                            background: MODERN_BMW_THEME.primaryUltraLight
+                            background: THEME.primaryUltraLight
                           }
                         }}
                       >
@@ -2006,7 +2006,7 @@ export default function SuperAdminDashboard() {
                     ))}
                     {getTopPerformersByType().length === 0 && (
                       <Typography variant="body2" sx={{
-                        color: MODERN_BMW_THEME.textTertiary,
+                        color: THEME.textTertiary,
                         textAlign: 'center',
                         py: 4
                       }}>
@@ -2023,14 +2023,14 @@ export default function SuperAdminDashboard() {
         {/* Recent Activity Section */}
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h4" sx={{
-            color: MODERN_BMW_THEME.textPrimary,
+            color: THEME.textPrimary,
             fontWeight: 600,
             mb: 1
           }}>
             Recent Network Activity
           </Typography>
           <Typography variant="body1" sx={{
-            color: MODERN_BMW_THEME.textSecondary,
+            color: THEME.textSecondary,
             mb: 4,
             maxWidth: '600px',
             mx: 'auto'
@@ -2040,16 +2040,16 @@ export default function SuperAdminDashboard() {
 
           {/* Recent Activity Table */}
           <Card sx={{
-            background: MODERN_BMW_THEME.surfaceElevated,
-            border: `1px solid ${MODERN_BMW_THEME.border}`,
+            background: THEME.surfaceElevated,
+            border: `1px solid ${THEME.border}`,
             borderRadius: 3,
-            boxShadow: MODERN_BMW_THEME.shadowSm
+            boxShadow: THEME.shadowSm
           }}>
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                <Analytics sx={{ color: MODERN_BMW_THEME.primary, mr: 2, fontSize: 24 }} />
+                <Analytics sx={{ color: THEME.primary, mr: 2, fontSize: 24 }} />
                 <Typography variant="h6" sx={{
-                  color: MODERN_BMW_THEME.textPrimary,
+                  color: THEME.textPrimary,
                   fontWeight: 600
                 }}>
                   Dealer Performance Overview
@@ -2060,11 +2060,11 @@ export default function SuperAdminDashboard() {
                 <Table>
                   <TableHead>
                     <TableRow sx={{
-                      backgroundColor: MODERN_BMW_THEME.surface,
+                      backgroundColor: THEME.surface,
                       '& th': {
-                        borderBottom: `2px solid ${MODERN_BMW_THEME.border}`,
+                        borderBottom: `2px solid ${THEME.border}`,
                         fontWeight: 600,
-                        color: MODERN_BMW_THEME.textPrimary,
+                        color: THEME.textPrimary,
                         fontSize: '0.875rem',
                         py: 2
                       }
@@ -2083,10 +2083,10 @@ export default function SuperAdminDashboard() {
                         key={dealer.id}
                         sx={{
                           '&:hover': {
-                            backgroundColor: MODERN_BMW_THEME.surface
+                            backgroundColor: THEME.surface
                           },
                           '& td': {
-                            borderBottom: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                            borderBottom: `1px solid ${THEME.borderLight}`,
                             py: 2
                           }
                         }}
@@ -2097,7 +2097,7 @@ export default function SuperAdminDashboard() {
                               sx={{
                                 width: 32,
                                 height: 32,
-                                background: MODERN_BMW_THEME.gradientPrimary,
+                                background: THEME.gradientPrimary,
                                 fontWeight: 600,
                                 fontSize: '14px',
                                 mr: 2
@@ -2106,7 +2106,7 @@ export default function SuperAdminDashboard() {
                               {index + 1}
                             </Avatar>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               fontWeight: 600
                             }}>
                               {dealer.name}
@@ -2119,22 +2119,22 @@ export default function SuperAdminDashboard() {
                             size="small"
                             sx={{
                               background:
-                                dealer.overall >= 8.5 ? MODERN_BMW_THEME.successLight :
-                                  dealer.overall >= 7 ? MODERN_BMW_THEME.primaryUltraLight :
-                                    dealer.overall >= 5 ? MODERN_BMW_THEME.warningLight :
-                                      MODERN_BMW_THEME.errorLight,
+                                dealer.overall >= 8.5 ? THEME.successLight :
+                                  dealer.overall >= 7 ? THEME.primaryUltraLight :
+                                    dealer.overall >= 5 ? THEME.warningLight :
+                                      THEME.errorLight,
                               color:
-                                dealer.overall >= 8.5 ? MODERN_BMW_THEME.success :
-                                  dealer.overall >= 7 ? MODERN_BMW_THEME.primary :
-                                    dealer.overall >= 5 ? MODERN_BMW_THEME.warning :
-                                      MODERN_BMW_THEME.error,
+                                dealer.overall >= 8.5 ? THEME.success :
+                                  dealer.overall >= 7 ? THEME.primary :
+                                    dealer.overall >= 5 ? THEME.warning :
+                                      THEME.error,
                               fontWeight: 700
                             }}
                           />
                         </TableCell>
                         <TableCell align="center">
                           <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
+                            color: THEME.textPrimary,
                             fontWeight: 600
                           }}>
                             {dealer.video.toFixed(1)}
@@ -2142,7 +2142,7 @@ export default function SuperAdminDashboard() {
                         </TableCell>
                         <TableCell align="center">
                           <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
+                            color: THEME.textPrimary,
                             fontWeight: 600
                           }}>
                             {dealer.audio.toFixed(1)}
@@ -2150,7 +2150,7 @@ export default function SuperAdminDashboard() {
                         </TableCell>
                         <TableCell align="center">
                           <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
+                            color: THEME.textPrimary,
                             fontWeight: 600
                           }}>
                             {dealer.videos}
@@ -2162,10 +2162,10 @@ export default function SuperAdminDashboard() {
                               size="small"
                               onClick={() => handleViewDealer(dealer)}
                               sx={{
-                                color: MODERN_BMW_THEME.primary,
-                                background: `${MODERN_BMW_THEME.primary}08`,
+                                color: THEME.primary,
+                                background: `${THEME.primary}08`,
                                 '&:hover': {
-                                  background: `${MODERN_BMW_THEME.primary}15`
+                                  background: `${THEME.primary}15`
                                 }
                               }}
                             >
@@ -2178,7 +2178,7 @@ export default function SuperAdminDashboard() {
                     {dashboardData.dealerRankings.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                          <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textTertiary }}>
+                          <Typography variant="body2" sx={{ color: THEME.textTertiary }}>
                             No dealer data available
                           </Typography>
                         </TableCell>

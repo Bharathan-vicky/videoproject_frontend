@@ -19,15 +19,15 @@ import { AuthContext } from '../../contexts/AuthContext';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// Modern BMW-Inspired Theme (same as your dealer management)
-const MODERN_BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0A4B9C',
-  primaryLight: '#4D8FDF',
-  primaryUltraLight: '#E8F1FD',
-  accent: '#FF6D00',
-  accentLight: '#FF9D45',
-  accentUltraLight: '#FFF3E8',
+// QualityLens Branding Theme (consistent across dashboard)
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#F0FDFA',
+  accent: '#00B4DB',
+  accentLight: '#E0F2FE',
+  accentUltraLight: '#F8FAFC',
   background: '#FFFFFF',
   surface: '#F8FAFC',
   surfaceElevated: '#FFFFFF',
@@ -37,14 +37,14 @@ const MODERN_BMW_THEME = {
   textSecondary: '#64748B',
   textTertiary: '#94A3B8',
   success: '#10B981',
-  successLight: '#D1FAE5',
+  successLight: '#F0FDF4',
   successUltraLight: '#ECFDF5',
   warning: '#F59E0B',
-  warningLight: '#FEF3C7',
+  warningLight: '#FFFBE8',
   error: '#EF4444',
-  errorLight: '#FEE2E2',
-  gradientPrimary: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
-  gradientAccent: 'linear-gradient(135deg, #FF6D00 0%, #FF8A00 100%)',
+  errorLight: '#FEF2F2',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
+  gradientAccent: 'linear-gradient(135deg, #0DA1B8 0%, #0C587D 100%)',
   gradientSuccess: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
   shadowMd: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -56,10 +56,10 @@ const MODERN_BMW_THEME = {
 
 const QualityScoreBadge = ({ score, label, type = 'overall' }) => {
   const getColorConfig = () => {
-    if (score >= 8) return { color: MODERN_BMW_THEME.success, bg: MODERN_BMW_THEME.successLight };
-    if (score >= 6) return { color: MODERN_BMW_THEME.primary, bg: MODERN_BMW_THEME.primaryUltraLight };
-    if (score >= 4) return { color: MODERN_BMW_THEME.warning, bg: MODERN_BMW_THEME.warningLight };
-    return { color: MODERN_BMW_THEME.error, bg: MODERN_BMW_THEME.errorLight };
+    if (score >= 8) return { color: THEME.success, bg: THEME.successLight };
+    if (score >= 6) return { color: THEME.primary, bg: THEME.primaryUltraLight };
+    if (score >= 4) return { color: THEME.warning, bg: THEME.warningLight };
+    return { color: THEME.error, bg: THEME.errorLight };
   };
 
   const colors = getColorConfig();
@@ -114,13 +114,13 @@ const QualityScoreBadge = ({ score, label, type = 'overall' }) => {
 // Enhanced Stats Cards
 const StatsCard = ({ icon: Icon, value, label, color, trend }) => (
   <Card sx={{
-    background: MODERN_BMW_THEME.surfaceElevated,
-    border: `1px solid ${MODERN_BMW_THEME.border}`,
+    background: THEME.surfaceElevated,
+    border: `1px solid ${THEME.border}`,
     borderRadius: 3,
-    boxShadow: MODERN_BMW_THEME.shadowSm,
+    boxShadow: THEME.shadowSm,
     transition: 'all 0.2s ease-in-out',
     '&:hover': {
-      boxShadow: MODERN_BMW_THEME.shadowMd,
+      boxShadow: THEME.shadowMd,
       transform: 'translateY(-2px)'
     }
   }}>
@@ -147,14 +147,14 @@ const StatsCard = ({ icon: Icon, value, label, color, trend }) => (
         )}
       </Box>
       <Typography variant="h4" sx={{
-        color: MODERN_BMW_THEME.textPrimary,
+        color: THEME.textPrimary,
         fontWeight: 700,
         mb: 0.5
       }}>
         {value}
       </Typography>
       <Typography variant="body2" sx={{
-        color: MODERN_BMW_THEME.textSecondary,
+        color: THEME.textSecondary,
         fontWeight: 500
       }}>
         {label}
@@ -501,7 +501,7 @@ export default function Results() {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('CitNOW Analytics — Quality Analysis Report', 14, 12);
+    doc.text('QualityLens Analytics — Quality Analysis Report', 14, 12);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.text(`Generated: ${new Date().toLocaleString()}`, 220, 12);
@@ -591,9 +591,9 @@ export default function Results() {
             variant="h3"
             sx={{
               fontWeight: 700,
-              color: MODERN_BMW_THEME.textPrimary,
+              color: THEME.textPrimary,
               mb: 2,
-              background: MODERN_BMW_THEME.gradientPrimary,
+              background: THEME.gradientPrimary,
               backgroundClip: 'text',
               textFillColor: 'transparent',
               WebkitBackgroundClip: 'text',
@@ -605,7 +605,7 @@ export default function Results() {
           <Typography
             variant="h6"
             sx={{
-              color: MODERN_BMW_THEME.textSecondary,
+              color: THEME.textSecondary,
               fontWeight: 400,
               maxWidth: '600px',
               mx: 'auto',
@@ -623,7 +623,7 @@ export default function Results() {
               icon={VideoLibrary}
               value={stats.totalResults}
               label="Total Analyses"
-              color={MODERN_BMW_THEME.primary}
+              color={THEME.primary}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -631,7 +631,7 @@ export default function Results() {
               icon={Videocam}
               value={stats.averageVideoScore.toFixed(1)}
               label="Avg Video Score"
-              color={MODERN_BMW_THEME.success}
+              color={THEME.success}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -639,7 +639,7 @@ export default function Results() {
               icon={Mic}
               value={stats.averageAudioScore.toFixed(1)}
               label="Avg Audio Score"
-              color={MODERN_BMW_THEME.accent}
+              color={THEME.accent}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -647,7 +647,7 @@ export default function Results() {
               icon={Score}
               value={stats.averageOverallScore.toFixed(1)}
               label="Avg Overall Score"
-              color={MODERN_BMW_THEME.primary}
+              color={THEME.primary}
             />
           </Grid>
         </Grid>
@@ -655,21 +655,21 @@ export default function Results() {
         {/* User Analysis Stats Section */}
         {Array.isArray(userStats) && userStats.length > 0 ? (
           <Card sx={{
-            background: MODERN_BMW_THEME.surfaceElevated,
-            border: `1px solid ${MODERN_BMW_THEME.border}`,
+            background: THEME.surfaceElevated,
+            border: `1px solid ${THEME.border}`,
             borderRadius: 3,
-            boxShadow: MODERN_BMW_THEME.shadowSm,
+            boxShadow: THEME.shadowSm,
             mb: 4
           }}>
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                 <Group sx={{
                   fontSize: 28,
-                  color: MODERN_BMW_THEME.primary,
+                  color: THEME.primary,
                   mr: 2
                 }} />
                 <Typography variant="h5" sx={{
-                  color: MODERN_BMW_THEME.textPrimary,
+                  color: THEME.textPrimary,
                   fontWeight: 600
                 }}>
                   User Analysis Statistics
@@ -688,12 +688,12 @@ export default function Results() {
                   return (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={userId}>
                       <Card sx={{
-                        background: MODERN_BMW_THEME.surface,
-                        border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                        background: THEME.surface,
+                        border: `1px solid ${THEME.borderLight}`,
                         borderRadius: 2,
                         transition: 'all 0.2s ease-in-out',
                         '&:hover': {
-                          boxShadow: MODERN_BMW_THEME.shadowMd,
+                          boxShadow: THEME.shadowMd,
                           transform: 'translateY(-2px)'
                         }
                       }}>
@@ -702,7 +702,7 @@ export default function Results() {
                             sx={{
                               width: 56,
                               height: 56,
-                              background: MODERN_BMW_THEME.gradientPrimary,
+                              background: THEME.gradientPrimary,
                               fontWeight: 600,
                               fontSize: '18px',
                               mb: 2,
@@ -713,7 +713,7 @@ export default function Results() {
                           </Avatar>
 
                           <Typography variant="h6" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
+                            color: THEME.textPrimary,
                             fontWeight: 600,
                             mb: 0.5
                           }}>
@@ -721,7 +721,7 @@ export default function Results() {
                           </Typography>
 
                           <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textSecondary,
+                            color: THEME.textSecondary,
                             mb: 1
                           }}>
                             {email}
@@ -732,11 +732,11 @@ export default function Results() {
                             size="small"
                             sx={{
                               background: role === 'dealer_admin'
-                                ? MODERN_BMW_THEME.primaryUltraLight
-                                : MODERN_BMW_THEME.successLight,
+                                ? THEME.primaryUltraLight
+                                : THEME.successLight,
                               color: role === 'dealer_admin'
-                                ? MODERN_BMW_THEME.primary
-                                : MODERN_BMW_THEME.success,
+                                ? THEME.primary
+                                : THEME.success,
                               fontWeight: 600,
                               mb: 2
                             }}
@@ -747,23 +747,23 @@ export default function Results() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 1,
-                            background: MODERN_BMW_THEME.primaryUltraLight,
+                            background: THEME.primaryUltraLight,
                             borderRadius: 2,
                             py: 1,
-                            border: `1px solid ${MODERN_BMW_THEME.primary}20`
+                            border: `1px solid ${THEME.primary}20`
                           }}>
                             <VideoLibrary sx={{
                               fontSize: 20,
-                              color: MODERN_BMW_THEME.primary
+                              color: THEME.primary
                             }} />
                             <Typography variant="h6" sx={{
-                              color: MODERN_BMW_THEME.primary,
+                              color: THEME.primary,
                               fontWeight: 700
                             }}>
                               {videosAnalyzed}
                             </Typography>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               fontWeight: 500
                             }}>
                               videos
@@ -781,18 +781,18 @@ export default function Results() {
 
         {/* Results Table Section */}
         <Card sx={{
-          background: MODERN_BMW_THEME.surfaceElevated,
-          border: `1px solid ${MODERN_BMW_THEME.border}`,
+          background: THEME.surfaceElevated,
+          border: `1px solid ${THEME.border}`,
           borderRadius: 3,
-          boxShadow: MODERN_BMW_THEME.shadowSm,
+          boxShadow: THEME.shadowSm,
           overflow: 'hidden'
         }}>
           <CardContent sx={{ p: 0 }}>
             {/* Enhanced Action Bar */}
             <Box sx={{
               p: 3,
-              background: MODERN_BMW_THEME.surface,
-              borderBottom: `1px solid ${MODERN_BMW_THEME.border}`
+              background: THEME.surface,
+              borderBottom: `1px solid ${THEME.border}`
             }}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <TextField
@@ -806,17 +806,17 @@ export default function Results() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchIcon sx={{ color: MODERN_BMW_THEME.textTertiary }} />
+                        <SearchIcon sx={{ color: THEME.textTertiary }} />
                       </InputAdornment>
                     )
                   }}
                   sx={{
                     flexGrow: 1,
                     '& .MuiOutlinedInput-root': {
-                      background: MODERN_BMW_THEME.background,
+                      background: THEME.background,
                       borderRadius: 2,
                       '&:hover fieldset': {
-                        borderColor: MODERN_BMW_THEME.primary,
+                        borderColor: THEME.primary,
                       },
                     }
                   }}
@@ -833,9 +833,9 @@ export default function Results() {
                     sx={{
                       minWidth: 230,
                       '& .MuiOutlinedInput-root': {
-                        background: MODERN_BMW_THEME.background,
+                        background: THEME.background,
                         borderRadius: 2,
-                        '&:hover fieldset': { borderColor: MODERN_BMW_THEME.primary },
+                        '&:hover fieldset': { borderColor: THEME.primary },
                       }
                     }}
                   >
@@ -852,13 +852,13 @@ export default function Results() {
                   onClick={() => setRefreshCounter(prev => prev + 1)}
                   disabled={loading}
                   sx={{
-                    borderColor: MODERN_BMW_THEME.border,
-                    color: MODERN_BMW_THEME.textSecondary,
+                    borderColor: THEME.border,
+                    color: THEME.textSecondary,
                     borderRadius: 2,
                     fontWeight: 500,
                     '&:hover': {
-                      borderColor: MODERN_BMW_THEME.primary,
-                      color: MODERN_BMW_THEME.primary
+                      borderColor: THEME.primary,
+                      color: THEME.primary
                     }
                   }}
                 >
@@ -872,13 +872,13 @@ export default function Results() {
                   disabled={!filteredRows.length}
                   onClick={(e) => setExportAnchor(e.currentTarget)}
                   sx={{
-                    background: MODERN_BMW_THEME.gradientPrimary,
+                    background: THEME.gradientPrimary,
                     borderRadius: 2,
                     px: 3,
                     fontWeight: 600,
-                    boxShadow: MODERN_BMW_THEME.shadowMd,
+                    boxShadow: THEME.shadowMd,
                     '&:hover': {
-                      boxShadow: MODERN_BMW_THEME.shadowLg,
+                      boxShadow: THEME.shadowLg,
                       transform: 'translateY(-1px)'
                     },
                     transition: 'all 0.2s ease-in-out'
@@ -898,7 +898,7 @@ export default function Results() {
                   }}
                 >
                   <MenuItem onClick={() => { exportToCsv(); setExportAnchor(null); }} sx={{ gap: 1.5, py: 1.2 }}>
-                    <FileDownloadIcon sx={{ color: MODERN_BMW_THEME.primary, fontSize: 20 }} />
+                    <FileDownloadIcon sx={{ color: THEME.primary, fontSize: 20 }} />
                     Export CSV
                   </MenuItem>
                   <MenuItem onClick={() => { exportToPdf(); setExportAnchor(null); }} sx={{ gap: 1.5, py: 1.2 }}>
@@ -915,14 +915,14 @@ export default function Results() {
                   width: 60,
                   height: 60,
                   borderRadius: '50%',
-                  border: `3px solid ${MODERN_BMW_THEME.border}`,
-                  borderTop: `3px solid ${MODERN_BMW_THEME.primary}`,
+                  border: `3px solid ${THEME.border}`,
+                  borderTop: `3px solid ${THEME.primary}`,
                   animation: 'spin 1s linear infinite',
                   mx: 'auto',
                   mb: 3
                 }} />
                 <Typography variant="h6" sx={{
-                  color: MODERN_BMW_THEME.textSecondary,
+                  color: THEME.textSecondary,
                   fontWeight: 500
                 }}>
                   Loading analysis results...
@@ -934,11 +934,11 @@ export default function Results() {
                   <Table>
                     <TableHead>
                       <TableRow sx={{
-                        backgroundColor: MODERN_BMW_THEME.surface,
+                        backgroundColor: THEME.surface,
                         '& th': {
-                          borderBottom: `2px solid ${MODERN_BMW_THEME.border}`,
+                          borderBottom: `2px solid ${THEME.border}`,
                           fontWeight: 600,
-                          color: MODERN_BMW_THEME.textPrimary,
+                          color: THEME.textPrimary,
                           fontSize: '0.875rem',
                           py: 2
                         }
@@ -960,10 +960,10 @@ export default function Results() {
                             hover
                             sx={{
                               '&:hover': {
-                                backgroundColor: MODERN_BMW_THEME.surface
+                                backgroundColor: THEME.surface
                               },
                               '& td': {
-                                borderBottom: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                                borderBottom: `1px solid ${THEME.borderLight}`,
                                 py: 1.5
                               }
                             }}
@@ -974,7 +974,7 @@ export default function Results() {
                                   sx={{
                                     width: 32,
                                     height: 32,
-                                    background: MODERN_BMW_THEME.gradientPrimary,
+                                    background: THEME.gradientPrimary,
                                     fontWeight: 600,
                                     fontSize: '14px',
                                     mr: 2
@@ -984,13 +984,13 @@ export default function Results() {
                                 </Avatar>
                                 <Box>
                                   <Typography variant="body2" sx={{
-                                    color: MODERN_BMW_THEME.textPrimary,
+                                    color: THEME.textPrimary,
                                     fontWeight: 600
                                   }}>
                                     {r.citnow_metadata?.dealership || '—'}
                                   </Typography>
                                   <Typography variant="caption" sx={{
-                                    color: MODERN_BMW_THEME.textTertiary
+                                    color: THEME.textTertiary
                                   }}>
                                     {r.citnow_metadata?.email || '—'}
                                   </Typography>
@@ -1000,19 +1000,19 @@ export default function Results() {
                             <TableCell>
                               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <DirectionsCar sx={{
-                                  color: MODERN_BMW_THEME.primary,
+                                  color: THEME.primary,
                                   mr: 1.5,
                                   fontSize: 18
                                 }} />
                                 <Box>
                                   <Typography variant="body2" sx={{
-                                    color: MODERN_BMW_THEME.textPrimary,
+                                    color: THEME.textPrimary,
                                     fontWeight: 500
                                   }}>
                                     {r.citnow_metadata?.vehicle || r.citnow_metadata?.registration || '—'}
                                   </Typography>
                                   <Typography variant="caption" sx={{
-                                    color: MODERN_BMW_THEME.textTertiary,
+                                    color: THEME.textTertiary,
                                     fontFamily: 'monospace'
                                   }}>
                                     {r.citnow_metadata?.vin || '—'}
@@ -1023,12 +1023,12 @@ export default function Results() {
                             <TableCell>
                               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Person sx={{
-                                  color: MODERN_BMW_THEME.textSecondary,
+                                  color: THEME.textSecondary,
                                   mr: 1.5,
                                   fontSize: 18
                                 }} />
                                 <Typography variant="body2" sx={{
-                                  color: MODERN_BMW_THEME.textPrimary
+                                  color: THEME.textPrimary
                                 }}>
                                   {r.citnow_metadata?.service_advisor || '—'}
                                 </Typography>
@@ -1044,29 +1044,29 @@ export default function Results() {
                                   borderRadius: '50%',
                                   background: (() => {
                                     const score = r.video_analysis?.quality_score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.successLight;
-                                    if (score >= 6) return MODERN_BMW_THEME.primaryUltraLight;
-                                    if (score >= 4) return MODERN_BMW_THEME.warningLight;
-                                    return MODERN_BMW_THEME.errorLight;
+                                    if (score >= 8) return THEME.successLight;
+                                    if (score >= 6) return THEME.primaryUltraLight;
+                                    if (score >= 4) return THEME.warningLight;
+                                    return THEME.errorLight;
                                   })(),
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   border: `2px solid ${(() => {
                                     const score = r.video_analysis?.quality_score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.success + '30';
-                                    if (score >= 6) return MODERN_BMW_THEME.primary + '30';
-                                    if (score >= 4) return MODERN_BMW_THEME.warning + '30';
-                                    return MODERN_BMW_THEME.error + '30';
+                                    if (score >= 8) return THEME.success + '30';
+                                    if (score >= 6) return THEME.primary + '30';
+                                    if (score >= 4) return THEME.warning + '30';
+                                    return THEME.error + '30';
                                   })()}`
                                 }}>
                                   <Typography variant="body2" sx={{
                                     color: (() => {
                                       const score = r.video_analysis?.quality_score || 0;
-                                      if (score >= 8) return MODERN_BMW_THEME.success;
-                                      if (score >= 6) return MODERN_BMW_THEME.primary;
-                                      if (score >= 4) return MODERN_BMW_THEME.warning;
-                                      return MODERN_BMW_THEME.error;
+                                      if (score >= 8) return THEME.success;
+                                      if (score >= 6) return THEME.primary;
+                                      if (score >= 4) return THEME.warning;
+                                      return THEME.error;
                                     })(),
                                     fontWeight: 700
                                   }}>
@@ -1076,10 +1076,10 @@ export default function Results() {
                                 <Typography variant="body2" sx={{
                                   color: (() => {
                                     const score = r.video_analysis?.quality_score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.success;
-                                    if (score >= 6) return MODERN_BMW_THEME.primary;
-                                    if (score >= 4) return MODERN_BMW_THEME.warning;
-                                    return MODERN_BMW_THEME.error;
+                                    if (score >= 8) return THEME.success;
+                                    if (score >= 6) return THEME.primary;
+                                    if (score >= 4) return THEME.warning;
+                                    return THEME.error;
                                   })(),
                                   fontWeight: 600
                                 }}>
@@ -1097,29 +1097,29 @@ export default function Results() {
                                   borderRadius: '50%',
                                   background: (() => {
                                     const score = r.audio_analysis?.score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.successLight;
-                                    if (score >= 6) return MODERN_BMW_THEME.primaryUltraLight;
-                                    if (score >= 4) return MODERN_BMW_THEME.warningLight;
-                                    return MODERN_BMW_THEME.errorLight;
+                                    if (score >= 8) return THEME.successLight;
+                                    if (score >= 6) return THEME.primaryUltraLight;
+                                    if (score >= 4) return THEME.warningLight;
+                                    return THEME.errorLight;
                                   })(),
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   border: `2px solid ${(() => {
                                     const score = r.audio_analysis?.score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.success + '30';
-                                    if (score >= 6) return MODERN_BMW_THEME.primary + '30';
-                                    if (score >= 4) return MODERN_BMW_THEME.warning + '30';
-                                    return MODERN_BMW_THEME.error + '30';
+                                    if (score >= 8) return THEME.success + '30';
+                                    if (score >= 6) return THEME.primary + '30';
+                                    if (score >= 4) return THEME.warning + '30';
+                                    return THEME.error + '30';
                                   })()}`
                                 }}>
                                   <Typography variant="body2" sx={{
                                     color: (() => {
                                       const score = r.audio_analysis?.score || 0;
-                                      if (score >= 8) return MODERN_BMW_THEME.success;
-                                      if (score >= 6) return MODERN_BMW_THEME.primary;
-                                      if (score >= 4) return MODERN_BMW_THEME.warning;
-                                      return MODERN_BMW_THEME.error;
+                                      if (score >= 8) return THEME.success;
+                                      if (score >= 6) return THEME.primary;
+                                      if (score >= 4) return THEME.warning;
+                                      return THEME.error;
                                     })(),
                                     fontWeight: 700
                                   }}>
@@ -1129,10 +1129,10 @@ export default function Results() {
                                 <Typography variant="body2" sx={{
                                   color: (() => {
                                     const score = r.audio_analysis?.score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.success;
-                                    if (score >= 6) return MODERN_BMW_THEME.primary;
-                                    if (score >= 4) return MODERN_BMW_THEME.warning;
-                                    return MODERN_BMW_THEME.error;
+                                    if (score >= 8) return THEME.success;
+                                    if (score >= 6) return THEME.primary;
+                                    if (score >= 4) return THEME.warning;
+                                    return THEME.error;
                                   })(),
                                   fontWeight: 600
                                 }}>
@@ -1150,29 +1150,29 @@ export default function Results() {
                                   borderRadius: '50%',
                                   background: (() => {
                                     const score = r.overall_quality?.overall_score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.successLight;
-                                    if (score >= 6) return MODERN_BMW_THEME.primaryUltraLight;
-                                    if (score >= 4) return MODERN_BMW_THEME.warningLight;
-                                    return MODERN_BMW_THEME.errorLight;
+                                    if (score >= 8) return THEME.successLight;
+                                    if (score >= 6) return THEME.primaryUltraLight;
+                                    if (score >= 4) return THEME.warningLight;
+                                    return THEME.errorLight;
                                   })(),
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   border: `2px solid ${(() => {
                                     const score = r.overall_quality?.overall_score || 0;
-                                    if (score >= 8) return MODERN_BMW_THEME.success + '30';
-                                    if (score >= 6) return MODERN_BMW_THEME.primary + '30';
-                                    if (score >= 4) return MODERN_BMW_THEME.warning + '30';
-                                    return MODERN_BMW_THEME.error + '30';
+                                    if (score >= 8) return THEME.success + '30';
+                                    if (score >= 6) return THEME.primary + '30';
+                                    if (score >= 4) return THEME.warning + '30';
+                                    return THEME.error + '30';
                                   })()}`
                                 }}>
                                   <Typography variant="h6" sx={{
                                     color: (() => {
                                       const score = r.overall_quality?.overall_score || 0;
-                                      if (score >= 8) return MODERN_BMW_THEME.success;
-                                      if (score >= 6) return MODERN_BMW_THEME.primary;
-                                      if (score >= 4) return MODERN_BMW_THEME.warning;
-                                      return MODERN_BMW_THEME.error;
+                                      if (score >= 8) return THEME.success;
+                                      if (score >= 6) return THEME.primary;
+                                      if (score >= 4) return THEME.warning;
+                                      return THEME.error;
                                     })(),
                                     fontWeight: 700
                                   }}>
@@ -1185,17 +1185,17 @@ export default function Results() {
                                   sx={{
                                     background: (() => {
                                       const score = r.overall_quality?.overall_score || 0;
-                                      if (score >= 8) return MODERN_BMW_THEME.successLight;
-                                      if (score >= 6) return MODERN_BMW_THEME.primaryUltraLight;
-                                      if (score >= 4) return MODERN_BMW_THEME.warningLight;
-                                      return MODERN_BMW_THEME.errorLight;
+                                      if (score >= 8) return THEME.successLight;
+                                      if (score >= 6) return THEME.primaryUltraLight;
+                                      if (score >= 4) return THEME.warningLight;
+                                      return THEME.errorLight;
                                     })(),
                                     color: (() => {
                                       const score = r.overall_quality?.overall_score || 0;
-                                      if (score >= 8) return MODERN_BMW_THEME.success;
-                                      if (score >= 6) return MODERN_BMW_THEME.primary;
-                                      if (score >= 4) return MODERN_BMW_THEME.warning;
-                                      return MODERN_BMW_THEME.error;
+                                      if (score >= 8) return THEME.success;
+                                      if (score >= 6) return THEME.primary;
+                                      if (score >= 4) return THEME.warning;
+                                      return THEME.error;
                                     })(),
                                     fontWeight: 600,
                                     fontSize: '0.7rem',
@@ -1208,12 +1208,12 @@ export default function Results() {
                             <TableCell>
                               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Person sx={{
-                                  color: MODERN_BMW_THEME.textSecondary,
+                                  color: THEME.textSecondary,
                                   mr: 1.5,
                                   fontSize: 18
                                 }} />
                                 <Typography variant="body2" sx={{
-                                  color: MODERN_BMW_THEME.textPrimary
+                                  color: THEME.textPrimary
                                 }}>
                                   {getUserName(r.submitted_by_user_id) || '—'}
                                 </Typography>
@@ -1226,10 +1226,10 @@ export default function Results() {
                                   <IconButton
                                     size="small"
                                     sx={{
-                                      color: MODERN_BMW_THEME.primary,
-                                      background: `${MODERN_BMW_THEME.primary}08`,
+                                      color: THEME.primary,
+                                      background: `${THEME.primary}08`,
                                       '&:hover': {
-                                        background: `${MODERN_BMW_THEME.primary}15`
+                                        background: `${THEME.primary}15`
                                       }
                                     }}
                                     onClick={() => handleViewDetails(r)}
@@ -1241,10 +1241,10 @@ export default function Results() {
                                   <IconButton
                                     size="small"
                                     sx={{
-                                      color: MODERN_BMW_THEME.error,
-                                      background: `${MODERN_BMW_THEME.error}08`,
+                                      color: THEME.error,
+                                      background: `${THEME.error}08`,
                                       '&:hover': {
-                                        background: `${MODERN_BMW_THEME.error}15`
+                                        background: `${THEME.error}15`
                                       }
                                     }}
                                     onClick={() => handleDelete(r._id)}
@@ -1262,19 +1262,19 @@ export default function Results() {
                           <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
                             <Assessment sx={{
                               fontSize: 64,
-                              color: MODERN_BMW_THEME.textTertiary,
+                              color: THEME.textTertiary,
                               mb: 2,
                               opacity: 0.5
                             }} />
                             <Typography variant="h6" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               fontWeight: 500,
                               mb: 1
                             }}>
                               {searchTerm ? 'No results found' : 'No analysis results available'}
                             </Typography>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textTertiary
+                              color: THEME.textTertiary
                             }}>
                               {searchTerm ? 'Try adjusting your search terms' : 'Analysis results will appear here once available'}
                             </Typography>
@@ -1296,7 +1296,7 @@ export default function Results() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     sx={{
-                      borderTop: `1px solid ${MODERN_BMW_THEME.border}`,
+                      borderTop: `1px solid ${THEME.border}`,
                       '& .MuiTablePagination-toolbar': {
                         padding: 2
                       }
@@ -1317,17 +1317,17 @@ export default function Results() {
           PaperProps={{
             sx: {
               maxHeight: '95vh',
-              background: MODERN_BMW_THEME.background,
-              border: `1px solid ${MODERN_BMW_THEME.border}`,
+              background: THEME.background,
+              border: `1px solid ${THEME.border}`,
               borderRadius: 3,
-              boxShadow: MODERN_BMW_THEME.shadowXl,
+              boxShadow: THEME.shadowXl,
             }
           }}
         >
           {/* Modern Header */}
           <DialogTitle sx={{
-            background: MODERN_BMW_THEME.gradientPrimary,
-            color: MODERN_BMW_THEME.background,
+            background: THEME.gradientPrimary,
+            color: THEME.background,
             fontWeight: 600,
             py: 3,
             position: 'relative'
@@ -1345,7 +1345,7 @@ export default function Results() {
                   mr: 2,
                   backdropFilter: 'blur(10px)'
                 }}>
-                  <Assessment sx={{ fontSize: 24, color: MODERN_BMW_THEME.background }} />
+                  <Assessment sx={{ fontSize: 24, color: THEME.background }} />
                 </Box>
                 <Box>
                   <Typography variant="h5" fontWeight={600}>
@@ -1359,7 +1359,7 @@ export default function Results() {
               <IconButton
                 onClick={handleCloseDialog}
                 sx={{
-                  color: MODERN_BMW_THEME.background,
+                  color: THEME.background,
                   background: 'rgba(255, 255, 255, 0.2)',
                   '&:hover': {
                     background: 'rgba(255, 255, 255, 0.3)'
@@ -1372,7 +1372,7 @@ export default function Results() {
           </DialogTitle>
 
           <DialogContent dividers sx={{
-            background: MODERN_BMW_THEME.background,
+            background: THEME.background,
             p: 0,
             overflow: 'auto'
           }}>
@@ -1382,20 +1382,20 @@ export default function Results() {
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                   <Grid item xs={12}>
                     <Card sx={{
-                      background: MODERN_BMW_THEME.surfaceElevated,
-                      border: `1px solid ${MODERN_BMW_THEME.border}`,
+                      background: THEME.surfaceElevated,
+                      border: `1px solid ${THEME.border}`,
                       borderRadius: 3,
-                      boxShadow: MODERN_BMW_THEME.shadowSm
+                      boxShadow: THEME.shadowSm
                     }}>
                       <CardContent sx={{ p: 3 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                           <DirectionsCar sx={{
                             fontSize: 28,
-                            color: MODERN_BMW_THEME.primary,
+                            color: THEME.primary,
                             mr: 2
                           }} />
                           <Typography variant="h6" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
+                            color: THEME.textPrimary,
                             fontWeight: 600
                           }}>
                             Service Information
@@ -1441,18 +1441,18 @@ export default function Results() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 p: 2,
-                                background: MODERN_BMW_THEME.surface,
+                                background: THEME.surface,
                                 borderRadius: 2,
-                                border: `1px solid ${MODERN_BMW_THEME.borderLight}`
+                                border: `1px solid ${THEME.borderLight}`
                               }}>
                                 <item.icon sx={{
                                   fontSize: 20,
-                                  color: MODERN_BMW_THEME.primary,
+                                  color: THEME.primary,
                                   mr: 2
                                 }} />
                                 <Box sx={{ flex: 1 }}>
                                   <Typography variant="caption" sx={{
-                                    color: MODERN_BMW_THEME.textSecondary,
+                                    color: THEME.textSecondary,
                                     fontWeight: 500,
                                     display: 'block',
                                     mb: 0.5
@@ -1460,7 +1460,7 @@ export default function Results() {
                                     {item.label}
                                   </Typography>
                                   <Typography variant="body2" sx={{
-                                    color: MODERN_BMW_THEME.textPrimary,
+                                    color: THEME.textPrimary,
                                     fontWeight: 600,
                                     fontFamily: item.monospace ? 'monospace' : 'inherit'
                                   }}>
@@ -1473,24 +1473,24 @@ export default function Results() {
                         </Grid>
 
                         {/* Video Link */}
-                        <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${MODERN_BMW_THEME.borderLight}` }}>
+                        <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${THEME.borderLight}` }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <Videocam sx={{
                                 fontSize: 24,
-                                color: MODERN_BMW_THEME.primary,
+                                color: THEME.primary,
                                 mr: 2
                               }} />
                               <Box>
                                 <Typography variant="body1" sx={{
-                                  color: MODERN_BMW_THEME.textPrimary,
+                                  color: THEME.textPrimary,
                                   fontWeight: 600,
                                   mb: 0.5
                                 }}>
                                   Video Recording
                                 </Typography>
                                 <Typography variant="body2" sx={{
-                                  color: MODERN_BMW_THEME.textSecondary
+                                  color: THEME.textSecondary
                                 }}>
                                   {selectedResult.citnow_metadata?.page_url ?
                                     'Watch the original video recording' :
@@ -1506,13 +1506,13 @@ export default function Results() {
                                 target="_blank"
                                 startIcon={<Videocam />}
                                 sx={{
-                                  background: MODERN_BMW_THEME.gradientPrimary,
+                                  background: THEME.gradientPrimary,
                                   borderRadius: 2,
                                   px: 3,
                                   fontWeight: 600,
-                                  boxShadow: MODERN_BMW_THEME.shadowMd,
+                                  boxShadow: THEME.shadowMd,
                                   '&:hover': {
-                                    boxShadow: MODERN_BMW_THEME.shadowLg,
+                                    boxShadow: THEME.shadowLg,
                                     transform: 'translateY(-1px)'
                                   },
                                   transition: 'all 0.2s ease-in-out'
@@ -1526,8 +1526,8 @@ export default function Results() {
                                 size="small"
                                 variant="outlined"
                                 sx={{
-                                  borderColor: MODERN_BMW_THEME.textTertiary,
-                                  color: MODERN_BMW_THEME.textTertiary
+                                  borderColor: THEME.textTertiary,
+                                  color: THEME.textTertiary
                                 }}
                               />
                             )}
@@ -1541,7 +1541,7 @@ export default function Results() {
                 {/* Quality Assessment Section */}
                 <Box sx={{ mb: 4 }}>
                   <Typography variant="h5" sx={{
-                    color: MODERN_BMW_THEME.textPrimary,
+                    color: THEME.textPrimary,
                     fontWeight: 600,
                     mb: 3
                   }}>
@@ -1557,10 +1557,10 @@ export default function Results() {
                   }}>
                     {/* Video Quality - Left Side */}
                     <Card sx={{
-                      background: MODERN_BMW_THEME.surfaceElevated,
-                      border: `1px solid ${MODERN_BMW_THEME.border}`,
+                      background: THEME.surfaceElevated,
+                      border: `1px solid ${THEME.border}`,
                       borderRadius: 3,
-                      boxShadow: MODERN_BMW_THEME.shadowSm,
+                      boxShadow: THEME.shadowSm,
                       flex: 1,
                       minWidth: { md: 0 }
                     }}>
@@ -1576,24 +1576,24 @@ export default function Results() {
                             width: 50,
                             height: 50,
                             borderRadius: '50%',
-                            background: MODERN_BMW_THEME.primaryUltraLight,
+                            background: THEME.primaryUltraLight,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0
                           }}>
-                            <Videocam sx={{ fontSize: 24, color: MODERN_BMW_THEME.primary }} />
+                            <Videocam sx={{ fontSize: 24, color: THEME.primary }} />
                           </Box>
                           <Box>
                             <Typography variant="h4" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               fontWeight: 700,
                               lineHeight: 1.2
                             }}>
                               {selectedResult.video_analysis?.quality_score?.toFixed(1) || '0.0'}/10
                             </Typography>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               fontWeight: 500
                             }}>
                               Video Quality
@@ -1604,15 +1604,15 @@ export default function Results() {
                             size="small"
                             sx={{
                               background:
-                                selectedResult.video_analysis?.quality_label === 'Excellent' ? MODERN_BMW_THEME.successLight :
-                                  selectedResult.video_analysis?.quality_label === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
-                                    selectedResult.video_analysis?.quality_label === 'Fair' ? MODERN_BMW_THEME.warningLight :
-                                      MODERN_BMW_THEME.errorLight,
+                                selectedResult.video_analysis?.quality_label === 'Excellent' ? THEME.successLight :
+                                  selectedResult.video_analysis?.quality_label === 'Good' ? THEME.primaryUltraLight :
+                                    selectedResult.video_analysis?.quality_label === 'Fair' ? THEME.warningLight :
+                                      THEME.errorLight,
                               color:
-                                selectedResult.video_analysis?.quality_label === 'Excellent' ? MODERN_BMW_THEME.success :
-                                  selectedResult.video_analysis?.quality_label === 'Good' ? MODERN_BMW_THEME.primary :
-                                    selectedResult.video_analysis?.quality_label === 'Fair' ? MODERN_BMW_THEME.warning :
-                                      MODERN_BMW_THEME.error,
+                                selectedResult.video_analysis?.quality_label === 'Excellent' ? THEME.success :
+                                  selectedResult.video_analysis?.quality_label === 'Good' ? THEME.primary :
+                                    selectedResult.video_analysis?.quality_label === 'Fair' ? THEME.warning :
+                                      THEME.error,
                               fontWeight: 600,
                               ml: 'auto'
                             }}
@@ -1622,7 +1622,7 @@ export default function Results() {
                         {/* Video Detailed Metrics */}
                         <Box sx={{ mb: 3 }}>
                           <Typography variant="subtitle2" sx={{
-                            color: MODERN_BMW_THEME.textSecondary,
+                            color: THEME.textSecondary,
                             mb: 2,
                             fontWeight: 600
                           }}>
@@ -1635,7 +1635,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Resolution:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.video_analysis?.detailed_analysis?.resolution || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1643,7 +1643,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Duration:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.video_analysis?.detailed_analysis?.duration || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1651,7 +1651,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Frame Rate:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.video_analysis?.detailed_analysis?.frame_rate || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1659,7 +1659,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Stability:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.video_analysis?.shake_level || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1669,7 +1669,7 @@ export default function Results() {
                         {/* Quality Scores */}
                         <Box sx={{ mb: 3 }}>
                           <Typography variant="subtitle2" sx={{
-                            color: MODERN_BMW_THEME.textSecondary,
+                            color: THEME.textSecondary,
                             mb: 2,
                             fontWeight: 600
                           }}>
@@ -1679,40 +1679,40 @@ export default function Results() {
                           <Grid container spacing={1}>
                             <Grid item xs={6}>
                               <Box sx={{ textAlign: 'center', p: 1 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.primary }}>
                                   {selectedResult.video_analysis?.detailed_analysis?.sharpness?.replace('%', '') || '0'}%
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                <Typography variant="caption" sx={{ color: THEME.textSecondary }}>
                                   Sharpness
                                 </Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={6}>
                               <Box sx={{ textAlign: 'center', p: 1 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.primary }}>
                                   {selectedResult.video_analysis?.detailed_analysis?.brightness?.replace('%', '') || '0'}%
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                <Typography variant="caption" sx={{ color: THEME.textSecondary }}>
                                   Brightness
                                 </Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={6}>
                               <Box sx={{ textAlign: 'center', p: 1 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.primary }}>
                                   {selectedResult.video_analysis?.detailed_analysis?.contrast?.replace('%', '') || '0'}%
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                <Typography variant="caption" sx={{ color: THEME.textSecondary }}>
                                   Contrast
                                 </Typography>
                               </Box>
                             </Grid>
                             <Grid item xs={6}>
                               <Box sx={{ textAlign: 'center', p: 1 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.primary }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.primary }}>
                                   {selectedResult.video_analysis?.detailed_analysis?.color_vibrancy?.replace('%', '') || '0'}%
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                <Typography variant="caption" sx={{ color: THEME.textSecondary }}>
                                   Color
                                 </Typography>
                               </Box>
@@ -1724,7 +1724,7 @@ export default function Results() {
                         {selectedResult.video_analysis?.issues?.length > 0 && (
                           <Box>
                             <Typography variant="subtitle2" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               mb: 1,
                               fontWeight: 600
                             }}>
@@ -1733,7 +1733,7 @@ export default function Results() {
                             <Box sx={{ pl: 1 }}>
                               {selectedResult.video_analysis.issues.map((issue, index) => (
                                 <Typography key={index} variant="body2" sx={{
-                                  color: MODERN_BMW_THEME.warning,
+                                  color: THEME.warning,
                                   mb: 0.5,
                                   fontSize: '0.8rem',
                                   display: 'flex',
@@ -1752,10 +1752,10 @@ export default function Results() {
 
                     {/* Audio Quality - Right Side */}
                     <Card sx={{
-                      background: MODERN_BMW_THEME.surfaceElevated,
-                      border: `1px solid ${MODERN_BMW_THEME.border}`,
+                      background: THEME.surfaceElevated,
+                      border: `1px solid ${THEME.border}`,
                       borderRadius: 3,
-                      boxShadow: MODERN_BMW_THEME.shadowSm,
+                      boxShadow: THEME.shadowSm,
                       flex: 1,
                       minWidth: { md: 0 }
                     }}>
@@ -1771,24 +1771,24 @@ export default function Results() {
                             width: 50,
                             height: 50,
                             borderRadius: '50%',
-                            background: MODERN_BMW_THEME.accentUltraLight,
+                            background: THEME.accentUltraLight,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0
                           }}>
-                            <Mic sx={{ fontSize: 24, color: MODERN_BMW_THEME.accent }} />
+                            <Mic sx={{ fontSize: 24, color: THEME.accent }} />
                           </Box>
                           <Box>
                             <Typography variant="h4" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               fontWeight: 700,
                               lineHeight: 1.2
                             }}>
                               {Math.round(selectedResult.audio_analysis?.score || 0)}/10
                             </Typography>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               fontWeight: 500
                             }}>
                               Audio Quality
@@ -1803,19 +1803,19 @@ export default function Results() {
                             size="small"
                             sx={{
                               background:
-                                selectedResult.audio_analysis?.clarity_level === 'Excellent' ? MODERN_BMW_THEME.successLight :
-                                  selectedResult.audio_analysis?.clarity_level === 'Very Good' ? MODERN_BMW_THEME.successLight :
-                                    selectedResult.audio_analysis?.clarity_level === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
-                                      selectedResult.audio_analysis?.clarity_level === 'Fair' ? MODERN_BMW_THEME.warningLight :
-                                        selectedResult.audio_analysis?.clarity_level === 'Poor' ? MODERN_BMW_THEME.errorLight :
-                                          MODERN_BMW_THEME.errorLight,
+                                selectedResult.audio_analysis?.clarity_level === 'Excellent' ? THEME.successLight :
+                                  selectedResult.audio_analysis?.clarity_level === 'Very Good' ? THEME.successLight :
+                                    selectedResult.audio_analysis?.clarity_level === 'Good' ? THEME.primaryUltraLight :
+                                      selectedResult.audio_analysis?.clarity_level === 'Fair' ? THEME.warningLight :
+                                        selectedResult.audio_analysis?.clarity_level === 'Poor' ? THEME.errorLight :
+                                          THEME.errorLight,
                               color:
-                                selectedResult.audio_analysis?.clarity_level === 'Excellent' ? MODERN_BMW_THEME.success :
-                                  selectedResult.audio_analysis?.clarity_level === 'Very Good' ? MODERN_BMW_THEME.success :
-                                    selectedResult.audio_analysis?.clarity_level === 'Good' ? MODERN_BMW_THEME.primary :
-                                      selectedResult.audio_analysis?.clarity_level === 'Fair' ? MODERN_BMW_THEME.warning :
-                                        selectedResult.audio_analysis?.clarity_level === 'Poor' ? MODERN_BMW_THEME.error :
-                                          MODERN_BMW_THEME.error,
+                                selectedResult.audio_analysis?.clarity_level === 'Excellent' ? THEME.success :
+                                  selectedResult.audio_analysis?.clarity_level === 'Very Good' ? THEME.success :
+                                    selectedResult.audio_analysis?.clarity_level === 'Good' ? THEME.primary :
+                                      selectedResult.audio_analysis?.clarity_level === 'Fair' ? THEME.warning :
+                                        selectedResult.audio_analysis?.clarity_level === 'Poor' ? THEME.error :
+                                          THEME.error,
                               fontWeight: 600,
                               ml: 'auto'
                             }}
@@ -1825,7 +1825,7 @@ export default function Results() {
                         {/* Audio Detailed Metrics */}
                         <Box sx={{ mb: 3 }}>
                           <Typography variant="subtitle2" sx={{
-                            color: MODERN_BMW_THEME.textSecondary,
+                            color: THEME.textSecondary,
                             mb: 2,
                             fontWeight: 600
                           }}>
@@ -1837,7 +1837,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Volume Level:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.audio_analysis?.detailed_analysis?.volume_level || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1845,7 +1845,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Noise Level:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.audio_analysis?.detailed_analysis?.noise_level || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1853,7 +1853,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Speech Clarity:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.audio_analysis?.detailed_analysis?.speech_clarity || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1861,7 +1861,7 @@ export default function Results() {
                               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 Background Noise:
                               </Typography>
-                              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, fontSize: '0.8rem' }}>
+                              <Typography variant="body2" sx={{ color: THEME.textSecondary, fontSize: '0.8rem' }}>
                                 {selectedResult.audio_analysis?.detailed_analysis?.background_noise || 'N/A'}
                               </Typography>
                             </Grid>
@@ -1872,7 +1872,7 @@ export default function Results() {
                         {selectedResult.audio_analysis?.component_scores && (
                           <Box sx={{ mb: 3 }}>
                             <Typography variant="subtitle2" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               mb: 2,
                               fontWeight: 600
                             }}>
@@ -1883,10 +1883,10 @@ export default function Results() {
                               {Object.entries(selectedResult.audio_analysis.component_scores).map(([key, value]) => (
                                 <Grid item xs={6} key={key}>
                                   <Box sx={{ textAlign: 'center', p: 1 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 700, color: MODERN_BMW_THEME.accent }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: THEME.accent }}>
                                       {Math.round(value)}%
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                    <Typography variant="caption" sx={{ color: THEME.textSecondary }}>
                                       {key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')}
                                     </Typography>
                                   </Box>
@@ -1900,7 +1900,7 @@ export default function Results() {
                         {selectedResult.audio_analysis?.issues?.length > 0 && (
                           <Box>
                             <Typography variant="subtitle2" sx={{
-                              color: MODERN_BMW_THEME.textSecondary,
+                              color: THEME.textSecondary,
                               mb: 1,
                               fontWeight: 600
                             }}>
@@ -1909,7 +1909,7 @@ export default function Results() {
                             <Box sx={{ pl: 1 }}>
                               {selectedResult.audio_analysis.issues.map((issue, index) => (
                                 <Typography key={index} variant="body2" sx={{
-                                  color: MODERN_BMW_THEME.warning,
+                                  color: THEME.warning,
                                   mb: 0.5,
                                   fontSize: '0.8rem',
                                   display: 'flex',
@@ -1927,38 +1927,173 @@ export default function Results() {
                     </Card>
                   </Box>
 
+                  {/* QA Compliance - Separate Row */}
+                  <Box sx={{ mb: 4 }}>
+                    <Card sx={{
+                      background: THEME.surfaceElevated,
+                      border: `1px solid ${THEME.border}`,
+                      borderRadius: 3,
+                      boxShadow: THEME.shadowSm,
+                      width: '100%'
+                    }}>
+                      <CardContent sx={{ p: 3 }}>
+                        {/* QA Header */}
+                        <Box sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          mb: 3,
+                          gap: 2
+                        }}>
+                          <Box sx={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: '50%',
+                            background: THEME.successUltraLight,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0
+                          }}>
+                            <CheckCircle sx={{ fontSize: 24, color: THEME.success }} />
+                          </Box>
+                          <Box>
+                            <Typography variant="h4" sx={{
+                              color: THEME.textPrimary,
+                              fontWeight: 700,
+                              lineHeight: 1.2
+                            }}>
+                              {selectedResult.overall_quality?.qa_score?.toFixed(1) || '0.0'}/5.0
+                            </Typography>
+                            <Typography variant="body2" sx={{
+                              color: THEME.textSecondary,
+                              fontWeight: 500
+                            }}>
+                              QA Protocol Compliance
+                            </Typography>
+                          </Box>
+                          <Chip
+                            label={selectedResult.overall_quality?.qa_details?.rating_label || 'N/A'}
+                            size="small"
+                            sx={{
+                              background: THEME.successLight,
+                              color: THEME.success,
+                              fontWeight: 600,
+                              ml: 'auto'
+                            }}
+                          />
+                        </Box>
+
+                        <Divider sx={{ mb: 3, opacity: 0.5 }} />
+
+                        {/* QA Items Grid */}
+                        <Box>
+                          <Typography variant="subtitle2" sx={{
+                            color: THEME.textSecondary,
+                            mb: 2,
+                            fontWeight: 600,
+                            letterSpacing: 1
+                          }}>
+                            DETAILED QA CHECKLIST (DOCUMENT-BASED SCORING)
+                          </Typography>
+
+                          <Grid container spacing={2}>
+                            {[
+                              { label: 'Clear & audible voice', key: 'clear_audible_voice' },
+                              { label: 'Minimal background noise', key: 'minimal_background_noise' },
+                              { label: 'Simple language', key: 'simple_language' },
+                              { label: 'Lighting & focus clear', key: 'lighting_focus_clear' },
+                              { label: 'Steady & controlled camera', key: 'steady_controlled_camera' },
+                              { label: 'Multipart used', key: 'multipart_used' },
+                              { label: 'Proper intro', key: 'proper_intro' },
+                              { label: 'Explains work + findings', key: 'explains_work_findings' },
+                              { label: 'Ends with call to action', key: 'ends_with_call_to_action' },
+                              { label: 'Gauges visible', key: 'gauges_visible' },
+                              { label: '% wear / limits mentioned', key: 'wear_limits_mentioned' },
+                              { label: 'Urgency / next steps explained', key: 'urgency_next_steps_explained' },
+                              { label: 'Video sent & watched', key: 'video_sent_watched' },
+                              { label: 'Follow-up / authorisation done', key: 'follow_up_done' },
+                              { label: 'Customer feedback', key: 'customer_feedback' }
+                            ].map((item) => {
+                              const score = selectedResult.overall_quality?.qa_details?.items?.[item.key] || 0;
+                              return (
+                                <Grid item xs={12} sm={6} md={4} key={item.key}>
+                                  <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    p: 1.5,
+                                    px: 2,
+                                    borderRadius: 2,
+                                    background: THEME.surface,
+                                    border: `1px solid ${THEME.borderLight}`,
+                                    transition: 'all 0.2s',
+                                    '&:hover': {
+                                      border: `1px solid ${THEME.primary}40`,
+                                      boxShadow: THEME.shadowSm
+                                    }
+                                  }}>
+                                    <Typography variant="caption" sx={{
+                                      color: THEME.textPrimary,
+                                      fontWeight: 500,
+                                      lineHeight: 1.2,
+                                      flex: 1,
+                                      mr: 1
+                                    }}>
+                                      {item.label}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                      {[1, 2, 3, 4, 5].map((dot) => (
+                                        <Box key={dot} sx={{
+                                          width: 9,
+                                          height: 9,
+                                          borderRadius: '50%',
+                                          background: dot <= score ? THEME.primary : THEME.border,
+                                          opacity: dot <= score ? 1 : 0.4
+                                        }} />
+                                      ))}
+                                    </Box>
+                                  </Box>
+                                </Grid>
+                              );
+                            })}
+                          </Grid>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Box>
+
                   {/* Overall Quality Card */}
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <Card sx={{
-                        background: MODERN_BMW_THEME.surfaceElevated,
-                        border: `1px solid ${MODERN_BMW_THEME.border}`,
+                        background: THEME.surfaceElevated,
+                        border: `1px solid ${THEME.border}`,
                         borderRadius: 3,
-                        boxShadow: MODERN_BMW_THEME.shadowSm
+                        boxShadow: THEME.shadowSm
                       }}>
                         <CardContent sx={{ p: 3, textAlign: 'center' }}>
                           <Box sx={{
                             width: 60,
                             height: 60,
                             borderRadius: '50%',
-                            background: MODERN_BMW_THEME.successUltraLight,
+                            background: THEME.successUltraLight,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             mx: 'auto',
                             mb: 2
                           }}>
-                            <Assessment sx={{ fontSize: 28, color: MODERN_BMW_THEME.success }} />
+                            <Assessment sx={{ fontSize: 28, color: THEME.success }} />
                           </Box>
                           <Typography variant="h3" sx={{
-                            color: MODERN_BMW_THEME.textPrimary,
+                            color: THEME.textPrimary,
                             fontWeight: 700,
                             mb: 1
                           }}>
                             {selectedResult.overall_quality?.overall_score || 0}/10
                           </Typography>
                           <Typography variant="body2" sx={{
-                            color: MODERN_BMW_THEME.textSecondary,
+                            color: THEME.textSecondary,
                             fontWeight: 800,
                             mb: 2
                           }}>
@@ -1969,19 +2104,19 @@ export default function Results() {
                             size="small"
                             sx={{
                               background:
-                                selectedResult.overall_quality?.overall_label === 'Excellent' ? MODERN_BMW_THEME.successLight :
-                                  selectedResult.overall_quality?.overall_label === 'Very Good' ? MODERN_BMW_THEME.successLight :
-                                    selectedResult.overall_quality?.overall_label === 'Good' ? MODERN_BMW_THEME.primaryUltraLight :
-                                      selectedResult.overall_quality?.overall_label === 'Fair' ? MODERN_BMW_THEME.warningLight :
-                                        selectedResult.overall_quality?.overall_label === 'Poor' ? MODERN_BMW_THEME.errorLight :
-                                          MODERN_BMW_THEME.errorLight,
+                                selectedResult.overall_quality?.overall_label === 'Excellent' ? THEME.successLight :
+                                  selectedResult.overall_quality?.overall_label === 'Very Good' ? THEME.successLight :
+                                    selectedResult.overall_quality?.overall_label === 'Good' ? THEME.primaryUltraLight :
+                                      selectedResult.overall_quality?.overall_label === 'Fair' ? THEME.warningLight :
+                                        selectedResult.overall_quality?.overall_label === 'Poor' ? THEME.errorLight :
+                                          THEME.errorLight,
                               color:
-                                selectedResult.overall_quality?.overall_label === 'Excellent' ? MODERN_BMW_THEME.success :
-                                  selectedResult.overall_quality?.overall_label === 'Very Good' ? MODERN_BMW_THEME.success :
-                                    selectedResult.overall_quality?.overall_label === 'Good' ? MODERN_BMW_THEME.primary :
-                                      selectedResult.overall_quality?.overall_label === 'Fair' ? MODERN_BMW_THEME.warning :
-                                        selectedResult.overall_quality?.overall_label === 'Poor' ? MODERN_BMW_THEME.error :
-                                          MODERN_BMW_THEME.error,
+                                selectedResult.overall_quality?.overall_label === 'Excellent' ? THEME.success :
+                                  selectedResult.overall_quality?.overall_label === 'Very Good' ? THEME.success :
+                                    selectedResult.overall_quality?.overall_label === 'Good' ? THEME.primary :
+                                      selectedResult.overall_quality?.overall_label === 'Fair' ? THEME.warning :
+                                        selectedResult.overall_quality?.overall_label === 'Poor' ? THEME.error :
+                                          THEME.error,
                               fontWeight: 600
                             }}
                           />
@@ -1990,19 +2125,27 @@ export default function Results() {
                           {selectedResult.overall_quality?.breakdown && (
                             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 4 }}>
                               <Box sx={{ textAlign: 'center' }}>
-                                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                                   Audio
                                 </Typography>
-                                <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.accent, fontWeight: 600 }}>
+                                <Typography variant="h6" sx={{ color: THEME.accent, fontWeight: 600 }}>
                                   {selectedResult.overall_quality.breakdown.audio_quality}/10
                                 </Typography>
                               </Box>
                               <Box sx={{ textAlign: 'center' }}>
-                                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                                <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                                   Video
                                 </Typography>
-                                <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.primary, fontWeight: 600 }}>
+                                <Typography variant="h6" sx={{ color: THEME.primary, fontWeight: 600 }}>
                                   {selectedResult.overall_quality.breakdown.video_quality}/10
+                                </Typography>
+                              </Box>
+                              <Box sx={{ textAlign: 'center' }}>
+                                <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
+                                  QA Protocol
+                                </Typography>
+                                <Typography variant="h6" sx={{ color: THEME.success, fontWeight: 600 }}>
+                                  {selectedResult.overall_quality.breakdown.qa_compliance}/5
                                 </Typography>
                               </Box>
                             </Box>
@@ -2016,7 +2159,7 @@ export default function Results() {
                 {/* Content Analysis Section */}
                 <Box>
                   <Typography variant="h5" sx={{
-                    color: MODERN_BMW_THEME.textPrimary,
+                    color: THEME.textPrimary,
                     fontWeight: 600,
                     mb: 3
                   }}>
@@ -2027,21 +2170,21 @@ export default function Results() {
                     {/* Transcription */}
                     <Grid item xs={12} md={4}>
                       <Card sx={{
-                        background: MODERN_BMW_THEME.surfaceElevated,
-                        border: `1px solid ${MODERN_BMW_THEME.border}`,
+                        background: THEME.surfaceElevated,
+                        border: `1px solid ${THEME.border}`,
                         borderRadius: 3,
-                        boxShadow: MODERN_BMW_THEME.shadowSm,
+                        boxShadow: THEME.shadowSm,
                         height: '100%'
                       }}>
                         <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <Description sx={{
-                              color: MODERN_BMW_THEME.primary,
+                              color: THEME.primary,
                               mr: 2,
                               fontSize: 20
                             }} />
                             <Typography variant="h6" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               fontWeight: 600
                             }}>
                               Transcription
@@ -2049,15 +2192,15 @@ export default function Results() {
                           </Box>
                           <Paper sx={{
                             p: 2,
-                            background: MODERN_BMW_THEME.surface,
-                            border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                            background: THEME.surface,
+                            border: `1px solid ${THEME.borderLight}`,
                             borderRadius: 2,
                             flex: 1,
                             overflow: 'auto',
                             maxHeight: 300
                           }}>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               whiteSpace: 'pre-wrap',
                               lineHeight: 1.6,
                               fontSize: '0.875rem'
@@ -2072,21 +2215,21 @@ export default function Results() {
                     {/* Summary */}
                     <Grid item xs={12} md={4}>
                       <Card sx={{
-                        background: MODERN_BMW_THEME.surfaceElevated,
-                        border: `1px solid ${MODERN_BMW_THEME.border}`,
+                        background: THEME.surfaceElevated,
+                        border: `1px solid ${THEME.border}`,
                         borderRadius: 3,
-                        boxShadow: MODERN_BMW_THEME.shadowSm,
+                        boxShadow: THEME.shadowSm,
                         height: '100%'
                       }}>
                         <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <Description sx={{
-                              color: MODERN_BMW_THEME.accent,
+                              color: THEME.accent,
                               mr: 2,
                               fontSize: 20
                             }} />
                             <Typography variant="h6" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               fontWeight: 600
                             }}>
                               Summary
@@ -2094,15 +2237,15 @@ export default function Results() {
                           </Box>
                           <Paper sx={{
                             p: 2,
-                            background: MODERN_BMW_THEME.surface,
-                            border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                            background: THEME.surface,
+                            border: `1px solid ${THEME.borderLight}`,
                             borderRadius: 2,
                             flex: 1,
                             overflow: 'auto',
                             maxHeight: 300
                           }}>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               whiteSpace: 'pre-wrap',
                               lineHeight: 1.6,
                               fontSize: '0.875rem'
@@ -2117,21 +2260,21 @@ export default function Results() {
                     {/* Translation */}
                     <Grid item xs={12} md={4}>
                       <Card sx={{
-                        background: MODERN_BMW_THEME.surfaceElevated,
-                        border: `1px solid ${MODERN_BMW_THEME.border}`,
+                        background: THEME.surfaceElevated,
+                        border: `1px solid ${THEME.border}`,
                         borderRadius: 3,
-                        boxShadow: MODERN_BMW_THEME.shadowSm,
+                        boxShadow: THEME.shadowSm,
                         height: '100%'
                       }}>
                         <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <Description sx={{
-                              color: MODERN_BMW_THEME.success,
+                              color: THEME.success,
                               mr: 2,
                               fontSize: 20
                             }} />
                             <Typography variant="h6" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               fontWeight: 600
                             }}>
                               Translation
@@ -2139,15 +2282,15 @@ export default function Results() {
                           </Box>
                           <Paper sx={{
                             p: 2,
-                            background: MODERN_BMW_THEME.surface,
-                            border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                            background: THEME.surface,
+                            border: `1px solid ${THEME.borderLight}`,
                             borderRadius: 2,
                             flex: 1,
                             overflow: 'auto',
                             maxHeight: 300
                           }}>
                             <Typography variant="body2" sx={{
-                              color: MODERN_BMW_THEME.textPrimary,
+                              color: THEME.textPrimary,
                               whiteSpace: 'pre-wrap',
                               lineHeight: 1.6,
                               fontSize: '0.875rem'
@@ -2167,22 +2310,22 @@ export default function Results() {
           <DialogActions sx={{
             px: 3,
             py: 2,
-            background: MODERN_BMW_THEME.surface,
-            borderTop: `1px solid ${MODERN_BMW_THEME.border}`
+            background: THEME.surface,
+            borderTop: `1px solid ${THEME.border}`
           }}>
             <Button
               onClick={handleCloseDialog}
               variant="outlined"
               sx={{
-                borderColor: MODERN_BMW_THEME.border,
-                color: MODERN_BMW_THEME.textSecondary,
+                borderColor: THEME.border,
+                color: THEME.textSecondary,
                 borderRadius: 2,
                 px: 4,
                 fontWeight: 500,
                 '&:hover': {
-                  borderColor: MODERN_BMW_THEME.textSecondary,
-                  color: MODERN_BMW_THEME.textPrimary,
-                  background: `${MODERN_BMW_THEME.textSecondary}08`
+                  borderColor: THEME.textSecondary,
+                  color: THEME.textPrimary,
+                  background: `${THEME.textSecondary}08`
                 }
               }}
             >

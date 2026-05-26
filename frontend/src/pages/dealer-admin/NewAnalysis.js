@@ -10,37 +10,37 @@ import {
 } from '@mui/icons-material';
 import api from '../../services/api';
 
-// CitNOW / BMW Branding Theme
-const CN_THEME = {
-  primary: '#1C3FAA',
-  primaryDark: '#0E2A80',
-  primaryLight: '#4B6BCC',
-  primaryUltraLight: '#EEF2FF',
-  accent: '#F5B800',
-  accentLight: '#FFFBEB',
-  accentUltraLight: '#FFFDF5',
-  orange: '#FF6600',
-  orangeLight: '#FFF0E6',
+// QualityLens Branding Theme
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#F0FDFA',
+  accent: '#00B4DB',
+  accentLight: '#E0F2FE',
+  accentUltraLight: '#F8FAFC',
+  orange: '#0DA1B8',
+  orangeLight: '#F0FDFA',
   background: '#FFFFFF',
-  surface: '#FAFBFC',
+  surface: '#F8FAFC',
   surfaceElevated: '#FFFFFF',
-  border: '#E8EDF5',
+  border: '#E2E8F0',
   borderLight: '#F1F5F9',
-  textPrimary: '#0A1929',
-  textSecondary: '#3E5060',
-  textTertiary: '#6B7A90',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  textTertiary: '#94A3B8',
   success: '#10B981',
-  successLight: '#EEFDF4',
-  warning: '#F5B800',
-  warningLight: '#FFFBEB',
-  error: '#E82A1F',
+  successLight: '#F0FDF4',
+  warning: '#F59E0B',
+  warningLight: '#FFFBE8',
+  error: '#EF4444',
   errorLight: '#FEF2F2',
-  gradientPrimary: 'linear-gradient(135deg, #1C3FAA 0%, #0E2A80 100%)',
-  gradientAccent: 'linear-gradient(135deg, #F5B800 0%, #FF6600 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
+  gradientAccent: 'linear-gradient(135deg, #0DA1B8 0%, #0C587D 100%)',
   gradientSuccess: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   shadowSm: '0 4px 20px rgba(0,0,0,0.03)',
-  shadowMd: '0 8px 30px rgba(28,63,170,0.08)',
-  shadowLg: '0 12px 40px rgba(28,63,170,0.12)',
+  shadowMd: '0 8px 30px rgba(13, 161, 184, 0.08)',
+  shadowLg: '0 12px 40px rgba(13, 161, 184, 0.12)',
 };
 
 const LANGS = [
@@ -65,31 +65,31 @@ const LANGS = [
 const STATUS_CONFIG = {
   pending: {
     color: 'default',
-    icon: <Schedule sx={{ color: CN_THEME.textTertiary }} />,
+    icon: <Schedule sx={{ color: THEME.textTertiary }} />,
     label: 'Pending',
-    bgColor: CN_THEME.surface,
-    textColor: CN_THEME.textTertiary
+    bgColor: THEME.surface,
+    textColor: THEME.textTertiary
   },
   processing: {
     color: 'primary',
-    icon: <Refresh sx={{ color: CN_THEME.primary }} />,
+    icon: <Refresh sx={{ color: THEME.primary }} />,
     label: 'Processing',
-    bgColor: CN_THEME.primaryUltraLight,
-    textColor: CN_THEME.primary
+    bgColor: THEME.primaryUltraLight,
+    textColor: THEME.primary
   },
   completed: {
     color: 'success',
-    icon: <Check sx={{ color: CN_THEME.success }} />,
+    icon: <Check sx={{ color: THEME.success }} />,
     label: 'Completed',
-    bgColor: CN_THEME.successLight,
-    textColor: CN_THEME.success
+    bgColor: THEME.successLight,
+    textColor: THEME.success
   },
   failed: {
     color: 'error',
-    icon: <Error sx={{ color: CN_THEME.error }} />,
+    icon: <Error sx={{ color: THEME.error }} />,
     label: 'Failed',
-    bgColor: CN_THEME.errorLight,
-    textColor: CN_THEME.error
+    bgColor: THEME.errorLight,
+    textColor: THEME.error
   }
 };
 
@@ -197,9 +197,9 @@ export default function NewAnalysis() {
           sx={{
             fontWeight: 800,
             letterSpacing: '-1.5px', // Tighter, elite feel
-            color: CN_THEME.textPrimary,
+            color: THEME.textPrimary,
             mb: 2,
-            background: CN_THEME.gradientPrimary,
+            background: THEME.gradientPrimary,
             backgroundClip: 'text',
             textFillColor: 'transparent',
             WebkitBackgroundClip: 'text',
@@ -212,24 +212,24 @@ export default function NewAnalysis() {
         <Typography
           variant="h6"
           sx={{
-            color: CN_THEME.textSecondary,
+            color: THEME.textSecondary,
             fontWeight: 400,
             maxWidth: '600px',
             mx: 'auto',
             lineHeight: 1.6
           }}
         >
-          Analyze CitNow videos with AI-powered transcription, translation, and quality assessment
+          Analyze QualityLens videos with AI-powered transcription, translation, and quality assessment
         </Typography>
       </Box>
 
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} md={8}>
           <Card sx={{
-            background: CN_THEME.surfaceElevated,
-            border: `1.5px solid ${CN_THEME.border}`,
+            background: THEME.surfaceElevated,
+            border: `1.5px solid ${THEME.border}`,
             borderRadius: 4,
-            boxShadow: CN_THEME.shadowLg,
+            boxShadow: THEME.shadowLg,
             overflow: 'visible',
             position: 'relative'
           }}>
@@ -240,8 +240,8 @@ export default function NewAnalysis() {
                   sx={{
                     mb: 3,
                     borderRadius: 2,
-                    border: `1px solid ${CN_THEME.errorLight}`,
-                    backgroundColor: CN_THEME.errorLight
+                    border: `1px solid ${THEME.errorLight}`,
+                    backgroundColor: THEME.errorLight
                   }}
                   action={
                     <Button
@@ -268,7 +268,7 @@ export default function NewAnalysis() {
                     mb: 3,
                     borderRadius: 2,
                     backgroundColor: STATUS_CONFIG[currentTask.status]?.bgColor,
-                    border: `1px solid ${CN_THEME.borderLight}`
+                    border: `1px solid ${THEME.borderLight}`
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
@@ -280,8 +280,8 @@ export default function NewAnalysis() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: CN_THEME.background,
-                        border: `1px solid ${CN_THEME.border}`
+                        backgroundColor: THEME.background,
+                        border: `1px solid ${THEME.border}`
                       }}>
                         {STATUS_CONFIG[currentTask.status]?.icon}
                       </Box>
@@ -289,7 +289,7 @@ export default function NewAnalysis() {
                         <Typography variant="h6" fontWeight="600" sx={{ color: STATUS_CONFIG[currentTask.status]?.textColor }}>
                           Analysis {STATUS_CONFIG[currentTask.status]?.label}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: CN_THEME.textSecondary, mt: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: THEME.textSecondary, mt: 0.5 }}>
                           Task ID: {currentTask.task_id}
                         </Typography>
                       </Box>
@@ -407,8 +407,8 @@ export default function NewAnalysis() {
                       mb: 2,
                       background: '#0a0a0a',
                       borderRadius: 4,
-                      border: `1px solid ${CN_THEME.success}40`,
-                      boxShadow: `0 10px 30px ${CN_THEME.success}15`
+                      border: `1px solid ${THEME.success}40`,
+                      boxShadow: `0 10px 30px ${THEME.success}15`
                     }}>
                       <Box sx={{ position: 'relative', display: 'inline-flex', mb: 3 }}>
                         <CircularProgress
@@ -417,7 +417,7 @@ export default function NewAnalysis() {
                           size={130}
                           thickness={5}
                           sx={{
-                            color: CN_THEME.success,
+                            color: THEME.success,
                             '& .MuiCircularProgress-circle': {
                               strokeLinecap: 'round',
                             },
@@ -435,20 +435,20 @@ export default function NewAnalysis() {
                             justifyContent: 'center',
                           }}
                         >
-                          <Check sx={{ color: CN_THEME.success, fontSize: '4rem' }} />
+                          <Check sx={{ color: THEME.success, fontSize: '4rem' }} />
                         </Box>
                       </Box>
                       <Typography variant="h6" sx={{ color: '#FFFFFF', fontWeight: 800, textTransform: 'uppercase' }}>
                         Analysis Complete
                       </Typography>
-                      <Typography variant="caption" sx={{ color: CN_THEME.success, fontWeight: 600, mt: 1 }}>
+                      <Typography variant="caption" sx={{ color: THEME.success, fontWeight: 600, mt: 1 }}>
                         READY FOR REVIEW
                       </Typography>
                     </Box>
                   )}
 
                   {currentTask.message && (
-                    <Typography variant="body2" sx={{ color: CN_THEME.textPrimary, mb: 1 }}>
+                    <Typography variant="body2" sx={{ color: THEME.textPrimary, mb: 1 }}>
                       {currentTask.message}
                     </Typography>
                   )}
@@ -461,11 +461,11 @@ export default function NewAnalysis() {
                       p: 2,
                       mt: 2,
                       borderRadius: 2,
-                      backgroundColor: CN_THEME.successLight,
-                      border: `1px solid ${CN_THEME.success}20`
+                      backgroundColor: THEME.successLight,
+                      border: `1px solid ${THEME.success}20`
                     }}>
-                      <Check sx={{ color: CN_THEME.success }} />
-                      <Typography variant="body2" fontWeight="600" sx={{ color: CN_THEME.success }}>
+                      <Check sx={{ color: THEME.success }} />
+                      <Typography variant="body2" fontWeight="600" sx={{ color: THEME.success }}>
                         Analysis completed successfully!
                       </Typography>
                     </Box>
@@ -479,11 +479,11 @@ export default function NewAnalysis() {
                       p: 2,
                       mt: 2,
                       borderRadius: 2,
-                      backgroundColor: CN_THEME.errorLight,
-                      border: `1px solid ${CN_THEME.error}20`
+                      backgroundColor: THEME.errorLight,
+                      border: `1px solid ${THEME.error}20`
                     }}>
-                      <Error sx={{ color: CN_THEME.error }} />
-                      <Typography variant="body2" fontWeight="600" sx={{ color: CN_THEME.error }}>
+                      <Error sx={{ color: THEME.error }} />
+                      <Typography variant="body2" fontWeight="600" sx={{ color: THEME.error }}>
                         Error: {currentTask.error_message}
                       </Typography>
                     </Box>
@@ -495,29 +495,29 @@ export default function NewAnalysis() {
               {resultData && (
                 <Box sx={{ mt: 3 }}>
                   <Typography variant="h6" fontWeight="700" sx={{
-                    color: CN_THEME.textPrimary, mb: 2,
+                    color: THEME.textPrimary, mb: 2,
                     display: 'flex', alignItems: 'center', gap: 1
                   }}>
-                    <Check sx={{ color: CN_THEME.success }} /> Analysis Result
+                    <Check sx={{ color: THEME.success }} /> Analysis Result
                   </Typography>
 
                   {/* Score Cards */}
                   <Grid container spacing={2} sx={{ mb: 3 }}>
                     {[
-                      { label: 'Video Quality', value: resultData.video_analysis?.quality_score ?? resultData.video_quality_score ?? 0, color: CN_THEME.primary },
-                      { label: 'Audio Quality', value: resultData.audio_analysis?.score ?? resultData.audio_quality_score ?? 0, color: CN_THEME.accent },
-                      { label: 'Overall Score', value: resultData.overall_quality?.overall_score ?? resultData.overall_quality_score ?? 0, color: CN_THEME.success },
+                      { label: 'Video Quality', value: resultData.video_analysis?.quality_score ?? resultData.video_quality_score ?? 0, color: THEME.primary },
+                      { label: 'Audio Quality', value: resultData.audio_analysis?.score ?? resultData.audio_quality_score ?? 0, color: THEME.accent },
+                      { label: 'Overall Score', value: resultData.overall_quality?.overall_score ?? resultData.overall_quality_score ?? 0, color: THEME.success },
                     ].map(({ label, value, color }) => (
                       <Grid item xs={4} key={label}>
                         <Paper elevation={0} sx={{
                           p: 2, borderRadius: 2, textAlign: 'center',
-                          border: `1px solid ${CN_THEME.border}`,
-                          background: CN_THEME.surface
+                          border: `1px solid ${THEME.border}`,
+                          background: THEME.surface
                         }}>
                           <Typography variant="h4" fontWeight="700" sx={{ color }}>
                             {Number(value).toFixed(1)}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: CN_THEME.textSecondary, fontWeight: 600 }}>
+                          <Typography variant="caption" sx={{ color: THEME.textSecondary, fontWeight: 600 }}>
                             {label}
                           </Typography>
                         </Paper>
@@ -544,10 +544,10 @@ export default function NewAnalysis() {
                         {(m.star_rating !== undefined || m.customer_feedback) && (
                           <Paper elevation={0} sx={{
                             p: 2.5, mb: 2, borderRadius: 2,
-                            border: `1px solid ${CN_THEME.success}30`,
-                            background: `${CN_THEME.success}05`
+                            border: `1px solid ${THEME.success}30`,
+                            background: `${THEME.success}05`
                           }}>
-                            <Typography variant="subtitle2" fontWeight="700" sx={{ color: CN_THEME.success, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="subtitle2" fontWeight="700" sx={{ color: THEME.success, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
                               ⭐ Customer Satisfaction (Real Rating)
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: m.customer_feedback ? 2 : 0 }}>
@@ -562,15 +562,15 @@ export default function NewAnalysis() {
                                       ★
                                     </Typography>
                                   ))}
-                                  <Typography sx={{ ml: 1, fontWeight: 700, color: CN_THEME.textPrimary }}>
+                                  <Typography sx={{ ml: 1, fontWeight: 700, color: THEME.textPrimary }}>
                                     {m.star_rating}/5
                                   </Typography>
                                 </Box>
                               )}
                             </Box>
                             {m.customer_feedback && (
-                              <Box sx={{ p: 1.5, background: '#FFFFFF', borderRadius: 1.5, borderLeft: `3px solid ${CN_THEME.success}` }}>
-                                <Typography variant="body2" italic sx={{ color: CN_THEME.textSecondary }}>
+                              <Box sx={{ p: 1.5, background: '#FFFFFF', borderRadius: 1.5, borderLeft: `3px solid ${THEME.success}` }}>
+                                <Typography variant="body2" italic sx={{ color: THEME.textSecondary }}>
                                   "{m.customer_feedback}"
                                 </Typography>
                               </Box>
@@ -581,20 +581,20 @@ export default function NewAnalysis() {
                         {details.length > 0 && (
                           <Paper elevation={0} sx={{
                             p: 2.5, mb: 2, borderRadius: 2,
-                            border: `1px solid ${CN_THEME.border}`,
-                            background: CN_THEME.surface
+                            border: `1px solid ${THEME.border}`,
+                            background: THEME.surface
                           }}>
-                            <Typography variant="subtitle2" fontWeight="700" sx={{ color: CN_THEME.textPrimary, mb: 1.5 }}>
+                            <Typography variant="subtitle2" fontWeight="700" sx={{ color: THEME.textPrimary, mb: 1.5 }}>
                               🚘 Vehicle & Case Details
                             </Typography>
                             <Grid container spacing={1.5}>
                               {details.map(({ label, value }) => (
                                 <Grid item xs={12} sm={6} key={label}>
                                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-                                    <Typography variant="caption" sx={{ color: CN_THEME.textTertiary, fontWeight: 600, minWidth: 120 }}>
+                                    <Typography variant="caption" sx={{ color: THEME.textTertiary, fontWeight: 600, minWidth: 120 }}>
                                       {label}
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: CN_THEME.textPrimary, fontWeight: 500, wordBreak: 'break-word' }}>
+                                    <Typography variant="caption" sx={{ color: THEME.textPrimary, fontWeight: 500, wordBreak: 'break-word' }}>
                                       {value}
                                     </Typography>
                                   </Box>
@@ -611,13 +611,13 @@ export default function NewAnalysis() {
                   {resultData.transcription?.text && (
                     <Paper elevation={0} sx={{
                       p: 2.5, mb: 2, borderRadius: 2,
-                      border: `1px solid ${CN_THEME.border}`,
-                      background: CN_THEME.surface
+                      border: `1px solid ${THEME.border}`,
+                      background: THEME.surface
                     }}>
-                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: CN_THEME.textPrimary, mb: 1 }}>
+                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: THEME.textPrimary, mb: 1 }}>
                         📝 Transcription
                       </Typography>
-                      <Typography variant="body2" sx={{ color: CN_THEME.textSecondary, lineHeight: 1.7 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, lineHeight: 1.7 }}>
                         {resultData.transcription.text}
                       </Typography>
                     </Paper>
@@ -627,13 +627,13 @@ export default function NewAnalysis() {
                   {resultData.summarization?.summary && (
                     <Paper elevation={0} sx={{
                       p: 2.5, mb: 2, borderRadius: 2,
-                      border: `1px solid ${CN_THEME.border}`,
-                      background: CN_THEME.surface
+                      border: `1px solid ${THEME.border}`,
+                      background: THEME.surface
                     }}>
-                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: CN_THEME.textPrimary, mb: 1 }}>
+                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: THEME.textPrimary, mb: 1 }}>
                         💡 Summary
                       </Typography>
-                      <Typography variant="body2" sx={{ color: CN_THEME.textSecondary, lineHeight: 1.7 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, lineHeight: 1.7 }}>
                         {resultData.summarization.summary}
                       </Typography>
                     </Paper>
@@ -643,13 +643,13 @@ export default function NewAnalysis() {
                   {resultData.translation?.translated_text && (
                     <Paper elevation={0} sx={{
                       p: 2.5, mb: 2, borderRadius: 2,
-                      border: `1px solid ${CN_THEME.border}`,
-                      background: CN_THEME.surface
+                      border: `1px solid ${THEME.border}`,
+                      background: THEME.surface
                     }}>
-                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: CN_THEME.textPrimary, mb: 1 }}>
+                      <Typography variant="subtitle2" fontWeight="700" sx={{ color: THEME.textPrimary, mb: 1 }}>
                         🌐 Translation
                       </Typography>
-                      <Typography variant="body2" sx={{ color: CN_THEME.textSecondary, lineHeight: 1.7 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, lineHeight: 1.7 }}>
                         {resultData.translation.translated_text}
                       </Typography>
                     </Paper>
@@ -662,8 +662,8 @@ export default function NewAnalysis() {
                         label={`Quality: ${resultData.overall_quality.overall_label}`}
                         sx={{
                           fontWeight: 700,
-                          background: CN_THEME.primaryUltraLight,
-                          color: CN_THEME.primary
+                          background: THEME.primaryUltraLight,
+                          color: THEME.primary
                         }}
                       />
                       {resultData.citnow_metadata?.service_advisor && (
@@ -685,24 +685,24 @@ export default function NewAnalysis() {
                       fullWidth
                       label={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <VideoCameraBack sx={{ color: CN_THEME.textSecondary, fontSize: 20 }} />
-                          <span>CitNow Video URL</span>
+                          <VideoCameraBack sx={{ color: THEME.textSecondary, fontSize: 20 }} />
+                          <span>QualityLens Video URL</span>
                         </Box>
                       }
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       required
                       disabled={localLoading || (currentTask && ['pending', 'processing'].includes(currentTask.status))}
-                      helperText="Enter the full URL of your CitNow video for analysis"
+                      helperText="Enter the full URL of your video for analysis"
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
-                          backgroundColor: CN_THEME.surface,
+                          backgroundColor: THEME.surface,
                           transition: 'all 0.2s ease',
-                          '& fieldset': { borderColor: CN_THEME.border },
-                          '&:hover fieldset': { borderColor: CN_THEME.primaryLight },
+                          '& fieldset': { borderColor: THEME.border },
+                          '&:hover fieldset': { borderColor: THEME.primaryLight },
                           '&.Mui-focused fieldset': {
-                            borderColor: CN_THEME.primary,
+                            borderColor: THEME.primary,
                             borderWidth: '2px'
                           },
                           '&.Mui-focused': {
@@ -720,7 +720,7 @@ export default function NewAnalysis() {
                       select
                       label={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Language sx={{ color: CN_THEME.textSecondary, fontSize: 20 }} />
+                          <Language sx={{ color: THEME.textSecondary, fontSize: 20 }} />
                           <span>Spoken Language</span>
                         </Box>
                       }
@@ -730,12 +730,12 @@ export default function NewAnalysis() {
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
-                          backgroundColor: CN_THEME.surface,
+                          backgroundColor: THEME.surface,
                           transition: 'all 0.2s ease',
-                          '& fieldset': { borderColor: CN_THEME.border },
-                          '&:hover fieldset': { borderColor: CN_THEME.primaryLight },
+                          '& fieldset': { borderColor: THEME.border },
+                          '&:hover fieldset': { borderColor: THEME.primaryLight },
                           '&.Mui-focused fieldset': {
-                            borderColor: CN_THEME.primary,
+                            borderColor: THEME.primary,
                             borderWidth: '2px'
                           },
                           '&.Mui-focused': {
@@ -762,7 +762,7 @@ export default function NewAnalysis() {
                       select
                       label={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Translate sx={{ color: CN_THEME.textSecondary, fontSize: 20 }} />
+                          <Translate sx={{ color: THEME.textSecondary, fontSize: 20 }} />
                           <span>Target Language</span>
                         </Box>
                       }
@@ -772,12 +772,12 @@ export default function NewAnalysis() {
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
-                          backgroundColor: CN_THEME.surface,
+                          backgroundColor: THEME.surface,
                           transition: 'all 0.2s ease',
-                          '& fieldset': { borderColor: CN_THEME.border },
-                          '&:hover fieldset': { borderColor: CN_THEME.primaryLight },
+                          '& fieldset': { borderColor: THEME.border },
+                          '&:hover fieldset': { borderColor: THEME.primaryLight },
                           '&.Mui-focused fieldset': {
-                            borderColor: CN_THEME.primary,
+                            borderColor: THEME.primary,
                             borderWidth: '2px'
                           },
                           '&.Mui-focused': {
@@ -806,7 +806,7 @@ export default function NewAnalysis() {
                         disabled={localLoading || (currentTask && ['pending', 'processing'].includes(currentTask.status))}
                         startIcon={<PlayArrow />}
                         sx={{
-                          background: CN_THEME.gradientPrimary,
+                          background: THEME.gradientPrimary,
                           borderRadius: 3,
                           px: 6,
                           py: 1.8,
@@ -819,7 +819,7 @@ export default function NewAnalysis() {
                             transform: 'translateY(-2px)'
                           },
                           '&:disabled': {
-                            background: CN_THEME.textTertiary,
+                            background: THEME.textTertiary,
                             transform: 'none',
                             boxShadow: 'none'
                           },
@@ -842,11 +842,11 @@ export default function NewAnalysis() {
                             fontWeight: 600,
                             textTransform: 'none',
                             fontSize: '16px',
-                            borderColor: CN_THEME.primary,
-                            color: CN_THEME.primary,
+                            borderColor: THEME.primary,
+                            color: THEME.primary,
                             '&:hover': {
-                              backgroundColor: CN_THEME.primaryUltraLight,
-                              borderColor: CN_THEME.primaryDark
+                              backgroundColor: THEME.primaryUltraLight,
+                              borderColor: THEME.primaryDark
                             }
                           }}
                         >
@@ -865,7 +865,7 @@ export default function NewAnalysis() {
                     p: 4,
                     mt: 5,
                     borderRadius: 4,
-                    background: `linear-gradient(135deg, ${CN_THEME.surface} 0%, rgba(248, 250, 252, 0.4) 100%)`,
+                    background: `linear-gradient(135deg, ${THEME.surface} 0%, rgba(248, 250, 252, 0.4) 100%)`,
                     border: '1px solid',
                     borderColor: 'rgba(28, 105, 212, 0.1)',
                     position: 'relative',
@@ -879,13 +879,13 @@ export default function NewAnalysis() {
                     background: 'radial-gradient(circle, rgba(28,105,212,0.1) 0%, transparent 70%)',
                     borderRadius: '50%'
                   }} />
-                  <Typography variant="subtitle1" fontWeight="700" sx={{ color: CN_THEME.primary, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="700" sx={{ color: THEME.primary, mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <span style={{ fontSize: '1.2rem' }}>💡</span> How it works
                   </Typography>
                   <Box sx={{
                     display: 'flex', flexDirection: 'column', gap: 1.5,
-                    '& p': { color: CN_THEME.textSecondary, display: 'flex', alignItems: 'center', gap: 1.5, m: 0, fontSize: '0.95rem' },
-                    '& span.bullet': { color: CN_THEME.primaryLight, fontSize: '1.5rem', lineHeight: 0.5 }
+                    '& p': { color: THEME.textSecondary, display: 'flex', alignItems: 'center', gap: 1.5, m: 0, fontSize: '0.95rem' },
+                    '& span.bullet': { color: THEME.primaryLight, fontSize: '1.5rem', lineHeight: 0.5 }
                   }}>
                     <p><span className="bullet">•</span> Analysis runs seamlessly in the background — feel free to continue using the dashboard.</p>
                     <p><span className="bullet">•</span> Real-time progress tracking with automatic status updates.</p>

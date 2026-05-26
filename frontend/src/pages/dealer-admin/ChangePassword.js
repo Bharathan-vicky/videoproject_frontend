@@ -11,11 +11,13 @@ import {
 } from '@mui/material';
 import { Save, Lock } from '@mui/icons-material';
 
-const BMW = {
-  primary: '#1C69D4',
-  primaryDark: '#0D47A1',
-  border: '#E1E6ED',
-  textPrimary: '#0A1929',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  accent: '#00B4DB',
+  border: '#E2E8F0',
+  textPrimary: '#1E293B',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
 };
 
 export default function ChangePassword() {
@@ -34,11 +36,22 @@ export default function ChangePassword() {
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 4 }}>
-      <Typography variant="h4" fontWeight={800} sx={{ mb: 1, color: BMW.textPrimary }}>
+      <Typography variant="h4" fontWeight={800} sx={{ 
+        mb: 1, 
+        color: THEME.textPrimary,
+        background: THEME.gradientPrimary,
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent'
+      }}>
         Change Password
       </Typography>
       
-      <Paper sx={{ p: 4, borderRadius: 3, border: `1px solid ${BMW.border}`, boxShadow: 'none' }}>
+      <Paper sx={{ 
+        p: 4, 
+        borderRadius: 3, 
+        border: `1px solid ${THEME.border}`, 
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
+      }}>
         <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
           To ensure account security, please use a strong password with a mix of letters, numbers, and symbols.
         </Typography>
@@ -54,6 +67,7 @@ export default function ChangePassword() {
               required
               value={form.currentPassword}
               onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <TextField
               fullWidth
@@ -62,6 +76,7 @@ export default function ChangePassword() {
               required
               value={form.newPassword}
               onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <TextField
               fullWidth
@@ -70,6 +85,7 @@ export default function ChangePassword() {
               required
               value={form.confirmPassword}
               onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             
             <Divider sx={{ my: 1 }} />
@@ -81,10 +97,10 @@ export default function ChangePassword() {
               sx={{ 
                 py: 1.5, 
                 borderRadius: 2, 
-                bgcolor: BMW.primary,
+                background: THEME.gradientPrimary,
                 textTransform: 'none',
                 fontWeight: 700,
-                '&:hover': { bgcolor: BMW.primaryDark }
+                '&:hover': { opacity: 0.9 }
               }}
             >
               Update Password

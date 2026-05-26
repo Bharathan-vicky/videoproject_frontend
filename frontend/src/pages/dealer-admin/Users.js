@@ -10,10 +10,10 @@ import {
 import { listMyDealerUsers, createDealerUser, updateDealerUser, deleteDealerUser } from '../../services/dealer_user';
 import { AuthContext } from '../../contexts/AuthContext';
 
-// CitNow / BMW Theme aligned colors
+// QualityLens Theme aligned colors
 const THEME = {
-  primary: '#1C3FAA',
-  primaryDark: '#0E2A80',
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
   secondaryBtn: '#94A3B8',
   success: '#10B981',
   error: '#D32F2F',
@@ -371,7 +371,7 @@ export default function DealerUsers() {
             {/* Header Match */}
             <Box sx={{ background: THEME.primary, color: 'white', p: 2, borderRadius: 1, mb: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                {viewState === 'edit' ? `${form.username} - CitNOW Dashboard` : 'Create New User Profile'}
+                {viewState === 'edit' ? `${form.username} - QualityLens Dashboard` : 'Create New User Profile'}
               </Typography>
             </Box>
 

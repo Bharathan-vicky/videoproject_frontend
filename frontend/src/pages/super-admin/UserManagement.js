@@ -43,19 +43,35 @@ import {
 } from '@mui/icons-material';
 import { listUsers, createUser, updateUser, deleteUser } from '../../services/users';
 
-const BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0D47A1',
-  secondary: '#37474F',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#F0FDFA',
+  accent: '#00B4DB',
+  accentLight: '#E0F2FE',
+  accentUltraLight: '#F8FAFC',
   background: '#FFFFFF',
-  surface: '#F8F9FA',
-  text: '#1A1A1A',
-  textSecondary: '#546E7A',
-  border: '#E0E0E0',
-  hover: '#F5F5F5'
+  surface: '#F8FAFC',
+  surfaceElevated: '#FFFFFF',
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  textTertiary: '#94A3B8',
+  success: '#10B981',
+  successLight: '#D1FAE5',
+  warning: '#F59E0B',
+  warningLight: '#FEF3C7',
+  error: '#EF4444',
+  errorLight: '#FEE2E2',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
+  gradientAccent: 'linear-gradient(135deg, #0DA1B8 0%, #0C587D 100%)',
+  shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+  shadowMd: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  hover: '#F0FDFA'
 };
 
-// ✅ REMOVED super_admin option - only dealer_admin remains
 const ROLE_OPTS = [
   { value: 'dealer_admin', label: 'Dealer Admin' }
 ];
@@ -68,7 +84,7 @@ export default function UserManagement() {
   const [form, setForm] = useState({
     username: '',
     email: '',
-    role: 'dealer_admin', // Default to dealer_admin
+    role: 'dealer_admin',
     password: '',
     dealer_id: '',
     showroom_name: ''
@@ -191,14 +207,12 @@ export default function UserManagement() {
     }
   };
 
-  // Table sorting
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  // Filtering and sorting
   const filteredUsers = users.filter(user => {
     const matchesSearch =
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -228,9 +242,9 @@ export default function UserManagement() {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'super_admin': return '#FF9800';
-      case 'dealer_admin': return BMW_THEME.primary;
-      default: return BMW_THEME.textSecondary;
+      case 'super_admin': return THEME.warning;
+      case 'dealer_admin': return THEME.primary;
+      default: return THEME.textSecondary;
     }
   };
 
@@ -241,11 +255,10 @@ export default function UserManagement() {
   return (
     <Box sx={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #FFFFFF 0%, #F0F4F8 100%)',
+      background: 'linear-gradient(135deg, #FFFFFF 0%, #F0FDFA 100%)',
       py: 4
     }}>
       <Container maxWidth="xl">
-        {/* Enhanced Header */}
         <Box sx={{ mb: 5 }}>
           <Box sx={{
             display: 'flex',
@@ -260,9 +273,9 @@ export default function UserManagement() {
                 variant="h3"
                 sx={{
                   fontWeight: 700,
-                  color: BMW_THEME.text,
+                  color: THEME.textPrimary,
                   mb: 1,
-                  background: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
+                  background: THEME.gradientPrimary,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text'
@@ -270,7 +283,7 @@ export default function UserManagement() {
               >
                 Administrator Management
               </Typography>
-              <Typography variant="body1" sx={{ color: BMW_THEME.textSecondary, fontSize: '1.05rem' }}>
+              <Typography variant="body1" sx={{ color: THEME.textSecondary, fontSize: '1.05rem' }}>
                 Manage system administrators and dealer admins
               </Typography>
             </Box>
@@ -287,9 +300,10 @@ export default function UserManagement() {
                 fontWeight: 600,
                 textTransform: 'none',
                 fontSize: '1rem',
-                boxShadow: '0 4px 14px rgba(28, 105, 212, 0.3)',
+                background: THEME.gradientPrimary,
+                boxShadow: THEME.shadowMd,
                 '&:hover': {
-                  boxShadow: '0 6px 20px rgba(28, 105, 212, 0.4)',
+                  boxShadow: '0 6px 20px rgba(13, 161, 184, 0.4)',
                   transform: 'translateY(-2px)'
                 },
                 transition: 'all 0.3s ease'
@@ -300,19 +314,18 @@ export default function UserManagement() {
           </Box>
         </Box>
 
-        {/* Enhanced Search and Filter Card */}
         <Paper
           elevation={0}
           sx={{
             mb: 4,
-            border: `1px solid ${BMW_THEME.border}`,
+            border: `1px solid ${THEME.border}`,
             borderRadius: 3,
             overflow: 'hidden',
             background: '#FFFFFF'
           }}
         >
           <Box sx={{
-            background: 'linear-gradient(135deg, rgba(28, 105, 212, 0.05) 0%, rgba(10, 75, 156, 0.05) 100%)',
+            background: 'linear-gradient(135deg, rgba(13, 161, 184, 0.05) 0%, rgba(12, 88, 125, 0.05) 100%)',
             p: 3
           }}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
@@ -322,12 +335,13 @@ export default function UserManagement() {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
+                  setPage(page); // Fixed the reference
                   setPage(0);
                 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search sx={{ color: BMW_THEME.primary }} />
+                      <Search sx={{ color: THEME.primary }} />
                     </InputAdornment>
                   )
                 }}
@@ -337,10 +351,10 @@ export default function UserManagement() {
                     backgroundColor: '#FFFFFF',
                     borderRadius: 2,
                     '&:hover fieldset': {
-                      borderColor: BMW_THEME.primary
+                      borderColor: THEME.primary
                     },
                     '&.Mui-focused fieldset': {
-                      borderColor: BMW_THEME.primary,
+                      borderColor: THEME.primary,
                       borderWidth: 2
                     }
                   }
@@ -361,14 +375,14 @@ export default function UserManagement() {
                     backgroundColor: '#FFFFFF',
                     borderRadius: 2,
                     '&:hover fieldset': {
-                      borderColor: BMW_THEME.primary
+                      borderColor: THEME.primary
                     }
                   }
                 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <FilterList sx={{ color: BMW_THEME.primary }} />
+                      <FilterList sx={{ color: THEME.primary }} />
                     </InputAdornment>
                   )
                 }}
@@ -380,18 +394,17 @@ export default function UserManagement() {
           </Box>
         </Paper>
 
-        {/* Table */}
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-            <CircularProgress />
+            <CircularProgress sx={{ color: THEME.primary }} />
           </Box>
         ) : filteredUsers.length === 0 ? (
-          <Paper elevation={0} sx={{ p: 8, textAlign: 'center', border: `1px solid ${BMW_THEME.border}` }}>
-            <Person sx={{ fontSize: 64, color: BMW_THEME.border, mb: 2 }} />
-            <Typography variant="h6" sx={{ color: BMW_THEME.textSecondary, mb: 1 }}>
+          <Paper elevation={0} sx={{ p: 8, textAlign: 'center', border: `1px solid ${THEME.border}` }}>
+            <Person sx={{ fontSize: 64, color: THEME.border, mb: 2 }} />
+            <Typography variant="h6" sx={{ color: THEME.textSecondary, mb: 1 }}>
               {searchQuery || roleFilter !== 'all' ? 'No users found' : 'No administrators yet'}
             </Typography>
-            <Typography variant="body2" sx={{ color: BMW_THEME.textSecondary, mb: 3 }}>
+            <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 3 }}>
               {searchQuery || roleFilter !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Create your first administrator to get started'}
@@ -401,7 +414,7 @@ export default function UserManagement() {
                 variant="contained"
                 startIcon={<Add />}
                 onClick={() => setOpen(true)}
-                sx={{ bgcolor: BMW_THEME.primary }}
+                sx={{ background: THEME.gradientPrimary }}
               >
                 Create Administrator
               </Button>
@@ -411,7 +424,7 @@ export default function UserManagement() {
           <Paper
             elevation={0}
             sx={{
-              border: `1px solid ${BMW_THEME.border}`,
+              border: `1px solid ${THEME.border}`,
               borderRadius: 3,
               overflow: 'hidden',
               background: '#FFFFFF'
@@ -421,7 +434,7 @@ export default function UserManagement() {
               <Table>
                 <TableHead>
                   <TableRow sx={{
-                    background: 'linear-gradient(135deg, rgba(28, 105, 212, 0.08) 0%, rgba(10, 75, 156, 0.08) 100%)'
+                    background: 'linear-gradient(135deg, rgba(13, 161, 184, 0.08) 0%, rgba(12, 88, 125, 0.08) 100%)'
                   }}>
                     <TableCell>
                       <TableSortLabel
@@ -461,7 +474,6 @@ export default function UserManagement() {
                         </Typography>
                       </TableSortLabel>
                     </TableCell>
-
                     <TableCell>
                       <TableSortLabel
                         active={orderBy === 'dealer_id'}
@@ -473,7 +485,6 @@ export default function UserManagement() {
                         </Typography>
                       </TableSortLabel>
                     </TableCell>
-
                     <TableCell align="right">
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                         Actions
@@ -488,11 +499,11 @@ export default function UserManagement() {
                       hover
                       sx={{
                         '&:hover': {
-                          bgcolor: 'rgba(28, 105, 212, 0.04)',
+                          bgcolor: 'rgba(13, 161, 184, 0.04)',
                           transform: 'scale(1.001)',
                           transition: 'all 0.2s ease'
                         },
-                        borderBottom: `1px solid ${BMW_THEME.border}`
+                        borderBottom: `1px solid ${THEME.borderLight}`
                       }}
                     >
                       <TableCell>
@@ -502,50 +513,49 @@ export default function UserManagement() {
                               width: 40,
                               height: 40,
                               borderRadius: '50%',
-                              background: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
+                              background: THEME.gradientPrimary,
                               color: 'white',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontWeight: 700,
                               fontSize: '1rem',
-                              boxShadow: '0 2px 8px rgba(28, 105, 212, 0.2)'
+                              boxShadow: '0 2px 8px rgba(13, 161, 184, 0.2)'
                             }}
                           >
                             {user.username.charAt(0).toUpperCase()}
                           </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 600, color: BMW_THEME.text }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: THEME.textPrimary }}>
                             {user.username}
                           </Typography>
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ color: BMW_THEME.textSecondary }}>
+                        <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                           {user.email}
                         </Typography>
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label="Dealer Admin" // ✅ Simplified since only dealer_admin remains
+                          label="Dealer Admin"
                           size="small"
                           sx={{
-                            bgcolor: `${BMW_THEME.primary}15`,
-                            color: BMW_THEME.primary,
+                            bgcolor: `${THEME.primary}15`,
+                            color: THEME.primary,
                             fontWeight: 600,
                             fontSize: '0.75rem'
                           }}
                         />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: 500, color: BMW_THEME.text }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: THEME.textPrimary }}>
                           {user.showroom_name || '—'}
                         </Typography>
                       </TableCell>
-
                       <TableCell>
                         <Typography variant="body2" sx={{
                           fontFamily: 'monospace',
-                          color: user.dealer_id ? BMW_THEME.text : BMW_THEME.textSecondary
+                          color: user.dealer_id ? THEME.textPrimary : THEME.textSecondary
                         }}>
                           {user.dealer_id || '—'}
                         </Typography>
@@ -557,8 +567,8 @@ export default function UserManagement() {
                               size="small"
                               onClick={() => handleEdit(user)}
                               sx={{
-                                color: BMW_THEME.primary,
-                                '&:hover': { bgcolor: `${BMW_THEME.primary}10` }
+                                color: THEME.primary,
+                                '&:hover': { bgcolor: `${THEME.primary}10` }
                               }}
                             >
                               <Edit fontSize="small" />
@@ -569,8 +579,8 @@ export default function UserManagement() {
                               size="small"
                               onClick={() => handleDelete(user._id || user.id)}
                               sx={{
-                                color: '#D32F2F',
-                                '&:hover': { bgcolor: '#D32F2F10' }
+                                color: THEME.error,
+                                '&:hover': { bgcolor: `${THEME.error}10` }
                               }}
                             >
                               <Delete fontSize="small" />
@@ -599,20 +609,20 @@ export default function UserManagement() {
           </Paper>
         )}
 
-        {/* Create/Edit Dialog */}
         <Dialog
           open={open}
           onClose={() => setOpen(false)}
           fullWidth
           maxWidth="sm"
           PaperProps={{
-            sx: { borderRadius: 2 }
+            sx: { borderRadius: 3, boxShadow: THEME.shadowMd }
           }}
         >
           <DialogTitle sx={{
-            bgcolor: BMW_THEME.surface,
-            borderBottom: `1px solid ${BMW_THEME.border}`,
-            fontWeight: 600
+            bgcolor: THEME.surface,
+            borderBottom: `1px solid ${THEME.border}`,
+            fontWeight: 600,
+            color: THEME.textPrimary
           }}>
             {dialogTitle}
           </DialogTitle>
@@ -634,10 +644,11 @@ export default function UserManagement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Person sx={{ color: BMW_THEME.textSecondary }} />
+                      <Person sx={{ color: THEME.textSecondary }} />
                     </InputAdornment>
                   )
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
 
               <TextField
@@ -650,10 +661,11 @@ export default function UserManagement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <EmailIcon sx={{ color: BMW_THEME.textSecondary }} />
+                      <EmailIcon sx={{ color: THEME.textSecondary }} />
                     </InputAdornment>
                   )
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
 
               <TextField
@@ -676,6 +688,7 @@ export default function UserManagement() {
                     </InputAdornment>
                   )
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
 
               <TextField
@@ -687,12 +700,12 @@ export default function UserManagement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Security sx={{ color: BMW_THEME.textSecondary }} />
+                      <Security sx={{ color: THEME.textSecondary }} />
                     </InputAdornment>
                   )
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               >
-                {/* ✅ Now only shows "Dealer Admin" option */}
                 {ROLE_OPTS.map(r => (
                   <MenuItem key={r.value} value={r.value}>
                     {r.label}
@@ -710,10 +723,11 @@ export default function UserManagement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Business sx={{ color: BMW_THEME.textSecondary }} />
+                      <Business sx={{ color: THEME.textSecondary }} />
                     </InputAdornment>
                   )
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
               <TextField
                 fullWidth
@@ -725,18 +739,19 @@ export default function UserManagement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Business sx={{ color: BMW_THEME.textSecondary }} />
+                      <Business sx={{ color: THEME.textSecondary }} />
                     </InputAdornment>
                   )
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
             </Stack>
           </DialogContent>
 
-          <DialogActions sx={{ px: 3, py: 2, bgcolor: BMW_THEME.surface }}>
+          <DialogActions sx={{ px: 3, py: 2, bgcolor: THEME.surface }}>
             <Button
               onClick={() => setOpen(false)}
-              sx={{ color: BMW_THEME.textSecondary }}
+              sx={{ color: THEME.textSecondary, fontWeight: 500 }}
             >
               Cancel
             </Button>
@@ -744,10 +759,12 @@ export default function UserManagement() {
               variant="contained"
               onClick={handleSubmit}
               sx={{
-                bgcolor: BMW_THEME.primary,
-                '&:hover': { bgcolor: BMW_THEME.primaryDark },
+                background: THEME.gradientPrimary,
+                '&:hover': { opacity: 0.9 },
                 textTransform: 'none',
-                fontWeight: 600
+                fontWeight: 600,
+                borderRadius: 2,
+                px: 4
               }}
             >
               {submitButtonText}

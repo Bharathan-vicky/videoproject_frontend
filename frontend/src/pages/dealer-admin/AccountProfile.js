@@ -23,22 +23,29 @@ import {
 import { AuthContext } from '../../contexts/AuthContext';
 
 // Similar theme to the rest of the app
-const BMW = {
-  primary: '#1C69D4',
-  primaryDark: '#0D47A1',
-  border: '#E1E6ED',
-  textPrimary: '#0A1929',
-  textSecondary: '#3E5060',
-  surface: '#F5F7FA',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  border: '#E2E8F0',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  surface: '#F8FAFC',
 };
 
 export default function AccountProfile() {
   const { user, updateProfile } = useContext(AuthContext);
   const fileInputRef = useRef(null);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(user?.profile_image || null);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
+  // Sync preview image if user profile image changes
+  useEffect(() => {
+    if (user?.profile_image) {
+      setPreviewImage(user.profile_image);
+    }
+  }, [user?.profile_image]);
   
   const initialName = useMemo(() => {
     const raw = (user?.username || '').trim();
@@ -104,7 +111,10 @@ export default function AccountProfile() {
     setSaving(true);
     setError('');
     try {
-      await updateProfile({ username: newUsername });
+      await updateProfile({ 
+        username: newUsername,
+        profile_image: previewImage 
+      });
       setSuccess('Profile updated.');
     } catch (e) {
       setError(e?.message || 'Failed to update profile.');
@@ -122,11 +132,11 @@ export default function AccountProfile() {
         <Alert severity="error" variant="filled">{error}</Alert>
       </Snackbar>
 
-      <Typography variant="h4" fontWeight={800} sx={{ mb: 1, color: BMW.textPrimary }}>
+      <Typography variant="h4" fontWeight={800} sx={{ mb: 1, color: THEME.textPrimary }}>
         Edit Profile
       </Typography>
       
-      <Paper sx={{ p: 4, borderRadius: 3, border: `1px solid ${BMW.border}`, boxShadow: 'none' }}>
+      <Paper sx={{ p: 4, borderRadius: 3, border: `1px solid ${THEME.border}`, boxShadow: 'none' }}>
         {/* Section: Account Details */}
         <Typography variant="h6" fontWeight={700} gutterBottom>
           Account Details
@@ -219,7 +229,7 @@ export default function AccountProfile() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 1 }}>
            <Avatar 
              src={previewImage} 
-             sx={{ width: 80, height: 80, bgcolor: BMW.surface, color: BMW.textTertiary, border: `1px solid ${BMW.border}` }}
+             sx={{ width: 80, height: 80, bgcolor: THEME.surface, color: THEME.textTertiary, border: `1px solid ${THEME.border}` }}
            >
               {!previewImage && <Person sx={{ fontSize: 50 }} />}
            </Avatar>
@@ -239,7 +249,7 @@ export default function AccountProfile() {
                   variant="outlined"
                   onClick={triggerFileInput}
                   startIcon={<CameraAlt />}
-                  sx={{ textTransform: 'none', borderRadius: 2, borderColor: BMW.primary, color: BMW.primary, '&:hover': { borderColor: BMW.primaryDark, bgcolor: 'rgba(28, 105, 212, 0.04)' } }}
+                  sx={{ textTransform: 'none', borderRadius: 2, borderColor: THEME.primary, color: THEME.primary, '&:hover': { borderColor: THEME.primaryDark, bgcolor: 'rgba(28, 105, 212, 0.04)' } }}
                 >
                   Select a Photo
                 </Button>
@@ -320,10 +330,10 @@ export default function AccountProfile() {
               px: 6, 
               py: 1.5, 
               borderRadius: 2, 
-              bgcolor: BMW.primary,
+              bgcolor: THEME.primary,
               textTransform: 'none',
               fontWeight: 700,
-              '&:hover': { bgcolor: BMW.primaryDark }
+              '&:hover': { bgcolor: THEME.primaryDark }
             }}
           >
             {saving ? 'Saving...' : 'Save Profile'}

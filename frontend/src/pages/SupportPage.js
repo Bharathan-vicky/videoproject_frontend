@@ -22,13 +22,13 @@ import {
 } from '@mui/icons-material';
 import { AuthContext } from '../contexts/AuthContext';
 
-const BMW = {
-  primary: '#1C69D4',
-  primaryDark: '#0D47A1',
-  border: '#E1E6ED',
-  textPrimary: '#0A1929',
-  textSecondary: '#3E5060',
-  surface: '#F5F7FA',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  border: '#E2E8F0',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  surface: '#F8FAFC',
   success: '#10B981'
 };
 
@@ -51,7 +51,7 @@ export default function SupportPage() {
 
   const getRecipientOptions = () => {
     if (role === 'super_admin') return [{ value: 'system_dev', label: 'System Development Team' }];
-    if (role === 'dealer_admin') return [{ value: 'super_admin', label: 'Super Admin / CitNow Support' }];
+    if (role === 'dealer_admin') return [{ value: 'super_admin', label: 'Super Admin / QualityLens Support' }];
     if (role === 'branch_admin') return [
       { value: 'dealer_admin', label: 'Dealer Admin' },
       { value: 'super_admin', label: 'Super Admin' }
@@ -72,14 +72,14 @@ export default function SupportPage() {
 
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto', p: 4 }}>
-      <Typography variant="h4" fontWeight={800} sx={{ mb: 1, color: BMW.textPrimary }}>
+      <Typography variant="h4" fontWeight={800} sx={{ mb: 1, color: THEME.textPrimary }}>
         Submit Support Query
       </Typography>
       <Typography variant="body2" color="textSecondary" sx={{ mb: 4 }}>
         Escalate your issue to the appropriate higher-hierarchy login for resolution.
       </Typography>
 
-      <Paper sx={{ p: 4, borderRadius: 3, border: `1px solid ${BMW.border}`, boxShadow: 'none' }}>
+      <Paper sx={{ p: 4, borderRadius: 3, border: `1px solid ${THEME.border}`, boxShadow: 'none' }}>
         {success && (
           <Alert severity="success" sx={{ mb: 4, borderRadius: 2 }}>
             Support request sent to {getRecipientOptions().find(o => o.value === form.sendTo)?.label || 'Administrator'} successfully!
@@ -199,7 +199,7 @@ export default function SupportPage() {
                 justifyContent: 'space-between', 
                 alignItems: 'center',
                 pt: 2,
-                borderTop: `1px solid ${BMW.border}`
+                borderTop: `1px solid ${THEME.border}`
               }}>
                 <Button
                   type="submit"
@@ -209,13 +209,13 @@ export default function SupportPage() {
                     px: 8, 
                     py: 1.8, 
                     borderRadius: 2, 
-                    bgcolor: BMW.primary,
+                    bgcolor: THEME.primary,
                     textTransform: 'none',
                     fontSize: '1rem',
                     fontWeight: 700,
                     boxShadow: '0 4px 12px rgba(28, 105, 212, 0.25)',
                     '&:hover': { 
-                      bgcolor: BMW.primaryDark,
+                      bgcolor: THEME.primaryDark,
                       boxShadow: '0 6px 16px rgba(28, 105, 212, 0.4)'
                     }
                   }}

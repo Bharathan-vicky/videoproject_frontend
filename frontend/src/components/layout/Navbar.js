@@ -56,22 +56,22 @@ import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTasks } from '../../contexts/TaskContext';
 
-// Professional BMW Theme Colors
-const BMW = {
-  primary: '#1C69D4',
-  primaryDark: '#0D47A1',
-  primaryLight: '#5B9EED',
-  primaryUltraLight: '#EBF4FF',
+// QualityLens Branding Theme Colors
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#E8F8FA',
+  accent: '#1CB5E0',
   white: '#FFFFFF',
   background: '#FAFBFC',
-  surface: '#F5F7FA',
-  border: '#E1E6ED',
-  textPrimary: '#0A1929',
-  textSecondary: '#3E5060',
-  textTertiary: '#6B7A90',
-  accent: '#00A5E0',
+  surface: '#F8FAFC',
+  border: '#E2E8F0',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  textTertiary: '#94A3B8',
   success: '#00A86B',
-  error: '#D32F2F'
+  error: '#EF4444'
 };
 
 // Menu configuration
@@ -111,10 +111,10 @@ const ROLE_LABEL = {
 };
 
 const ROLE_COLOR = {
-  super_admin: BMW.primary,
-  dealer_admin: BMW.accent,
+  super_admin: THEME.primary,
+  dealer_admin: THEME.accent,
   branch_admin: '#8B5CF6',
-  dealer_user: BMW.success,
+  dealer_user: THEME.success,
 };
 
 export default function Navbar() {
@@ -140,45 +140,39 @@ export default function Navbar() {
 
   // Mobile drawer content
   const drawer = (
-    <Box sx={{ width: 280, height: '100%', background: BMW.white }}>
+    <Box sx={{ width: 280, height: '100%', background: THEME.white }}>
       {/* Drawer Header */}
       <Box sx={{
         p: 3,
-        background: BMW.white,
-        borderBottom: `1px solid ${BMW.border}`,
+        background: 'linear-gradient(180deg, #083344 0%, #0c4a6e 100%)',
+        borderBottom: `1px solid rgba(255,255,255,0.1)`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center'
       }}>
         <Box sx={{
-          height: 50,
-          width: 50,
-          bgcolor: BMW.primary,
-          borderRadius: 2,
+          mb: 2,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          mb: 2
+          justifyContent: 'center'
         }}>
-          <SmartDisplay sx={{ fontSize: 30 }} />
+          <img src="/qualitylens-logo-mark.png" alt="QualityLens" style={{ height: 48, width: 'auto' }} />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Avatar sx={{
-            width: 36,
-            height: 36,
-            bgcolor: 'rgba(255,255,255,0.2)',
-            fontSize: '15px',
-            fontWeight: 600,
-            color: 'white'
+          <Avatar 
+            src={user?.profile_image}
+            sx={{
+            width: 40,
+            height: 40,
+            border: '2px solid rgba(255,255,255,0.2)',
+            bgcolor: THEME.primary,
           }}>
-            <Person />
+            {!user?.profile_image && <Person />}
           </Avatar>
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: '#FFFFFF', lineHeight: 1.2 }}>
               {user?.username || 'User'}
             </Typography>
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
               {ROLE_LABEL[role] || 'User'}
             </Typography>
           </Box>
@@ -198,20 +192,20 @@ export default function Navbar() {
               mb: 0.5,
               borderRadius: 1.5,
               '&.Mui-selected': {
-                background: BMW.primaryUltraLight,
-                color: BMW.primary,
-                '& .MuiListItemIcon-root': { color: BMW.primary },
+                background: THEME.primaryUltraLight,
+                color: THEME.primary,
+                '& .MuiListItemIcon-root': { color: THEME.primary },
                 '&:hover': {
-                  background: BMW.primaryUltraLight
+                  background: THEME.primaryUltraLight
                 }
               },
               '&:hover': {
-                backgroundColor: BMW.surface
+                backgroundColor: THEME.surface
               }
             }}
           >
             <ListItemIcon sx={{
-              color: isActive(path) ? BMW.primary : BMW.textTertiary,
+              color: isActive(path) ? THEME.primary : THEME.textTertiary,
               minWidth: 40
             }}>
               <Icon fontSize="small" />
@@ -221,7 +215,7 @@ export default function Navbar() {
               primaryTypographyProps={{
                 fontWeight: isActive(path) ? 600 : 500,
                 fontSize: '0.9375rem',
-                color: isActive(path) ? BMW.primary : BMW.textPrimary
+                color: isActive(path) ? THEME.primary : THEME.textPrimary
               }}
             />
           </ListItemButton>
@@ -237,11 +231,11 @@ export default function Navbar() {
         position="fixed"
         elevation={0}
         sx={{
-          background: BMW.white,
-          borderBottom: `1px solid ${BMW.border}`,
+          background: THEME.white,
+          borderBottom: `1px solid ${THEME.border}`,
           zIndex: theme.zIndex.drawer + 1,
-          width: { md: `calc(100% - 240px)` },
-          ml: { md: `240px` }
+          width: { md: `calc(100% - 280px)` },
+          ml: { md: `280px` }
         }}
       >
         <Toolbar sx={{
@@ -255,8 +249,8 @@ export default function Navbar() {
               <IconButton
                 onClick={toggleDrawer}
                 sx={{
-                  color: BMW.textPrimary,
-                  '&:hover': { background: BMW.surface }
+                  color: THEME.textPrimary,
+                  '&:hover': { background: THEME.surface }
                 }}
               >
                 <MenuIcon />
@@ -269,10 +263,10 @@ export default function Navbar() {
             <Box sx={{ flexGrow: 1, ml: 4 }}>
                <Typography variant="h6" sx={{ 
                  fontWeight: 700, 
-                 color: BMW.textPrimary,
+                 color: THEME.textPrimary,
                  letterSpacing: '-0.5px'
                }}>
-                 {ROLE_ACCESS[role]?.find(m => isActive(m.path))?.text || 'CitNow Analyzer'}
+                 {ROLE_ACCESS[role]?.find(m => isActive(m.path))?.text || 'QualityLens Analyzer'}
                </Typography>
             </Box>
           )}
@@ -287,11 +281,11 @@ export default function Navbar() {
                 label={`Processing (${tasks.filter(t => ['pending', 'processing'].includes(t.status)).length})`}
                 size="small"
                 sx={{
-                  background: BMW.primaryUltraLight,
-                  color: BMW.primary,
-                  borderColor: BMW.primary,
+                  background: THEME.primaryUltraLight,
+                  color: THEME.primary,
+                  borderColor: THEME.primary,
                   fontWeight: 600,
-                  border: `1px solid ${BMW.primary}40`,
+                  border: `1px solid ${THEME.primary}40`,
                   animation: 'pulse 2s infinite',
                   '@keyframes pulse': {
                     '0%': { opacity: 1 },
@@ -307,7 +301,7 @@ export default function Navbar() {
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', alignItems: 'flex-end', mr: 0.5 }}>
               <Typography variant="body2" sx={{
                 fontWeight: 600,
-                color: BMW.textPrimary,
+                color: THEME.textPrimary,
                 lineHeight: 1.3,
                 fontSize: '0.875rem'
               }}>
@@ -315,7 +309,7 @@ export default function Navbar() {
               </Typography>
               <Typography variant="caption" sx={{
                 fontWeight: 600,
-                color: ROLE_COLOR[role] || BMW.primary,
+                color: ROLE_COLOR[role] || THEME.primary,
                 lineHeight: 1.2,
                 fontSize: '0.7rem',
                 textTransform: 'uppercase',
@@ -331,23 +325,24 @@ export default function Navbar() {
                 onClick={openUserMenu}
                 sx={{
                   p: 0.5,
-                  border: `2px solid ${ROLE_COLOR[role] || BMW.border}30`,
+                  border: `2px solid ${ROLE_COLOR[role] || THEME.border}30`,
                   '&:hover': {
-                    borderColor: ROLE_COLOR[role] || BMW.primary,
-                    background: BMW.primaryUltraLight
+                    borderColor: ROLE_COLOR[role] || THEME.primary,
+                    background: THEME.primaryUltraLight
                   }
                 }}
               >
                 <Avatar
+                  src={user?.profile_image}
                   sx={{
                     width: 36,
                     height: 36,
-                    bgcolor: ROLE_COLOR[role] || BMW.primary,
+                    bgcolor: ROLE_COLOR[role] || THEME.primary,
                     fontWeight: 700,
                     fontSize: '15px'
                   }}
                 >
-                  {(user?.username || 'U').charAt(0).toUpperCase()}
+                  {!user?.profile_image && (user?.username || 'U').charAt(0).toUpperCase()}
                 </Avatar>
               </IconButton>
             </Tooltip>
@@ -380,16 +375,16 @@ export default function Navbar() {
           sx: {
             mt: 1.5,
             minWidth: 220,
-            border: `1px solid ${BMW.border}`,
+            border: `1px solid ${THEME.border}`,
             borderRadius: 2
           }
         }}
       >
         <Box sx={{ px: 2, py: 1.5 }}>
-          <Typography variant="subtitle2" fontWeight={600} color={BMW.textPrimary}>
+          <Typography variant="subtitle2" fontWeight={600} color={THEME.textPrimary}>
             {user?.username || 'User'}
           </Typography>
-          <Typography variant="caption" color={BMW.textSecondary}>
+          <Typography variant="caption" color={THEME.textSecondary}>
             {user?.email || 'user@example.com'}
           </Typography>
         </Box>
@@ -399,15 +394,15 @@ export default function Navbar() {
         <MenuItem
           onClick={handleEditClick}
           sx={{
-            color: BMW.textPrimary,
+            color: THEME.textPrimary,
             py: 1.5,
             '&:hover': {
-              background: BMW.surface
+              background: THEME.surface
             }
           }}
         >
           <ListItemIcon>
-            <Edit fontSize="small" sx={{ color: BMW.textSecondary }} />
+            <Edit fontSize="small" sx={{ color: THEME.textSecondary }} />
           </ListItemIcon>
           <Typography variant="body2" fontWeight={500}>Edit Profile</Typography>
         </MenuItem>
@@ -415,15 +410,15 @@ export default function Navbar() {
         <MenuItem
           onClick={() => { closeUserMenu(); logout(); }}
           sx={{
-            color: BMW.textPrimary,
+            color: THEME.textPrimary,
             py: 1.5,
             '&:hover': {
-              background: BMW.surface
+              background: THEME.surface
             }
           }}
         >
           <ListItemIcon>
-            <ExitToApp fontSize="small" sx={{ color: BMW.textSecondary }} />
+            <ExitToApp fontSize="small" sx={{ color: THEME.textSecondary }} />
           </ListItemIcon>
           <Typography variant="body2" fontWeight={500}>Logout</Typography>
         </MenuItem>
@@ -453,8 +448,8 @@ function NavButton({ to, icon: Icon, active, children }) {
           px: 2.5,
           py: 1.25,
           borderRadius: 50,
-          color: active ? BMW.primary : BMW.textSecondary,
-          background: active ? BMW.white : 'transparent',
+          color: active ? THEME.primary : THEME.textSecondary,
+          background: active ? THEME.white : 'transparent',
           fontWeight: 600,
           fontSize: '0.9rem',
           boxShadow: active ? '0 4px 12px rgba(0,0,0,0.08)' : 'none',
@@ -462,8 +457,8 @@ function NavButton({ to, icon: Icon, active, children }) {
           position: 'relative',
           overflow: 'hidden',
           '&:hover': {
-            background: active ? BMW.white : 'rgba(255,255,255,0.5)',
-            color: BMW.primary,
+            background: active ? THEME.white : 'rgba(255,255,255,0.5)',
+            color: THEME.primary,
             transform: 'translateY(-1px)'
           },
           '&:active': {

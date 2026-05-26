@@ -8,11 +8,11 @@ const ThemeContext = createContext();
 export const ThemeSettingsProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const defaultSettings = useMemo(() => ({
-    accent_color: '#1C69D4',
+    accent_color: '#0DA1B8',
     dark_mode: false,
-    theme_preset: 'bmw',
-    dealer_name: 'BMW Service Center',
-    brand: 'Multi Franchise',
+    theme_preset: 'qualitylens',
+    dealer_name: 'QualityLens Showroom',
+    brand: 'QualityLens',
     custom_content_html: '',
     website_links: {
       dealer_website: '',

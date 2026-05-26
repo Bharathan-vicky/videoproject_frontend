@@ -21,13 +21,13 @@ import {
   SmartDisplay
 } from '@mui/icons-material';
 
-const MODERN_BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0A4B9C',
-  primaryLight: '#4D8FDF',
-  primaryUltraLight: '#E8F1FD',
-  accent: '#FF6D00',
-  accentLight: '#FF9D45',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#F0FDFA',
+  accent: '#00B4DB',
+  accentLight: '#E0F2FE',
   background: '#FFFFFF',
   surface: '#F8FAFC',
   surfaceElevated: '#FFFFFF',
@@ -39,8 +39,8 @@ const MODERN_BMW_THEME = {
   success: '#10B981',
   warning: '#F59E0B',
   error: '#EF4444',
-  gradientPrimary: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
-  gradientAccent: 'linear-gradient(135deg, #FF6D00 0%, #FF8A00 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
+  gradientAccent: 'linear-gradient(135deg, #0DA1B8 0%, #0C587D 100%)',
   shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
   shadowMd: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
   shadowLg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
@@ -57,8 +57,8 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        background: MODERN_BMW_THEME.surface,
-        borderTop: `1px solid ${MODERN_BMW_THEME.border}`,
+        background: THEME.surface,
+        borderTop: `1px solid ${THEME.border}`,
         mt: 'auto',
         py: 4 // Reduced from py: 6
       }}
@@ -70,18 +70,18 @@ export default function Footer() {
           <Grid item xs={12} md={4}>
             <Box sx={{ mb: 2 }}> {/* Reduced from mb: 3 */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
-                <Box sx={{ height: 70, width: 160, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ height: 90, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                   <img
-                    src="/citnow-logo.png"
-                    alt="CitNOW Analytics"
-                    style={{ height: '160px', width: 'auto', objectFit: 'contain' }}
+                    src="/qualitylens-logo.png"
+                    alt="QualityLens"
+                    style={{ height: '100%', width: 'auto', objectFit: 'contain' }}
                   />
                 </Box>
-                <Box sx={{ width: '1px', height: 60, bgcolor: '#e0e0e0', flexShrink: 0 }} />
+                <Box sx={{ width: '1px', height: 75, bgcolor: '#e0e0e0', flexShrink: 0 }} />
                 <img
                   src="/focus-technologies-logo.png"
                   alt="Focus Technologies"
-                  style={{ height: '70px', width: 'auto', objectFit: 'contain' }}
+                  style={{ height: '90px', width: 'auto', objectFit: 'contain' }}
                 />
               </Box>
 
@@ -92,10 +92,10 @@ export default function Footer() {
               <IconButton
                 size="small"
                 sx={{
-                  background: MODERN_BMW_THEME.primaryUltraLight,
-                  color: MODERN_BMW_THEME.primary,
+                  background: THEME.primaryUltraLight,
+                  color: THEME.primary,
                   '&:hover': {
-                    background: MODERN_BMW_THEME.primary,
+                    background: THEME.primary,
                     color: '#fff'
                   }
                 }}
@@ -105,10 +105,10 @@ export default function Footer() {
               <IconButton
                 size="small"
                 sx={{
-                  background: MODERN_BMW_THEME.primaryUltraLight,
-                  color: MODERN_BMW_THEME.primary,
+                  background: THEME.primaryUltraLight,
+                  color: THEME.primary,
                   '&:hover': {
-                    background: MODERN_BMW_THEME.primary,
+                    background: THEME.primary,
                     color: '#fff'
                   }
                 }}
@@ -118,10 +118,10 @@ export default function Footer() {
               <IconButton
                 size="small"
                 sx={{
-                  background: MODERN_BMW_THEME.primaryUltraLight,
-                  color: MODERN_BMW_THEME.primary,
+                  background: THEME.primaryUltraLight,
+                  color: THEME.primary,
                   '&:hover': {
-                    background: MODERN_BMW_THEME.primary,
+                    background: THEME.primary,
                     color: '#fff'
                   }
                 }}
@@ -139,7 +139,7 @@ export default function Footer() {
           <Grid item xs={12} sm={6} md={4}>
             <Typography variant="subtitle2" sx={{ // Changed from h6 to subtitle2
               fontWeight: 600,
-              color: MODERN_BMW_THEME.textPrimary,
+              color: THEME.textPrimary,
               mb: 1.5, // Reduced from mb: 2
               fontSize: '0.9rem'
             }}>
@@ -148,13 +148,13 @@ export default function Footer() {
             <Stack spacing={1.5}> {/* Reduced from spacing={2} */}
               <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                 <LocationOn sx={{
-                  color: MODERN_BMW_THEME.primary,
+                  color: THEME.primary,
                   mr: 1.5, // Reduced from mr: 2
                   fontSize: 18, // Smaller icon
                   mt: 0.25 // Align better with text
                 }} />
                 <Typography variant="body2" sx={{
-                  color: MODERN_BMW_THEME.textSecondary,
+                  color: THEME.textSecondary,
                   fontSize: '0.875rem' // Smaller text
                 }}>
                   FocusEngineering, Gudiyatham, Tamil Nadu, India - 632602
@@ -162,19 +162,19 @@ export default function Footer() {
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Email sx={{
-                  color: MODERN_BMW_THEME.primary,
+                  color: THEME.primary,
                   mr: 1.5, // Reduced from mr: 2
                   fontSize: 18 // Smaller icon
                 }} />
                 <Link
-                  href="mailto:support@bmw-analytics.com"
+                  href="mailto:support@qualitylens.co.uk"
                   variant="body2"
                   sx={{
-                    color: MODERN_BMW_THEME.textSecondary,
+                    color: THEME.textSecondary,
                     textDecoration: 'none',
                     fontSize: '0.875rem', // Smaller text
                     '&:hover': {
-                      color: MODERN_BMW_THEME.primary
+                      color: THEME.primary
                     }
                   }}
                 >
@@ -186,7 +186,7 @@ export default function Footer() {
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 3, borderColor: MODERN_BMW_THEME.borderLight }} /> {/* Reduced from my: 4 */}
+        <Divider sx={{ my: 3, borderColor: THEME.borderLight }} /> {/* Reduced from my: 4 */}
 
         {/* Bottom Section - More Compact */}
         <Box sx={{
@@ -197,7 +197,7 @@ export default function Footer() {
           gap: 2
         }}>
           <Typography variant="body2" sx={{
-            color: MODERN_BMW_THEME.textTertiary,
+            color: THEME.textTertiary,
             textAlign: isMobile ? 'center' : 'left',
             width: isMobile ? '100%' : 'auto',
             fontSize: '0.875rem' // Smaller text
@@ -222,12 +222,12 @@ export default function Footer() {
                 href="#"
                 variant="body2"
                 sx={{
-                  color: MODERN_BMW_THEME.textTertiary,
+                  color: THEME.textTertiary,
                   textDecoration: 'none',
                   fontSize: '0.875rem', // Smaller text
                   transition: 'color 0.2s ease-in-out',
                   '&:hover': {
-                    color: MODERN_BMW_THEME.primary
+                    color: THEME.primary
                   }
                 }}
               >
@@ -243,7 +243,7 @@ export default function Footer() {
           textAlign: 'center'
         }}>
           <Typography variant="caption" sx={{
-            color: MODERN_BMW_THEME.textTertiary,
+            color: THEME.textTertiary,
             fontSize: '0.7rem' // Smaller text
           }}>
             v2.1.0 • React & FastAPI • UnifiedMediaAnalyzer

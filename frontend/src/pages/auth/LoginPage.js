@@ -17,12 +17,12 @@ import {
 import { Lock, Person, Business, Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../contexts/AuthContext';
 
-const BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0A4B9C',
-  primaryLight: '#4D8FDF',
-  primaryUltraLight: '#E8F1FD',
-  accent: '#FF6D00',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#E8F8FA',
+  accent: '#1CB5E0',
   background: '#FFFFFF',
   surface: '#F8FAFC',
   border: '#E2E8F0',
@@ -30,7 +30,7 @@ const BMW_THEME = {
   textSecondary: '#64748B',
   textTertiary: '#94A3B8',
   error: '#EF4444',
-  gradientPrimary: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
   shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
   shadowMd: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
   shadowLg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
@@ -152,12 +152,12 @@ export default function LoginPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: `linear-gradient(135deg, #0A1929 0%, #1C69D4 100%)`,
+        background: `linear-gradient(135deg, #061e38 0%, #086b8f 50%, #00b4db 100%)`,
         backgroundImage: `
-          radial-gradient(at 0% 0%, rgba(28, 105, 212, 0.15) 0, transparent 50%),
-          radial-gradient(at 100% 0%, rgba(255, 109, 0, 0.1) 0, transparent 50%),
-          radial-gradient(at 100% 100%, rgba(28, 105, 212, 0.15) 0, transparent 50%),
-          radial-gradient(at 0% 100%, rgba(255, 109, 0, 0.1) 0, transparent 50%)
+          radial-gradient(at 0% 0%, rgba(0, 180, 219, 0.25) 0, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(28, 181, 224, 0.2) 0, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(0, 180, 219, 0.25) 0, transparent 50%),
+          radial-gradient(at 0% 100%, rgba(28, 181, 224, 0.2) 0, transparent 50%)
         `,
         p: 2,
         position: 'relative',
@@ -199,8 +199,8 @@ export default function LoginPage() {
             <Box sx={{ textAlign: 'center', mb: 5 }}>
               <Box
                 component="img"
-                src="/citnow-logo.png"
-                alt="CitNow Analytics Logo"
+                src="/qualitylens-logo-mark.png"
+                alt="QualityLens Logo"
                 sx={{
                   width: 'auto',
                   height: 'auto',
@@ -232,7 +232,7 @@ export default function LoginPage() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Person sx={{ color: BMW_THEME.primary }} />
+                        <Person sx={{ color: THEME.primary }} />
                       </InputAdornment>
                     ),
                   }}
@@ -243,10 +243,10 @@ export default function LoginPage() {
                       transition: 'all 0.2s ease',
                       '& fieldset': { borderColor: 'rgba(226, 232, 240, 0.8)' },
                       '&:hover fieldset': {
-                        borderColor: BMW_THEME.primaryLight,
+                        borderColor: THEME.primaryLight,
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: BMW_THEME.primary,
+                        borderColor: THEME.primary,
                         borderWidth: '2px'
                       },
                       '&.Mui-focused': {
@@ -255,7 +255,7 @@ export default function LoginPage() {
                       }
                     },
                     '& .MuiInputLabel-root': {
-                      color: BMW_THEME.textSecondary,
+                      color: THEME.textSecondary,
                       fontWeight: 500
                     }
                   }}
@@ -272,7 +272,7 @@ export default function LoginPage() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Lock sx={{ color: BMW_THEME.primary }} />
+                        <Lock sx={{ color: THEME.primary }} />
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -296,10 +296,10 @@ export default function LoginPage() {
                       transition: 'all 0.2s ease',
                       '& fieldset': { borderColor: 'rgba(226, 232, 240, 0.8)' },
                       '&:hover fieldset': {
-                        borderColor: BMW_THEME.primaryLight,
+                        borderColor: THEME.primaryLight,
                       },
                       '&.Mui-focused fieldset': {
-                        borderColor: BMW_THEME.primary,
+                        borderColor: THEME.primary,
                         borderWidth: '2px'
                       },
                       '&.Mui-focused': {
@@ -308,7 +308,7 @@ export default function LoginPage() {
                       }
                     },
                     '& .MuiInputLabel-root': {
-                      color: BMW_THEME.textSecondary,
+                      color: THEME.textSecondary,
                       fontWeight: 500
                     }
                   }}
@@ -325,7 +325,7 @@ export default function LoginPage() {
                     fontWeight: 700,
                     fontSize: '1.1rem',
                     textTransform: 'none',
-                    background: `linear-gradient(45deg, ${BMW_THEME.primaryDark} 0%, ${BMW_THEME.primary} 100%)`,
+                    background: `linear-gradient(45deg, ${THEME.primaryDark} 0%, ${THEME.primary} 100%)`,
                     color: '#fff',
                     boxShadow: '0 8px 20px rgba(28, 105, 212, 0.3)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -348,7 +348,7 @@ export default function LoginPage() {
                       '&::after': { opacity: 1 }
                     },
                     '&:disabled': {
-                      background: BMW_THEME.textTertiary,
+                      background: THEME.textTertiary,
                       opacity: 0.7
                     },
                   }}

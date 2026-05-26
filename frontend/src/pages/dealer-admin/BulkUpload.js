@@ -13,15 +13,15 @@ import {
 } from '@mui/icons-material';
 import api from '../../services/api';
 
-// Use the same BMW theme
-const MODERN_BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0A4B9C',
-  primaryLight: '#4D8FDF',
-  primaryUltraLight: '#E8F1FD',
-  accent: '#FF6D00',
-  accentLight: '#FF9D45',
-  accentUltraLight: '#FFF3E8',
+// QualityLens Branding Theme
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  primaryLight: '#3BC5D9',
+  primaryUltraLight: '#F0FDFA',
+  accent: '#00B4DB',
+  accentLight: '#E0F2FE',
+  accentUltraLight: '#F8FAFC',
   background: '#FFFFFF',
   surface: '#F8FAFC',
   surfaceElevated: '#FFFFFF',
@@ -31,13 +31,13 @@ const MODERN_BMW_THEME = {
   textSecondary: '#64748B',
   textTertiary: '#94A3B8',
   success: '#10B981',
-  successLight: '#D1FAE5',
+  successLight: '#F0FDF4',
   warning: '#F59E0B',
-  warningLight: '#FEF3C7',
+  warningLight: '#FFFBE8',
   error: '#EF4444',
-  errorLight: '#FEE2E2',
-  gradientPrimary: 'linear-gradient(135deg, #1C69D4 0%, #0A4B9C 100%)',
-  gradientAccent: 'linear-gradient(135deg, #FF6D00 0%, #FF8A00 100%)',
+  errorLight: '#FEF2F2',
+  gradientPrimary: 'linear-gradient(135deg, #0083B0 0%, #00B4DB 100%)',
+  gradientAccent: 'linear-gradient(135deg, #0DA1B8 0%, #0C587D 100%)',
   gradientSuccess: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   shadowSm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
   shadowMd: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -555,12 +555,12 @@ export default function BulkUpload() {
 
   const getStatusConfig = (status) => {
     const config = {
-      pending: { bgColor: MODERN_BMW_THEME.surface, textColor: MODERN_BMW_THEME.textTertiary },
-      processing: { bgColor: MODERN_BMW_THEME.primaryUltraLight, textColor: MODERN_BMW_THEME.primary },
-      completed: { bgColor: MODERN_BMW_THEME.successLight, textColor: MODERN_BMW_THEME.success },
-      failed: { bgColor: MODERN_BMW_THEME.errorLight, textColor: MODERN_BMW_THEME.error },
-      cancelled: { bgColor: MODERN_BMW_THEME.warningLight, textColor: MODERN_BMW_THEME.warning },
-      stopping: { bgColor: MODERN_BMW_THEME.warningLight, textColor: MODERN_BMW_THEME.warning }
+      pending: { bgColor: THEME.surface, textColor: THEME.textTertiary },
+      processing: { bgColor: THEME.primaryUltraLight, textColor: THEME.primary },
+      completed: { bgColor: THEME.successLight, textColor: THEME.success },
+      failed: { bgColor: THEME.errorLight, textColor: THEME.error },
+      cancelled: { bgColor: THEME.warningLight, textColor: THEME.warning },
+      stopping: { bgColor: THEME.warningLight, textColor: THEME.warning }
     };
     return config[status] || config.pending;
   };
@@ -584,9 +584,9 @@ export default function BulkUpload() {
           variant="h3"
           sx={{
             fontWeight: 700,
-            color: MODERN_BMW_THEME.textPrimary,
+            color: THEME.textPrimary,
             mb: 2,
-            background: MODERN_BMW_THEME.gradientPrimary,
+            background: THEME.gradientPrimary,
             backgroundClip: 'text',
             textFillColor: 'transparent',
             WebkitBackgroundClip: 'text',
@@ -598,7 +598,7 @@ export default function BulkUpload() {
         <Typography
           variant="h6"
           sx={{
-            color: MODERN_BMW_THEME.textSecondary,
+            color: THEME.textSecondary,
             fontWeight: 400,
             maxWidth: '800px',
             mx: 'auto',
@@ -619,11 +619,11 @@ export default function BulkUpload() {
             px: 4,
             py: 1,
             fontWeight: 600,
-            borderColor: MODERN_BMW_THEME.primary,
-            color: MODERN_BMW_THEME.primary,
+            borderColor: THEME.primary,
+            color: THEME.primary,
             '&:hover': {
-              backgroundColor: MODERN_BMW_THEME.primaryUltraLight,
-              borderColor: MODERN_BMW_THEME.primaryDark
+              backgroundColor: THEME.primaryUltraLight,
+              borderColor: THEME.primaryDark
             }
           }}
         >
@@ -636,52 +636,52 @@ export default function BulkUpload() {
         <Grid item xs={12} lg={6}>
           {/* Excel Format Guide */}
           <Card sx={{
-            background: MODERN_BMW_THEME.surfaceElevated,
-            border: `1px solid ${MODERN_BMW_THEME.border}`,
+            background: THEME.surfaceElevated,
+            border: `1px solid ${THEME.border}`,
             borderRadius: 3,
-            boxShadow: MODERN_BMW_THEME.shadowMd
+            boxShadow: THEME.shadowMd
           }}>
             <CardContent sx={{ p: 4 }}>
-              <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <TableChart sx={{ color: MODERN_BMW_THEME.primary }} />
+              <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 600, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <TableChart sx={{ color: THEME.primary }} />
                 Expected Excel Format
               </Typography>
               
               <TableContainer>
                 <Table size="small">
                   <TableHead>
-                    <TableRow sx={{ backgroundColor: MODERN_BMW_THEME.surface }}>
-                      <TableCell sx={{ fontWeight: 600, color: MODERN_BMW_THEME.textPrimary }}>OEM Code</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: MODERN_BMW_THEME.textPrimary }}>Location</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: MODERN_BMW_THEME.textPrimary }}>Video URL</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: MODERN_BMW_THEME.textPrimary }}>Vehicle ID</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: MODERN_BMW_THEME.textPrimary }}>Customer Name</TableCell>
+                    <TableRow sx={{ backgroundColor: THEME.surface }}>
+                      <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>OEM Code</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>Location</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>Video URL</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>Vehicle ID</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>Customer Name</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell sx={{ color: MODERN_BMW_THEME.textSecondary }}>38536</TableCell>
-                      <TableCell sx={{ color: MODERN_BMW_THEME.textSecondary }}>Kun Motoren Private Limited</TableCell>
-                      <TableCell sx={{ color: MODERN_BMW_THEME.textSecondary, fontFamily: 'monospace', fontSize: '0.75rem' }}>
-                        https://southasia.citnow.com/...
+                      <TableCell sx={{ color: THEME.textSecondary }}>38536</TableCell>
+                      <TableCell sx={{ color: THEME.textSecondary }}>Kun Motoren Private Limited</TableCell>
+                      <TableCell sx={{ color: THEME.textSecondary, fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                        https://video.qualitylens.co.uk/...
                       </TableCell>
-                      <TableCell sx={{ color: MODERN_BMW_THEME.textSecondary }}>TS09FW4707</TableCell>
-                      <TableCell sx={{ color: MODERN_BMW_THEME.textSecondary }}>Bmw</TableCell>
+                      <TableCell sx={{ color: THEME.textSecondary }}>TS09FW4707</TableCell>
+                      <TableCell sx={{ color: THEME.textSecondary }}>Vehicle</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
               
-              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textTertiary, mt: 2, fontStyle: 'italic' }}>
-                💡 The system automatically detects columns containing video URLs. Ensure your Excel file has at least one column with valid CitNow URLs.
+              <Typography variant="body2" sx={{ color: THEME.textTertiary, mt: 2, fontStyle: 'italic' }}>
+                💡 The system automatically detects columns containing video URLs. Ensure your Excel file has at least one column with valid QualityLens URLs.
               </Typography>
             </CardContent>
           </Card>
           <Card sx={{
-            background: MODERN_BMW_THEME.surfaceElevated,
-            border: `1px solid ${MODERN_BMW_THEME.border}`,
+            background: THEME.surfaceElevated,
+            border: `1px solid ${THEME.border}`,
             borderRadius: 3,
-            boxShadow: MODERN_BMW_THEME.shadowMd,
+            boxShadow: THEME.shadowMd,
             height: '100%'
           }}>
             <CardContent sx={{ p: 4 }}>
@@ -691,24 +691,24 @@ export default function BulkUpload() {
                 sx={{ 
                   p: 4, 
                   mb: 4, 
-                  border: `2px dashed ${MODERN_BMW_THEME.border}`,
+                  border: `2px dashed ${THEME.border}`,
                   borderRadius: 3,
-                  backgroundColor: MODERN_BMW_THEME.surface,
+                  backgroundColor: THEME.surface,
                   textAlign: 'center',
                   transition: 'all 0.2s ease-in-out',
                   '&:hover': {
-                    borderColor: MODERN_BMW_THEME.primary,
-                    backgroundColor: MODERN_BMW_THEME.primaryUltraLight
+                    borderColor: THEME.primary,
+                    backgroundColor: THEME.primaryUltraLight
                   }
                 }}
               >
-                <CloudUpload sx={{ fontSize: 48, color: MODERN_BMW_THEME.primary, mb: 2 }} />
-                <Typography variant="h6" gutterBottom sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+                <CloudUpload sx={{ fontSize: 48, color: THEME.primary, mb: 2 }} />
+                <Typography variant="h6" gutterBottom sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
                   Upload Excel File
                 </Typography>
-                <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mb: 3, lineHeight: 1.6 }}>
+                <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 3, lineHeight: 1.6 }}>
                   Upload an Excel file containing video URLs for batch processing. 
-                  The system will automatically detect and process CitNow URLs.
+                  The system will automatically detect and process QualityLens URLs.
                 </Typography>
 
                 <Button 
@@ -719,11 +719,11 @@ export default function BulkUpload() {
                     px: 4,
                     py: 1.5,
                     fontWeight: 600,
-                    borderColor: MODERN_BMW_THEME.primary,
-                    color: MODERN_BMW_THEME.primary,
+                    borderColor: THEME.primary,
+                    color: THEME.primary,
                     '&:hover': {
-                      backgroundColor: MODERN_BMW_THEME.primaryUltraLight,
-                      borderColor: MODERN_BMW_THEME.primaryDark
+                      backgroundColor: THEME.primaryUltraLight,
+                      borderColor: THEME.primaryDark
                     }
                   }}
                   disabled={!!batchId && canStopBatch(status?.status)}
@@ -734,12 +734,12 @@ export default function BulkUpload() {
                 </Button>
 
                 {file && (
-                  <Box sx={{ mt: 3, p: 2, backgroundColor: MODERN_BMW_THEME.successLight, borderRadius: 2 }}>
-                    <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.success, fontWeight: 600 }}>
+                  <Box sx={{ mt: 3, p: 2, backgroundColor: THEME.successLight, borderRadius: 2 }}>
+                    <Typography variant="body2" sx={{ color: THEME.success, fontWeight: 600 }}>
                       ✅ Selected: {file.name}
                     </Typography>
                     {excelPreview && (
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mt: 1 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, mt: 1 }}>
                         {excelPreview.message}
                       </Typography>
                     )}
@@ -753,13 +753,13 @@ export default function BulkUpload() {
                 sx={{ 
                   p: 3, 
                   mb: 4,
-                  backgroundColor: MODERN_BMW_THEME.surface,
-                  border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                  backgroundColor: THEME.surface,
+                  border: `1px solid ${THEME.borderLight}`,
                   borderRadius: 2
                 }}
               >
-                <Typography variant="h6" gutterBottom sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Translate sx={{ color: MODERN_BMW_THEME.primary }} />
+                <Typography variant="h6" gutterBottom sx={{ color: THEME.textPrimary, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Translate sx={{ color: THEME.primary }} />
                   Translation Settings
                 </Typography>
                 
@@ -772,7 +772,7 @@ export default function BulkUpload() {
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 2,
-                      backgroundColor: MODERN_BMW_THEME.background,
+                      backgroundColor: THEME.background,
                     }
                   }}
                 >
@@ -796,20 +796,20 @@ export default function BulkUpload() {
                   onClick={startBulkProcessing}
                   disabled={!file || loading || (!!batchId && canStopBatch(status?.status))}
                   sx={{
-                    background: MODERN_BMW_THEME.gradientPrimary,
+                    background: THEME.gradientPrimary,
                     borderRadius: 3,
                     px: 6,
                     py: 1.5,
                     fontWeight: 600,
                     textTransform: 'none',
                     fontSize: '16px',
-                    boxShadow: MODERN_BMW_THEME.shadowMd,
+                    boxShadow: THEME.shadowMd,
                     '&:hover': {
-                      boxShadow: MODERN_BMW_THEME.shadowLg,
+                      boxShadow: THEME.shadowLg,
                       transform: 'translateY(-1px)'
                     },
                     '&:disabled': {
-                      background: MODERN_BMW_THEME.textTertiary,
+                      background: THEME.textTertiary,
                       transform: 'none'
                     },
                     transition: 'all 0.2s ease-in-out',
@@ -837,8 +837,8 @@ export default function BulkUpload() {
                   sx={{ 
                     mt: 3,
                     borderRadius: 2,
-                    border: `1px solid ${MODERN_BMW_THEME.errorLight}`,
-                    backgroundColor: MODERN_BMW_THEME.errorLight
+                    border: `1px solid ${THEME.errorLight}`,
+                    backgroundColor: THEME.errorLight
                   }}
                 >
                   {error}
@@ -853,19 +853,19 @@ export default function BulkUpload() {
           {/* Current Status */}
           {status && (
             <Card sx={{
-              background: MODERN_BMW_THEME.surfaceElevated,
-              border: `1px solid ${MODERN_BMW_THEME.border}`,
+              background: THEME.surfaceElevated,
+              border: `1px solid ${THEME.border}`,
               borderRadius: 3,
-              boxShadow: MODERN_BMW_THEME.shadowMd,
+              boxShadow: THEME.shadowMd,
               mb: 4
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                   <Box>
-                    <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, mb: 1 }}>
+                    <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 600, mb: 1 }}>
                       Processing Status
                     </Typography>
-                    <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+                    <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                       Batch ID: {status.batchId}
                     </Typography>
                   </Box>
@@ -886,9 +886,9 @@ export default function BulkUpload() {
                       <Tooltip title="Stop Processing">
                         <IconButton 
                           sx={{ 
-                            color: MODERN_BMW_THEME.error,
-                            backgroundColor: `${MODERN_BMW_THEME.error}08`,
-                            '&:hover': { backgroundColor: `${MODERN_BMW_THEME.error}15` }
+                            color: THEME.error,
+                            backgroundColor: `${THEME.error}08`,
+                            '&:hover': { backgroundColor: `${THEME.error}15` }
                           }}
                           onClick={() => setStopDialog({ open: true, batchId: status.batchId })}
                         >
@@ -902,9 +902,9 @@ export default function BulkUpload() {
                         <Tooltip title="Download JSON Results">
                           <IconButton 
                             sx={{ 
-                              color: MODERN_BMW_THEME.primary,
-                              backgroundColor: `${MODERN_BMW_THEME.primary}08`,
-                              '&:hover': { backgroundColor: `${MODERN_BMW_THEME.primary}15` }
+                              color: THEME.primary,
+                              backgroundColor: `${THEME.primary}08`,
+                              '&:hover': { backgroundColor: `${THEME.primary}15` }
                             }}
                             onClick={() => downloadResults(status.batchId)}
                           >
@@ -914,9 +914,9 @@ export default function BulkUpload() {
                         <Tooltip title="Download Structured ZIP">
                           <IconButton 
                             sx={{ 
-                              color: MODERN_BMW_THEME.primary,
-                              backgroundColor: `${MODERN_BMW_THEME.primary}08`,
-                              '&:hover': { backgroundColor: `${MODERN_BMW_THEME.primary}15` }
+                              color: THEME.primary,
+                              backgroundColor: `${THEME.primary}08`,
+                              '&:hover': { backgroundColor: `${THEME.primary}15` }
                             }}
                             onClick={() => downloadStructuredZip(status.batchId)}
                           >
@@ -930,9 +930,9 @@ export default function BulkUpload() {
                       <Tooltip title="Delete Batch">
                         <IconButton 
                           sx={{ 
-                            color: MODERN_BMW_THEME.error,
-                            backgroundColor: `${MODERN_BMW_THEME.error}08`,
-                            '&:hover': { backgroundColor: `${MODERN_BMW_THEME.error}15` }
+                            color: THEME.error,
+                            backgroundColor: `${THEME.error}08`,
+                            '&:hover': { backgroundColor: `${THEME.error}15` }
                           }}
                           onClick={() => setDeleteDialog({ open: true, batchId: status.batchId })}
                         >
@@ -947,32 +947,32 @@ export default function BulkUpload() {
                 <Grid container spacing={3} sx={{ mb: 3 }}>
                   <Grid item xs={3}>
                     <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mb: 1 }}>Total URLs</Typography>
-                      <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 700 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 1 }}>Total URLs</Typography>
+                      <Typography variant="h4" sx={{ color: THEME.textPrimary, fontWeight: 700 }}>
                         {status.total_urls}
                       </Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={3}>
                     <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mb: 1 }}>Processed</Typography>
-                      <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.primary, fontWeight: 700 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 1 }}>Processed</Typography>
+                      <Typography variant="h4" sx={{ color: THEME.primary, fontWeight: 700 }}>
                         {status.processed_urls}
                       </Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={3}>
                     <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mb: 1 }}>Failed</Typography>
-                      <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.error, fontWeight: 700 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 1 }}>Failed</Typography>
+                      <Typography variant="h4" sx={{ color: THEME.error, fontWeight: 700 }}>
                         {status.failed_urls}
                       </Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={3}>
                     <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mb: 1 }}>Progress</Typography>
-                      <Typography variant="h4" sx={{ color: MODERN_BMW_THEME.success, fontWeight: 700 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 1 }}>Progress</Typography>
+                      <Typography variant="h4" sx={{ color: THEME.success, fontWeight: 700 }}>
                         {status.progress_percentage}%
                       </Typography>
                     </Box>
@@ -1008,7 +1008,7 @@ export default function BulkUpload() {
                       size={120}
                       thickness={5}
                       sx={{
-                        color: status.status === 'failed' ? MODERN_BMW_THEME.error : '#A3E635',
+                        color: status.status === 'failed' ? THEME.error : '#A3E635',
                         position: 'absolute',
                         left: 0,
                         '& .MuiCircularProgress-circle': {
@@ -1036,7 +1036,7 @@ export default function BulkUpload() {
                     </Box>
                   </Box>
                   <Typography variant="caption" sx={{ 
-                    color: status.status === 'failed' ? MODERN_BMW_THEME.error : '#A3E635', 
+                    color: status.status === 'failed' ? THEME.error : '#A3E635', 
                     fontWeight: 700, 
                     letterSpacing: '1px', 
                     textTransform: 'uppercase' 
@@ -1051,16 +1051,16 @@ export default function BulkUpload() {
                     elevation={0}
                     sx={{ 
                       p: 2, 
-                      backgroundColor: MODERN_BMW_THEME.surface,
-                      border: `1px solid ${MODERN_BMW_THEME.borderLight}`,
+                      backgroundColor: THEME.surface,
+                      border: `1px solid ${THEME.borderLight}`,
                       borderRadius: 2
                     }}
                   >
-                    <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, mb: 1 }}>
+                    <Typography variant="body2" sx={{ color: THEME.textPrimary, fontWeight: 600, mb: 1 }}>
                       🎥 Currently Processing:
                     </Typography>
                     <Typography variant="body2" sx={{ 
-                      color: MODERN_BMW_THEME.textSecondary, 
+                      color: THEME.textSecondary, 
                       fontFamily: 'monospace',
                       wordBreak: 'break-all'
                     }}>
@@ -1076,8 +1076,8 @@ export default function BulkUpload() {
                     sx={{ 
                       mt: 2,
                       borderRadius: 2,
-                      border: `1px solid ${MODERN_BMW_THEME.successLight}`,
-                      backgroundColor: MODERN_BMW_THEME.successLight
+                      border: `1px solid ${THEME.successLight}`,
+                      backgroundColor: THEME.successLight
                     }}
                   >
                     ✅ Bulk processing completed! Processed: {status.processed_urls} | Failed: {status.failed_urls}
@@ -1090,8 +1090,8 @@ export default function BulkUpload() {
                     sx={{ 
                       mt: 2,
                       borderRadius: 2,
-                      border: `1px solid ${MODERN_BMW_THEME.errorLight}`,
-                      backgroundColor: MODERN_BMW_THEME.errorLight
+                      border: `1px solid ${THEME.errorLight}`,
+                      backgroundColor: THEME.errorLight
                     }}
                   >
                     ❌ Processing failed. Please check the server logs for details.
@@ -1109,12 +1109,12 @@ export default function BulkUpload() {
       <Dialog open={showHistory} onClose={() => setShowHistory(false)} maxWidth="md" fullWidth>
         <DialogTitle>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+            <Typography variant="h6" sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
               📋 Processing History
             </Typography>
             <IconButton 
               onClick={() => setShowHistory(false)}
-              sx={{ color: MODERN_BMW_THEME.textSecondary }}
+              sx={{ color: THEME.textSecondary }}
             >
               <Close />
             </IconButton>
@@ -1124,7 +1124,7 @@ export default function BulkUpload() {
         <DialogContent>
           {activeBatches.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="body1" sx={{ color: MODERN_BMW_THEME.textTertiary }}>
+              <Typography variant="body1" sx={{ color: THEME.textTertiary }}>
                 No processing history found
               </Typography>
             </Box>
@@ -1136,20 +1136,20 @@ export default function BulkUpload() {
                   sx={{ 
                     mb: 2, 
                     p: 3,
-                    border: `1px solid ${MODERN_BMW_THEME.border}`,
+                    border: `1px solid ${THEME.border}`,
                     borderRadius: 2,
-                    backgroundColor: MODERN_BMW_THEME.surfaceElevated
+                    backgroundColor: THEME.surfaceElevated
                   }}
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle1" sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600, mb: 1 }}>
+                      <Typography variant="subtitle1" sx={{ color: THEME.textPrimary, fontWeight: 600, mb: 1 }}>
                         {b.filename || 'Unknown file'}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary, mb: 1 }}>
+                      <Typography variant="body2" sx={{ color: THEME.textSecondary, mb: 1 }}>
                         Batch: {b.batchId} | {new Date(b.created_at).toLocaleString()}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+                      <Typography variant="body2" sx={{ color: THEME.textPrimary }}>
                         Processed: {b.processed_urls || 0} / {b.total_urls || 0} 
                         {b.failed_urls > 0 && ` | Failed: ${b.failed_urls}`}
                       </Typography>
@@ -1184,9 +1184,9 @@ export default function BulkUpload() {
                           <IconButton 
                             size="small"
                             sx={{ 
-                              color: MODERN_BMW_THEME.primary,
-                              backgroundColor: `${MODERN_BMW_THEME.primary}08`,
-                              '&:hover': { backgroundColor: `${MODERN_BMW_THEME.primary}15` }
+                              color: THEME.primary,
+                              backgroundColor: `${THEME.primary}08`,
+                              '&:hover': { backgroundColor: `${THEME.primary}15` }
                             }}
                             onClick={() => downloadResults(b.batchId)}
                           >
@@ -1200,9 +1200,9 @@ export default function BulkUpload() {
                           <IconButton 
                             size="small"
                             sx={{ 
-                              color: MODERN_BMW_THEME.error,
-                              backgroundColor: `${MODERN_BMW_THEME.error}08`,
-                              '&:hover': { backgroundColor: `${MODERN_BMW_THEME.error}15` }
+                              color: THEME.error,
+                              backgroundColor: `${THEME.error}08`,
+                              '&:hover': { backgroundColor: `${THEME.error}15` }
                             }}
                             onClick={() => setDeleteDialog({ open: true, batchId: b.batchId })}
                           >
@@ -1234,11 +1234,11 @@ export default function BulkUpload() {
         onClose={() => setStopDialog({ open: false, batchId: null })}
         PaperProps={{ sx: { borderRadius: 3 } }}
       >
-        <DialogTitle sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+        <DialogTitle sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
           Stop Batch Processing?
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+          <Typography sx={{ color: THEME.textSecondary }}>
             Are you sure you want to stop this batch? Current progress will be saved and you can resume later.
           </Typography>
         </DialogContent>
@@ -1266,11 +1266,11 @@ export default function BulkUpload() {
         onClose={() => setDeleteDialog({ open: false, batchId: null })}
         PaperProps={{ sx: { borderRadius: 3 } }}
       >
-        <DialogTitle sx={{ color: MODERN_BMW_THEME.textPrimary, fontWeight: 600 }}>
+        <DialogTitle sx={{ color: THEME.textPrimary, fontWeight: 600 }}>
           Delete Batch?
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+          <Typography sx={{ color: THEME.textSecondary }}>
             Are you sure you want to delete this batch and all its results? This action cannot be undone.
           </Typography>
         </DialogContent>

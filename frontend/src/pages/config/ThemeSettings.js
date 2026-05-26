@@ -28,9 +28,9 @@ import {
 } from '@mui/icons-material';
 import { useThemeSettings } from '../../contexts/ThemeContext';
 
-const MODERN_BMW_THEME = {
-  primary: '#1C69D4',
-  primaryDark: '#0A4B9C',
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
   surface: '#F8FAFC',
   surfaceElevated: '#FFFFFF',
   border: '#E2E8F0',
@@ -43,13 +43,12 @@ export default function ThemeSettings() {
   const { settings, updateSettings, loading: themeLoading } = useThemeSettings();
 
   const BRANDS = useMemo(() => ([
-    'Multi Franchise',
-    'BMW',
-    'MINI',
-    'CitNOW'
+    'QualityLens',
+    'Enterprise',
+    'Standard'
   ]), []);
 
-  const [brand, setBrand] = useState(settings?.brand || 'Multi Franchise');
+  const [brand, setBrand] = useState(settings?.brand || 'QualityLens');
   const [customHtml, setCustomHtml] = useState(settings?.custom_content_html || '');
   const editorRef = useRef(null);
 
@@ -135,24 +134,24 @@ export default function ThemeSettings() {
       </Snackbar>
 
       <Box sx={{ mb: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 800, color: MODERN_BMW_THEME.textPrimary }}>
+        <Typography variant="h5" sx={{ fontWeight: 800, color: THEME.textPrimary }}>
           Theme Settings
         </Typography>
       </Box>
 
-      <Card sx={{ borderRadius: 2, border: `1px solid ${MODERN_BMW_THEME.border}`, boxShadow: 'none' }}>
+      <Card sx={{ borderRadius: 2, border: `1px solid ${THEME.border}`, boxShadow: 'none' }}>
         <CardContent sx={{ p: { xs: 2, md: 3 } }}>
           {/* 1 of 4 */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 2 }}>
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+              <Typography variant="subtitle1" fontWeight={800} sx={{ color: THEME.textPrimary }}>
                 Current Brand
               </Typography>
-              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+              <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                 Select the brand you want to make edits to.
               </Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, pt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: THEME.textSecondary, pt: 0.5 }}>
               1 of 4
             </Typography>
           </Box>
@@ -176,20 +175,20 @@ export default function ThemeSettings() {
           {/* 2 of 4 */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 1.5 }}>
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+              <Typography variant="subtitle1" fontWeight={800} sx={{ color: THEME.textPrimary }}>
                 Custom Content
               </Typography>
-              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+              <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                 Write a piece of custom text that will be visible on your video page.
               </Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, pt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: THEME.textSecondary, pt: 0.5 }}>
               2 of 4
             </Typography>
           </Box>
 
-          <Box sx={{ border: `1px solid ${MODERN_BMW_THEME.border}`, borderRadius: 1.5, overflow: 'hidden' }}>
-            <Box sx={{ background: '#EEF2F7', borderBottom: `1px solid ${MODERN_BMW_THEME.border}`, px: 1, py: 0.5 }}>
+          <Box sx={{ border: `1px solid ${THEME.border}`, borderRadius: 1.5, overflow: 'hidden' }}>
+            <Box sx={{ background: '#EEF2F7', borderBottom: `1px solid ${THEME.border}`, px: 1, py: 0.5 }}>
               <Stack direction="row" spacing={0.5}>
                 <IconButton size="small" onClick={() => exec('bold')}><FormatBold fontSize="small" /></IconButton>
                 <IconButton size="small" onClick={() => exec('italic')}><FormatItalic fontSize="small" /></IconButton>
@@ -214,7 +213,7 @@ export default function ThemeSettings() {
                 background: '#fff',
                 '&:empty:before': {
                   content: '"Start typing..."',
-                  color: MODERN_BMW_THEME.textSecondary
+                  color: THEME.textSecondary
                 }
               }}
             />
@@ -225,14 +224,14 @@ export default function ThemeSettings() {
           {/* 3 of 4 */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 1.5 }}>
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+              <Typography variant="subtitle1" fontWeight={800} sx={{ color: THEME.textPrimary }}>
                 Logo
               </Typography>
-              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+              <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                 Upload your company logo, a transparent one will work best.
               </Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, pt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: THEME.textSecondary, pt: 0.5 }}>
               3 of 4
             </Typography>
           </Box>
@@ -247,12 +246,12 @@ export default function ThemeSettings() {
                 onChange={(e) => setLogoFile(e.target.files?.[0] || null)}
               />
             </Button>
-            <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+            <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
               Please make sure your logo is no larger than 25MB and it’s a GIF, JPEG, BMP or PNG.
             </Typography>
           </Box>
           {logoPreviewUrl && (
-            <Box sx={{ mt: 2, p: 2, border: `1px solid ${MODERN_BMW_THEME.border}`, borderRadius: 1.5, display: 'inline-flex', alignItems: 'center', background: '#fff' }}>
+            <Box sx={{ mt: 2, p: 2, border: `1px solid ${THEME.border}`, borderRadius: 1.5, display: 'inline-flex', alignItems: 'center', background: '#fff' }}>
               <img src={logoPreviewUrl} alt="Logo preview" style={{ height: 48, width: 'auto' }} />
             </Box>
           )}
@@ -262,14 +261,14 @@ export default function ThemeSettings() {
           {/* 4 of 4 */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 1.5 }}>
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ color: MODERN_BMW_THEME.textPrimary }}>
+              <Typography variant="subtitle1" fontWeight={800} sx={{ color: THEME.textPrimary }}>
                 Website Links
               </Typography>
-              <Typography variant="body2" sx={{ color: MODERN_BMW_THEME.textSecondary }}>
+              <Typography variant="body2" sx={{ color: THEME.textSecondary }}>
                 Edit the website links that are displayed for this brand.
               </Typography>
             </Box>
-            <Typography variant="caption" sx={{ color: MODERN_BMW_THEME.textSecondary, pt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: THEME.textSecondary, pt: 0.5 }}>
               4 of 4
             </Typography>
           </Box>
@@ -285,7 +284,7 @@ export default function ThemeSettings() {
         {/* Footer Actions */}
         <Box sx={{ 
           p: 2, 
-          borderTop: `1px solid ${MODERN_BMW_THEME.border}`, 
+          borderTop: `1px solid ${THEME.border}`, 
           display: 'flex', 
           justifyContent: 'flex-end',
           background: '#fff'
@@ -296,7 +295,7 @@ export default function ThemeSettings() {
             disabled={loading || themeLoading}
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Save />} 
             sx={{ 
-              background: MODERN_BMW_THEME.primary,
+              background: THEME.primary,
               textTransform: 'none', 
               px: { xs: 3, sm: 5 }, 
               py: 1.2, 
@@ -304,7 +303,7 @@ export default function ThemeSettings() {
               fontWeight: 600,
               boxShadow: 'none',
               '&:hover': {
-                background: MODERN_BMW_THEME.primaryDark,
+                background: THEME.primaryDark,
               }
             }}
           >

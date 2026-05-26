@@ -83,7 +83,8 @@ export default function AuthProvider({ children }) {
 
       setUser(prevUser => ({
         ...prevUser,
-        ...updatedUser
+        ...profileData, // Ensure we keep what we sent
+        ...updatedUser  // Overlay with backend response
       }));
 
       return updatedUser;

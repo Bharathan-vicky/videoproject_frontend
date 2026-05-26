@@ -34,7 +34,18 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 
-const SIDEBAR_WIDTH = 240;
+const THEME = {
+  primary: '#0DA1B8',
+  primaryDark: '#0C587D',
+  accent: '#00B4DB',
+  sidebarBg: 'linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 100%)',
+  sidebarHover: 'rgba(13, 161, 184, 0.12)',
+  textPrimary: '#0F172A',
+  textSecondary: '#475569',
+  divider: 'rgba(13, 161, 184, 0.15)'
+};
+
+const SIDEBAR_WIDTH = 280;
 
 // Sidebar now uses MUI theme palette dynamically
 
@@ -184,21 +195,23 @@ function SidebarItem({ item, isActive, currentPath }) {
           py: 0.8,
           px: 1.5,
           transition: 'all 0.2s',
+          color: (!hasSubItems && isActive(item.path)) ? '#FFFFFF' : THEME.textPrimary,
           '&.Mui-selected': {
-            background: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            '& .MuiListItemIcon-root': { color: theme.palette.primary.contrastText },
-            '&:hover': { background: theme.palette.primary.dark },
+            background: THEME.primary,
+            color: '#FFFFFF',
+            '& .MuiListItemIcon-root': { color: '#FFFFFF' },
+            '&:hover': { background: THEME.primaryDark },
           },
           '&:hover': {
-            background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(28, 105, 212, 0.08)',
-            '& .MuiListItemIcon-root': { color: theme.palette.primary.main },
+            background: THEME.sidebarHover,
+            color: THEME.primary,
+            '& .MuiListItemIcon-root': { color: THEME.primary },
           },
         }}
       >
         <ListItemIcon sx={{ 
           minWidth: 32, 
-          color: (!hasSubItems && isActive(item.path)) ? theme.palette.primary.contrastText : theme.palette.text.secondary 
+          color: 'inherit'
         }}>
           <Icon sx={{ fontSize: 18 }} />
         </ListItemIcon>
@@ -206,7 +219,8 @@ function SidebarItem({ item, isActive, currentPath }) {
           primary={item.text} 
           primaryTypographyProps={{ 
             fontWeight: (!hasSubItems && isActive(item.path)) ? 700 : 500,
-            fontSize: '0.825rem'
+            fontSize: '0.825rem',
+            color: 'inherit'
           }} 
         />
         {hasSubItems && (open ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
@@ -228,21 +242,29 @@ function SidebarItem({ item, isActive, currentPath }) {
                     borderRadius: 1.5,
                     py: 0.6,
                     px: 1.5,
+                    color: isActive(sub.path) ? THEME.primary : THEME.textPrimary,
                     '&.Mui-selected': {
-                      background: 'transparent',
-                      color: theme.palette.primary.main,
-                      '& .MuiListItemIcon-root': { color: theme.palette.primary.main },
-                      '& .MuiTypography-root': { fontWeight: 700 }
+                      background: 'rgba(13, 161, 184, 0.15)',
+                      color: THEME.primary,
+                      '& .MuiListItemIcon-root': { color: THEME.primary },
                     },
-                    '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(28, 105, 212, 0.04)' }
+                    '&:hover': { 
+                      background: THEME.sidebarHover,
+                      color: THEME.primary,
+                      '& .MuiListItemIcon-root': { color: THEME.primary }
+                    }
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 28, color: isActive(sub.path) ? theme.palette.primary.main : theme.palette.text.secondary }}>
+                  <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
                     <SubIcon sx={{ fontSize: 16 }} />
                   </ListItemIcon>
                   <ListItemText 
                     primary={sub.text} 
-                    primaryTypographyProps={{ fontSize: '0.75rem', fontWeight: isActive(sub.path) ? 700 : 500 }} 
+                    primaryTypographyProps={{ 
+                      fontSize: '0.75rem', 
+                      fontWeight: isActive(sub.path) ? 700 : 500, 
+                      color: 'inherit' 
+                    }} 
                   />
                 </ListItemButton>
               );
@@ -268,16 +290,21 @@ export default function Sidebar() {
       height: '100%', 
       display: 'flex', 
       flexDirection: 'column', 
-      background: theme.palette.background.paper,
-      borderRight: `1px solid ${theme.palette.divider}`
+      background: THEME.sidebarBg,
+      color: THEME.textPrimary,
+      borderRight: `1px solid ${THEME.divider}`
     }}>
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px' }}>
-        <img src="/citnow-logo.png" alt="CitNow" style={{ width: '100%', maxWidth: '160px', height: 'auto', objectFit: 'contain' }} />
+      <Box sx={{ p: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100px', overflow: 'hidden' }}>
+        <img src="/qualitylens-logo.png" alt="QualityLens" style={{ width: '100%', maxWidth: '215px', maxHeight: '68px', objectFit: 'contain' }} />
       </Box>
 
-      <Divider sx={{ mx: 2, mb: 2, opacity: 0.5 }} />
+      <Divider sx={{ mx: 2, mb: 2, borderColor: THEME.divider }} />
 
-      <List sx={{ px: 2, flex: 1, pt: 0 }}>
+      <List sx={{ 
+        px: 2, 
+        flex: 1, 
+        pt: 0
+      }}>
         {menuItems.map((item) => (
           <SidebarItem key={item.path} item={item} isActive={isActive} currentPath={location.pathname} />
         ))}
@@ -294,7 +321,12 @@ export default function Sidebar() {
       <Drawer
         variant="permanent"
         sx={{
-          '& .MuiDrawer-paper': { width: SIDEBAR_WIDTH, boxSizing: 'border-box', border: 'none' },
+          '& .MuiDrawer-paper': { 
+            width: SIDEBAR_WIDTH, 
+            boxSizing: 'border-box', 
+            border: 'none',
+            boxShadow: '4px 0 24px 0 rgba(0, 0, 0, 0.03)'
+          },
         }}
         open
       >
